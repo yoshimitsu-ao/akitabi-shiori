@@ -394,6 +394,13 @@ html.locked,html.locked body{overflow:hidden}
 #av-none[hidden]{display:none}
 .av-nones{display:inline-flex;align-items:center;gap:3px;font-size:12px;color:var(--mute)}
 .av-nones .av{width:20px;height:20px;font-size:10px}
+.sc-places{display:grid;gap:6px}
+.pl-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 6px;padding:8px;border:1px dashed var(--line);border-radius:12px}
+.pl-row .pl-u{grid-column:1/2}
+.pl-row .dish-x{grid-row:1/3;grid-column:2;align-self:center}
+.sched-form .pl-row input{width:100%}
+.sc-addpl{justify-self:start}
+.sc-addpl[hidden]{display:none}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -655,8 +662,9 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     </div>
     <details class="sc-more" id="sc-more">
       <summary>メモ・地図・目立たせる</summary>
-      <input id="sc-s" type="text" placeholder="メモ・お店の名前（例：ツルヤ 軽井沢店）" aria-label="メモ" autocomplete="off">
-      <input id="sc-m" type="text" placeholder="地図：場所の名前か Google マップのリンク" aria-label="地図で開く場所" autocomplete="off">
+      <input id="sc-s" type="text" placeholder="メモ（例：日没 16:40）" aria-label="メモ" autocomplete="off">
+      <div class="sc-places" id="sc-places"></div>
+      <button type="button" class="st-fix sc-addpl" id="sc-addpl">＋ 場所を追加</button>
       <label class="chk"><input type="checkbox" id="sc-k"> 大事な予定として目立たせる</label>
     </details>
     <button type="button" id="sc-cancel" class="ghost" hidden>やめる</button>
@@ -1258,12 +1266,13 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           // 2行目：メモと地図リンクを同じ小さな文字でそろえる
           var m=x.m||[],meta=el('div','meta');
           // 地図の欄には、場所の名前でも Google マップのリンクでも入れられる
-          function mapA(label,q){var a=el('a','pin');a.href=/^https?:\/\//.test(q)?q:mapUrl(q);a.target='_blank';a.rel='noopener';a.innerHTML=PIN;a.appendChild(document.createTextNode(label));return a}
-          if(m.length===1&&x.s&&!/^候補/.test(x.s))meta.appendChild(mapA(x.s,m[0]));
+          // 場所は「名前|リンク」「名前」「リンク」のどれかで保存されている
+          function mapA(label,p){var a=el('a','pin');a.href=p.u||mapUrl(p.q);a.target='_blank';a.rel='noopener';a.innerHTML=PIN;a.appendChild(document.createTextNode(label));return a}
+          var ps=m.map(parsePlace);
+          if(ps.length===1&&!ps[0].l&&x.s&&!/^候補/.test(x.s))meta.appendChild(mapA(x.s,ps[0]));
           else{
-            if(x.s)meta.appendChild(el('span','s',x.s+(m.length>1?'：':'')));
-            if(m.length===1)meta.appendChild(mapA('地図',m[0]));
-            else m.forEach(function(q,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(/^https?:/.test(q)?'地図'+(i+1):q,q))});
+            if(x.s)meta.appendChild(el('span','s',x.s+(ps.length>1?'：':'')));
+            ps.forEach(function(p,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(p.l||(ps.length===1?'地図':(p.u?'地図'+(i+1):p.q)),p))});
           }
           if(/チェックイン/.test(x.n)){var sb=el('button','to-stay','宿の情報');sb.type='button';sb.addEventListener('click',function(){var t=$('stay');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});meta.appendChild(sb)}
           if(meta.childNodes.length)body.appendChild(meta);
@@ -1278,13 +1287,29 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     });
     if(typeof placeCow==='function')placeCow();
   }
+  // ---- スケジュールの「場所」入力（名前とGoogleマップのリンク。「＋ 場所を追加」で増やせる）
+  function parsePlace(q){q=String(q||'');var i=q.indexOf('|');if(i>=0)return{l:q.slice(0,i),u:q.slice(i+1),q:q.slice(0,i)};
+    return /^https?:/.test(q)?{l:'',u:q,q:''}:{l:'',u:'',q:q}}
+  function addPlaceRow(p){
+    var box=$('sc-places');if(box.children.length>=4)return;
+    var row=el('div','pl-row'),n=document.createElement('input'),u=document.createElement('input');
+    n.type='text';n.className='pl-n';n.placeholder='場所の名前（例：ツルヤ 軽井沢店）';n.setAttribute('aria-label','場所の名前');n.autocomplete='off';n.value=p?(p.l||p.q||''):'';
+    u.type='url';u.className='pl-u';u.placeholder='Googleマップのリンク（任意）';u.setAttribute('aria-label','Googleマップのリンク');u.autocomplete='off';u.value=p&&p.u?p.u:'';
+    var x=el('button','dish-x','×');x.type='button';x.setAttribute('aria-label','この場所を消す');x.addEventListener('click',function(){row.remove();if(!box.children.length)addPlaceRow();placeBtn()});
+    row.appendChild(n);row.appendChild(u);row.appendChild(x);box.appendChild(row);placeBtn();return row;
+  }
+  function placeBtn(){$('sc-addpl').hidden=$('sc-places').children.length>=4}
+  function setPlaces(m){var box=$('sc-places');box.textContent='';(m&&m.length?m:['']).forEach(function(q){addPlaceRow(q?parsePlace(q):null)})}
+  function getPlaces(){return[].map.call($('sc-places').children,function(r){
+    var n=r.querySelector('.pl-n').value.trim().replace(/\|/g,'').slice(0,40),u=r.querySelector('.pl-u').value.trim().slice(0,250);
+    if(u&&!/^https?:\/\//.test(u))u='';return n&&u?n+'|'+u:(n||u)}).filter(String).slice(0,4)}
   function startEdit(x){
-    editId=x.id;$('sc-d').value=String(x.d);$('sc-t').value=x.t||'';$('sc-n').value=x.n;$('sc-s').value=x.s||'';$('sc-m').value=(x.m||[]).join('、');$('sc-k').checked=!!x.k;
+    editId=x.id;$('sc-d').value=String(x.d);$('sc-t').value=x.t||'';$('sc-n').value=x.n;$('sc-s').value=x.s||'';setPlaces(x.m||[]);$('sc-k').checked=!!x.k;
     $('sc-more').open=!!(x.s||(x.m&&x.m.length)||x.k);
     $('sc-submit').textContent='直す';$('sc-cancel').hidden=false;status(x.n+'を直しています','sched');renderSched();
     $('sched-form').scrollIntoView({behavior:'smooth',block:'center'});
   }
-  function resetSched(){editId=null;$('sched-form').reset();$('sc-more').open=false;$('sc-submit').textContent='追加';$('sc-cancel').hidden=true}
+  function resetSched(){editId=null;$('sched-form').reset();setPlaces([]);$('sc-more').open=false;$('sc-submit').textContent='追加';$('sc-cancel').hidden=true}
   // ---- 時間で変わるもの：カウントダウン、スケジュールの線を歩く牛、夜の星空
   var TRIP=[new Date(2026,10,7),new Date(2026,10,8)];
   function now(){return window.__now?new Date(window.__now):new Date()}
@@ -1578,6 +1603,8 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(schedEdit&&!sched)status('読み込み中です。少し待ってからもう一度押してください','sched');
     renderSched();
   });
+  setPlaces([]);
+  $('sc-addpl').addEventListener('click',function(){var r=addPlaceRow();if(r)r.querySelector('.pl-n').focus()});
   $('sc-cancel').addEventListener('click',function(){resetSched();status('','sched');renderSched()});
   $('sched-form').addEventListener('submit',function(ev){
     ev.preventDefault();
@@ -1589,12 +1616,12 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(t&&!/^\d{1,2}:\d{2}$/.test(t)){status('時間は 13:30 のように入れてください（未定なら空のまま）','sched');return}
     if(t&&(tmin(t)>=24*60||+t.split(':')[1]>59)){status('時間が正しくありません','sched');return}
     var x={d:+$('sc-d').value===2?2:1,t:t,n:n,s:$('sc-s').value.trim().slice(0,40),k:$('sc-k').checked?1:0,
-      m:$('sc-m').value.split(/[、,，\s]+(?=https?:)|[、,，]/).map(function(q){return q.trim().slice(0,300)}).filter(String).slice(0,4)};
+      m:getPlaces()};
     if(editId){
       if(!sched.stops.some(function(y){return y.id===editId})){status('この予定はほかの人が消したようです','sched');resetSched();return}
       var id=editId;sched.stops=sched.stops.map(function(y){return y.id===id?Object.assign({id:id},x):y});resetSched();op({type:'updateStop',id:id,stop:x},'sched');
     }else{
-      sched.stops.push(x);$('sched-form').reset();$('sc-more').open=false;op({type:'addStop',stop:x},'sched');
+      sched.stops.push(x);$('sched-form').reset();setPlaces([]);$('sc-more').open=false;op({type:'addStop',stop:x},'sched');
     }
   });
   $('album-form').addEventListener('submit',function(ev){
