@@ -336,6 +336,9 @@ input[type=text],input[type=url],input[type=number],select,textarea{font-size:16
 .stay-times span{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--f-mono);font-size:14px;padding:4px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
 .stay-times b{font-size:11px;letter-spacing:.08em;color:var(--accent)}
 .stay-site{display:inline-block;margin-top:12px;font-size:13px;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--accent)}
+.fans{display:inline-flex;margin-left:2px}
+.fans .av{width:20px;height:20px;font-size:10px;border:2px solid var(--paper);margin-left:-6px}
+.fans .av:first-child{margin-left:0}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -923,14 +926,23 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var box=$('dish-list');box.textContent='';
     if(!loaded){box.appendChild(el('span','dish-empty','読み込み中…'));return}
     if(!state.dishes.length)box.appendChild(el('span','dish-empty','まだ決まっていません'));
-    var top=Math.max.apply(null,[0].concat(state.dishes.map(function(d){return d.likes||0}))),crowned=false;
-    state.dishes.map(function(d,i){return{d:d,i:i}}).sort(function(a,b){return((b.d.likes||0)-(a.d.likes||0))||(a.i-b.i)}).forEach(function(o){
+    var reg=split.members.indexOf(me)>=0;
+    function lb(d){return(d.likedBy||[]).filter(function(m){return split.members.indexOf(m)>=0})}
+    function lc(d){return(d.likes||0)+lb(d).length}
+    var top=Math.max.apply(null,[0].concat(state.dishes.map(lc))),crowned=false;
+    state.dishes.map(function(d,i){return{d:d,i:i}}).sort(function(a,b){return(lc(b.d)-lc(a.d))||(a.i-b.i)}).forEach(function(o){
       var d=o.d,chip=el('span','dish');
-      if(top>0&&(d.likes||0)===top&&!crowned){crowned=true;chip.className='dish top';var cr=el('span','crown');cr.innerHTML=CROWN;cr.title='いちばん人気';chip.appendChild(cr)}
+      if(top>0&&lc(d)===top&&!crowned){crowned=true;chip.className='dish top';var cr=el('span','crown');cr.innerHTML=CROWN;cr.title='いちばん人気';chip.appendChild(cr)}
       if(d.url){var a=el('a','dish-ln',d.name);a.href=d.url;a.target='_blank';a.rel='noopener';chip.appendChild(a)}else chip.appendChild(el('span',null,d.name));
-      var lk=el('button','like'+(liked[d.name]?' on':''));lk.type='button';lk.innerHTML=HEART;lk.appendChild(el('span',null,String(d.likes||0)));
-      lk.setAttribute('aria-label',d.name+'にいいね'+(liked[d.name]?'（取り消す）':''));lk.setAttribute('aria-pressed',liked[d.name]?'true':'false');
-      lk.addEventListener('click',function(){var on=!liked[d.name];if(on)liked[d.name]=1;else delete liked[d.name];try{localStorage.setItem(LKEY,JSON.stringify(liked))}catch(e){}
+      // 誰が作りたいか：追加した人＋いいねした人のアイコン
+      var fans=[];if(d.by&&split.members.indexOf(d.by)>=0)fans.push(d.by);lb(d).forEach(function(m){if(fans.indexOf(m)<0)fans.push(m)});
+      if(fans.length){var fw=el('span','fans');fans.forEach(function(m){var a=av(m);a.removeAttribute('aria-hidden');a.setAttribute('role','img');a.setAttribute('aria-label',m);a.title=m;fw.appendChild(a)});chip.appendChild(fw)}
+      var mine=reg?lb(d).indexOf(me)>=0:!!liked[d.name];
+      var lk=el('button','like'+(mine?' on':''));lk.type='button';lk.innerHTML=HEART;lk.appendChild(el('span',null,String(lc(d))));
+      lk.setAttribute('aria-label',d.name+'にいいね'+(mine?'（取り消す）':''));lk.setAttribute('aria-pressed',mine?'true':'false');
+      lk.addEventListener('click',function(){var on=!mine;
+        if(reg){d.likedBy=lb(d).filter(function(m){return m!==me});if(on)d.likedBy.push(me);op({type:'likeDish',name:d.name,who:me,d:on?1:-1},'dish');return}
+        if(on)liked[d.name]=1;else delete liked[d.name];try{localStorage.setItem(LKEY,JSON.stringify(liked))}catch(e){}
         d.likes=Math.max(0,(d.likes||0)+(on?1:-1));op({type:'likeDish',name:d.name,d:on?1:-1},'dish')});
       chip.appendChild(lk);
       var sv=el('span','sv'),num=el('span',null,(d.servings||11)+'人前');
@@ -988,7 +1000,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       var r=await call('recipe',arg);
       if(!r||!r.name){status('レシピを読み取れませんでした','dish');return}
       var name=r.name;if(state.dishes.some(function(d){return d.name===name})){status(name+'はもう入っています','dish');return}
-      var dish={name:name,servings:11,items:(r.items||[]).slice(0,10),url:arg.url||''};
+      var dish={name:name,servings:11,items:(r.items||[]).slice(0,10),url:arg.url||'',by:me};
       state.dishes.push(dish);await op({type:'addDish',dish:dish},'dish');
       status(name+'を追加しました（材料'+dish.items.length+'品）','dish');
     }catch(e){status('レシピを読み取れませんでした'+(e&&e.message?'（'+e.message+'）':''),'dish')}
@@ -1333,7 +1345,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
   function addPreset(name){
     if(state.dishes.some(function(d){return d.name===name}))return;
-    var dish={name:name,servings:11,items:PRESETS[name].map(function(r){return{n:r[0],q:r[1],c:r[2]}})};
+    var dish={name:name,servings:11,items:PRESETS[name].map(function(r){return{n:r[0],q:r[1],c:r[2]}}),by:me};
     state.dishes.push(dish);op({type:'addDish',dish:dish},'dish');
   }
   async function addCustom(name){
@@ -1349,7 +1361,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       if(Array.isArray(r))items=r.filter(function(it){return it&&it.n}).slice(0,8).map(function(it){return{n:String(it.n).slice(0,30),q:String(it.q||'').slice(0,12),c:CATS.indexOf(it.c)>=0?it.c:'その他'}});
     }catch(e){status('材料を出せなかったので、料理だけ追加しました'+(e&&e.message?'（'+e.message+'）':''),'dish')}
     btn.disabled=false;
-    var dish={name:name,servings:11,items:items};
+    var dish={name:name,servings:11,items:items,by:me};
     state.dishes.push(dish);op({type:'addDish',dish:dish},items.length?'dish':null);
   }
 

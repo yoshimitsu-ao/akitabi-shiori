@@ -157,7 +157,8 @@ function mutate_(s, o) {
         return { n: str_(it.n, 30), q: str_(it.q, 12), c: CATS.indexOf(it.c) >= 0 ? it.c : 'その他' };
       }).filter(function (it) { return it.n; });
       var url = /^https?:\/\//.test(String(d.url || '')) ? str_(d.url, 500) : '';
-      s.bbq.dishes.push({ name: name, servings: servings_(d.servings), items: items, url: url, likes: 0 });
+      var by = str_(d.by, 20);
+      s.bbq.dishes.push({ name: name, servings: servings_(d.servings), items: items, url: url, likes: 0, by: members.indexOf(by) >= 0 ? by : '', likedBy: [] });
       return;
     }
     case 'removeDish':
@@ -221,9 +222,21 @@ function mutate_(s, o) {
     case 'setExtraQ':
       s.bbq.extras.forEach(function (x) { if (x.n === o.n) x.q = str_(o.q, 12); });
       return;
-    case 'likeDish':
-      s.bbq.dishes.forEach(function (x) { if (x.name === o.name) x.likes = Math.max(0, (Number(x.likes) || 0) + (o.d > 0 ? 1 : -1)); });
+    case 'likeDish': {
+      // 名前つきのいいね（who があるとき）。名前なしは前と同じく数だけ
+      var lw = str_(o.who, 20);
+      s.bbq.dishes.forEach(function (x) {
+        if (x.name !== o.name) return;
+        if (lw && members.indexOf(lw) >= 0) {
+          var lb = (Array.isArray(x.likedBy) ? x.likedBy : []).filter(function (m) { return m !== lw; });
+          if (o.d > 0) lb.push(lw);
+          x.likedBy = lb;
+        } else {
+          x.likes = Math.max(0, (Number(x.likes) || 0) + (o.d > 0 ? 1 : -1));
+        }
+      });
       return;
+    }
     case 'adjQ': {
       var an = str_(o.n, 30), ad = Math.round((Number(o.d) || 0) * 10) / 10;
       if (!an) return;
