@@ -164,6 +164,11 @@ function mutate_(s, o) {
     case 'removeDish':
       s.bbq.dishes = s.bbq.dishes.filter(function (x) { return x.name !== o.name; });
       return;
+    case 'setSteps': {
+      var ss = (Array.isArray(o.steps) ? o.steps : []).map(function (t) { return str_(t, 120); }).filter(String).slice(0, 10);
+      s.bbq.dishes.forEach(function (x) { if (x.name === o.name) x.steps = ss; });
+      return;
+    }
     case 'setServings':
       s.bbq.dishes.forEach(function (x) { if (x.name === o.name) x.servings = servings_(o.servings); });
       return;
@@ -445,4 +450,16 @@ function weather() {
   }
   cache.put('weather', JSON.stringify(out), 3600);
   return out;
+}
+
+/** 料理の作り方（手順）を Gemini に出してもらう */
+function steps(arg) {
+  var name = str_(arg && arg.name, 30), items = str_(arg && arg.items, 400);
+  if (!name) return [];
+  var cfg = gemini_();
+  var prompt = '外のBBQコンロ（炭火・網）と焚き火、宿のキッチン（IHコンロ・鍋・フライパン）が使えます。' +
+    '「' + name + '」を11人分作る手順を、短い日本語の文で4〜7個にまとめてください。材料: ' + items + '。' +
+    '火加減や時間の目安も入れてください。JSONの文字列の配列だけを返してください。';
+  var arr = callGemini_(cfg, [{ text: prompt }]);
+  return Array.isArray(arr) ? arr.map(function (t) { return str_(t, 120); }).filter(String).slice(0, 8) : [];
 }
