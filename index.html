@@ -686,7 +686,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <h3 class="sub-h first">支払い</h3>
   <form class="pay-form split-ed" id="pay-form">
     <div class="pay-quick" id="pay-quick">
-      <button type="button" data-t="ETC（みなみ）" data-p="南|みなみ|ミナミ">ETC（みなみ）</button><button type="button" data-t="ETC（あお）" data-p="青|あお|アオ">ETC（あお）</button><button type="button" data-t="ガソリン">ガソリン</button><button type="button" data-t="駐車場">駐車場</button><button type="button" data-t="レンタカー">レンタカー</button>
+      <button type="button" data-t="ETC">ETC</button><button type="button" data-t="ガソリン">ガソリン</button><button type="button" data-t="食費">食費</button>
     </div>
     <label class="receipt-btn" for="receipt" id="receipt-label">レシートの写真から読み取る</label><input type="file" id="receipt" accept="image/*" hidden>
     <input id="pay-title" type="text" placeholder="内容（例：レンタカー）" aria-label="内容" autocomplete="off">
@@ -1271,7 +1271,9 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(!split.members.length){list.appendChild(el('div','split-empty','いちばん上の「メンバー」にニックネームを入れると、ここに一人ずつのタブが出ます'));$('pack-form').hidden=true;return}
     $('pack-form').hidden=false;
     if(split.members.indexOf(packWho)<0)packWho=split.members.indexOf(me)>=0?me:split.members[0];
-    split.members.forEach(function(m){
+    // 自分のタブをいちばん左に
+    var order=split.members.indexOf(me)>=0?[me].concat(split.members.filter(function(m){return m!==me})):split.members;
+    order.forEach(function(m){
       var all=packItems(m).length,dn=packDone(m);
       var b=el('button','ptab'+(m===packWho?' on':'')+(all&&dn===all?' ok':''));b.type='button';b.setAttribute('aria-pressed',m===packWho?'true':'false');
       b.appendChild(el('span',null,m));b.appendChild(el('span','pc',dn+'/'+all));
@@ -1282,7 +1284,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     packItems(packWho).forEach(function(it){
       var row=el('div','want-row'),lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!d[it.n];
       cb.addEventListener('change',function(){pack.done[packWho]=pack.done[packWho]||{};if(cb.checked)pack.done[packWho][it.n]=1;else delete pack.done[packWho][it.n];op({type:'setPack',who:packWho,n:it.n,v:cb.checked},'pack')});
-      lb.appendChild(cb);lb.appendChild(el('span',null,it.n));if(it.want)lb.appendChild(el('span','pall','あれば嬉しい'));else if(!it.all)lb.appendChild(el('span','pall','この人だけ'));row.appendChild(lb);
+      lb.appendChild(cb);lb.appendChild(el('span',null,it.n));if(!it.all&&!it.want)lb.appendChild(el('span','pall','この人だけ'));row.appendChild(lb);
       row.appendChild(xBtn(it.n+'を消す'+(it.all?'（全員から）':''),function(){
         if(it.want){var w=(state.wants||[]).filter(function(x){return x.n===it.n})[0];if(w){w.by=(w.by||[]).filter(function(x){return x!==packWho});w.ok=w.by.length?1:0}
           op({type:'wantBy',n:it.n,who:packWho,v:false},'pack').then(function(){status(it.n+'は「あれば嬉しい」の持っていく人から外しました','pack',true)});return}
