@@ -832,7 +832,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 (function(){
   // お米は持ってきてくれる人がいるので、ごはん類は買い出しリストに入れない
   var NO_BUY=/パック(ご飯|ごはん)|^(ご飯|ごはん|白米|お米|米)$|サトウのごはん/;
-  var PRESET_STEPS={"焼肉": ["肉は焼く30分前に冷蔵庫から出しておく", "網を炭火でしっかり熱して、油を塗る", "玉ねぎ・ピーマンは火の弱い端で先に焼き始める", "肉は火の強いところで片面ずつ焼き、焼肉のたれで食べる"], "ソーセージ": ["斜めに数か所切り込みを入れる", "炭火の弱めのところで、転がしながら5〜6分焼く", "全体に焼き色がついたら完成"], "焼きそば": ["鉄板かフライパンを網の上（またはキッチン）で熱し、油をひく", "豚こまを炒め、色が変わったらキャベツを加える", "麺をほぐして入れ、水を少し入れてふたをして蒸し焼き", "付属のソースを入れて全体を混ぜたら完成"], "焼きおにぎり": ["ご飯で少し固めにおにぎりを握る（ご飯は持参のお米で）", "網に油を塗り、弱めの火で両面をじっくり焼き固める", "醤油を刷毛で塗り、香ばしく焼く（焦げやすいので何度かに分けて塗る）"], "焼きとうもろこし": ["皮付きなら、外側の皮を2〜3枚残してむく", "網の上で転がしながら15分ほど焼く", "皮をむいてバターと醤油を塗り、さっとあぶる"], "じゃがバター": ["じゃがいもを洗い、皮ごとアルミホイルで包む", "炭の端か熾火（おきび）の中に入れて40〜50分", "竹串がすっと通れば完成。十字に切り込みを入れてバターと塩で"], "ホイル焼き": ["アルミホイルにきのこと鮭をのせ、バター・塩コショウ", "ふんわり包んで、口をしっかり閉じる", "網の上で15分ほど焼く", "開けて醤油かポン酢をたらす"], "豚汁": ["大根・にんじんはいちょう切り、豚こまは一口大に切る", "大きい鍋で豚肉を炒め、野菜を加えてさらに炒める", "水（11人分で約2.5L）を入れ、野菜がやわらかくなるまで15分ほど煮る", "火を止めて味噌を溶き入れる"], "焼き芋": ["さつまいもを濡らしたキッチンペーパーで包み、さらにアルミホイルで包む", "炭や焚き火の熾火の中に入れ、ときどき返しながら40〜60分", "竹串がすっと通れば完成"], "スモア": ["マシュマロを串に刺し、焚き火で回しながらきつね色に焼く", "ビスケットに板チョコをのせる", "焼いたマシュマロをはさんで、串を抜く"], "アヒージョ": ["スキレットにオリーブオイル、薄切りのにんにく、塩を入れて網の上で温める", "香りが出たら、えびとマッシュルームを入れる", "えびの色が変わったら完成。バゲットにつけて"], "カマンベールフォンデュ": ["カマンベールの上の面を薄く切り取る", "アルミホイルで包み、網の端で10分ほど温める", "中がとろけたら、バゲットをつけて食べる"], "焼きりんご": ["りんごの芯をスプーンなどでくり抜く", "穴にバターとシナモンシュガーを詰める", "アルミホイルで包み、炭の端で30〜40分", "やわらかくなったら完成"], "ビア缶チキン": ["丸鶏の水気をふき、ハーブソルトを全体にすり込む", "缶ビールを半分ほどに減らし、鶏のお尻から差し込んで立たせる", "ふたがあるコンロで（なければアルミホイルで覆って）弱めの火で60〜80分", "もも肉の厚いところを刺して、透明な汁が出れば完成"], "カツオのたたき": ["カツオの柵に塩をふる", "強い火で表面だけを全体さっと焼く（中は生のまま）", "すぐ氷水で冷やして、水気をふく", "厚めに切り、玉ねぎ・にんにくをのせてポン酢で"]};
+  var PRESET_STEPS={"焼肉": ["肉は焼く30分前に冷蔵庫から出しておく", "網を炭火でしっかり熱して、油を塗る", "玉ねぎ・ピーマンは火の弱い端で先に焼き始める", "肉は火の強いところで片面ずつ焼き、焼肉のたれで食べる"], "ソーセージ": ["斜めに数か所切り込みを入れる", "炭火の弱めのところで、転がしながら5〜6分焼く", "全体に焼き色がついたら完成"], "焼きそば": ["鉄板かフライパンを網の上（またはキッチン）で熱し、油をひく", "豚こまを炒め、色が変わったらキャベツを加える", "麺をほぐして入れ、水を少し入れてふたをして蒸し焼き", "付属のソースを入れて全体を混ぜたら完成"], "焼きおにぎり": ["ご飯で少し固めにおにぎりを握る（ご飯は持参のお米で）", "網に油を塗り、弱めの火で両面をじっくり焼き固める", "醤油を刷毛で塗り、香ばしく焼く（焦げやすいので何度かに分けて塗る）"], "焼きとうもろこし": ["皮付きなら、外側の皮を2〜3枚残してむく", "網の上で転がしながら15分ほど焼く", "皮をむいてバターと醤油を塗り、さっとあぶる"], "じゃがバター": ["じゃがいもを洗い、皮ごとアルミホイルで包む", "炭の端か熾火（おきび）の中に入れて40〜50分", "竹串がすっと通れば完成。十字に切り込みを入れてバターと塩で"], "ホイル焼き": ["アルミホイルにきのこと鮭をのせ、バター・塩コショウ", "ふんわり包んで、口をしっかり閉じる", "網の上で15分ほど焼く", "開けて醤油かポン酢をたらす"], "豚汁": ["大根・にんじんはいちょう切り、豚こまは一口大に切る", "大きい鍋で豚肉を炒め、野菜を加えてさらに炒める", "水（11人分で約2.5L）を入れ、野菜がやわらかくなるまで15分ほど煮る", "火を止めて味噌を溶き入れる"], "焼き芋": ["さつまいもを濡らしたキッチンペーパーで包み、さらにアルミホイルで包む", "炭や焚き火の熾火の中に入れ、ときどき返しながら40〜60分", "竹串がすっと通れば完成"], "スモア": ["マシュマロを串に刺し、焚き火で回しながらきつね色に焼く", "ビスケットに板チョコをのせる", "焼いたマシュマロをはさんで、串を抜く"], "アヒージョ": ["スキレットにオリーブオイル、薄切りのにんにく、塩を入れて網の上で温める", "香りが出たら、えびとマッシュルームを入れる", "えびの色が変わったら完成。バゲットにつけて"], "焼きりんご": ["りんごの芯をスプーンなどでくり抜く", "穴にバターとシナモンシュガーを詰める", "アルミホイルで包み、炭の端で30〜40分", "やわらかくなったら完成"], "ビア缶チキン": ["丸鶏の水気をふき、ハーブソルトを全体にすり込む", "缶ビールを半分ほどに減らし、鶏のお尻から差し込んで立たせる", "ふたがあるコンロで（なければアルミホイルで覆って）弱めの火で60〜80分", "もも肉の厚いところを刺して、透明な汁が出れば完成"], "カツオのたたき": ["カツオの柵に塩をふる", "強い火で表面だけを全体さっと焼く（中は生のまま）", "すぐ氷水で冷やして、水気をふく", "厚めに切り、玉ねぎ・にんにくをのせてポン酢で"], "チーズフォンデュ": ["スキレットか小鍋に、とろけるチーズと牛乳を入れる", "網の上かキッチンで弱めの火にかけ、混ぜながら溶かす", "バゲット・ゆでたブロッコリー・焼いたウインナーをつけて食べる", "冷めて固まってきたら、火に戻して温め直す"]};
+  // 前の名前で追加済みのものは、新しい名前で表示する
+  var ALIAS={'カマンベールフォンデュ':'チーズフォンデュ','カマンベール':'チーズ'};
+  function nm(n){return ALIAS[n]||n}
   var CATS=["肉・魚","野菜・果物","主食・締め","乳製品・おやつ","飲み物","調味料","その他"];
   // 「その他」に入ってしまったものを、名前から正しい分類に振り分け直す
   var SNACK_RE=/チーズ|カマンベール|モッツァレラ|マシュマロ|ビスケット|クラッカー|チョコ|牛乳|ヨーグルト|生クリーム|アイス|お菓子|スナック|ポテチ/;
@@ -857,7 +860,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     "焼きおにぎり":[],
     "焼きそば":[["焼きそば麺","8玉","主食・締め"],["キャベツ","1玉","野菜・果物"],["豚こま","300g","肉・魚"]],
     "アヒージョ":[["むきえび","300g","肉・魚"],["マッシュルーム","2パック","野菜・果物"],["にんにく","1玉","野菜・果物"],["オリーブオイル","1本","調味料"],["バゲット","1本","主食・締め"]],
-    "カマンベールフォンデュ":[["カマンベール","2個","その他"],["バゲット","1本","主食・締め"]],
+    "チーズフォンデュ":[["とろけるチーズ","400g","乳製品・おやつ"],["牛乳","200ml","乳製品・おやつ"],["バゲット","1本","主食・締め"],["ウインナー","1袋","肉・魚"],["ブロッコリー","1株","野菜・果物"]],
     "ビア缶チキン":[["丸鶏","1羽","肉・魚"],["缶ビール","1本","その他"],["ハーブソルト","1本","調味料"]],
     "カツオのたたき":[["カツオ（柵）","2本","肉・魚"],["玉ねぎ","1個","野菜・果物"],["にんにく","1玉","野菜・果物"],["ポン酢","1本","調味料"]],
     "豚汁":[["豚こま","400g","肉・魚"],["大根","1本","野菜・果物"],["にんじん","2本","野菜・果物"],["味噌","1パック","調味料"]],
@@ -929,7 +932,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function aggregate(){
     var map={},order=[];
     function add(n,q,c){
-      if(!n||NO_BUY.test(n))return;
+      if(!n||NO_BUY.test(n))return;n=nm(n);
       if(CATS.indexOf(c)<0)c="その他";
       c=fixCat(n,c);
       if(!map[n]){map[n]={n:n,q:q||"",c:c};order.push(n);return}
@@ -975,7 +978,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     state.dishes.map(function(d,i){return{d:d,i:i}}).sort(function(a,b){return(lc(b.d)-lc(a.d))||(a.i-b.i)}).forEach(function(o){
       var d=o.d,chip=el('span','dish');
       if(top>0&&lc(d)===top&&!crowned){crowned=true;chip.className='dish top';var cr=el('span','crown');cr.innerHTML=CROWN;cr.title='いちばん人気';chip.appendChild(cr)}
-      var nb=el('button','dish-nm',d.name);nb.type='button';nb.setAttribute('aria-label',d.name+'の作り方を見る');nb.addEventListener('click',function(){openDish(d.name)});chip.appendChild(nb);
+      var nb=el('button','dish-nm',nm(d.name));nb.type='button';nb.setAttribute('aria-label',d.name+'の作り方を見る');nb.addEventListener('click',function(){openDish(d.name)});chip.appendChild(nb);
       // 誰が作りたいか：追加した人＋いいねした人のアイコン
       var fans=[];if(d.by&&split.members.indexOf(d.by)>=0)fans.push(d.by);lb(d).forEach(function(m){if(fans.indexOf(m)<0)fans.push(m)});
       if(fans.length){var fw=el('span','fans');fans.forEach(function(m){var a=av(m);a.removeAttribute('aria-hidden');a.setAttribute('role','img');a.setAttribute('aria-label',m);a.title=m;fw.appendChild(a)});chip.appendChild(fw)}
@@ -1000,11 +1003,11 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     });
   }
   var ORDER=[["定番",["焼肉","ソーセージ","焼きそば","焼きおにぎり","焼きとうもろこし","じゃがバター","ホイル焼き","豚汁","焼き芋","スモア"]],
-             ["変わり種",["アヒージョ","カマンベールフォンデュ","焼きりんご","ビア缶チキン","カツオのたたき"]]];
+             ["変わり種",["アヒージョ","チーズフォンデュ","焼きりんご","ビア缶チキン","カツオのたたき"]]];
   function renderPresets(){
     var box=$('preset-list');box.textContent='';
     ORDER.forEach(function(g){
-      var names=g[1].filter(function(name){return PRESETS[name]&&!state.dishes.some(function(d){return d.name===name})});
+      var names=g[1].filter(function(name){return PRESETS[name]&&!state.dishes.some(function(d){return nm(d.name)===name})});
       if(!names.length)return;
       var row=el('div','preset-g');
       names.forEach(function(name){var b=el('button','preset','＋ '+name);b.type='button';b.addEventListener('click',function(){addPreset(name)});row.appendChild(b)});
@@ -1394,14 +1397,14 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function renderSheet(){
     if(!sheetDish||$('sheet').hidden&&sheetDish===null)return;
     var d=state.dishes.filter(function(x){return x.name===sheetDish})[0];if(!d){closeSheet();return}
-    $('sheet-t').textContent=d.name;var b=$('sheet-body');b.textContent='';
+    $('sheet-t').textContent=nm(d.name);var b=$('sheet-body');b.textContent='';
     var sv=d.servings||11;b.appendChild(el('p','sh-sub',sv+'人前'));
     var its=(d.items||[]).filter(function(it){return it.n&&!NO_BUY.test(it.n)});
     if(/焼きおにぎり/.test(d.name))its=[{n:'ご飯（持参のお米）',q:'',c:''}].concat(its);
     if(its.length){b.appendChild(el('h4',null,'材料'));var ul=el('ul','sh-items');
-      its.forEach(function(it){var li=el('li');li.appendChild(el('span',null,it.n));li.appendChild(el('span','q',it.c&&!shared(it.n,it.c)?scaleQ(it.q,sv):it.q));ul.appendChild(li)});b.appendChild(ul)}
+      its.forEach(function(it){var li=el('li');li.appendChild(el('span',null,nm(it.n)));li.appendChild(el('span','q',it.c&&!shared(it.n,it.c)?scaleQ(it.q,sv):it.q));ul.appendChild(li)});b.appendChild(ul)}
     b.appendChild(el('h4',null,'作り方'));
-    var st=PRESET_STEPS[d.name]||d.steps;
+    var st=PRESET_STEPS[nm(d.name)]||d.steps;
     if(st&&st.length){var ol=el('ol','sh-steps');st.forEach(function(t){ol.appendChild(el('li',null,t))});b.appendChild(ol)}
     else{
       var gb=el('button','receipt-btn','Geminiに作り方を出してもらう');gb.type='button';
