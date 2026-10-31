@@ -16,9 +16,8 @@
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
   --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121614; --paper:#1A1F1C; --fg:#E6E9E3; --mute:#A3ADA5; --line:#343D37;
-  --larch:#E2AE4C; --accent:#E2AE4C; --rock:#C9D1CB; --berry:#E58A9B; --moss:#9DBA86; --maple:#E5805F; color-scheme:dark}}
+/* スマホのダークモードには合わせない。昼は明るい秋の色、夜（16:40〜）だけ星空にする */
+:root{color-scheme:only light}
 :root[data-theme="dark"]{
   --bg:#121614; --paper:#1A1F1C; --fg:#E6E9E3; --mute:#A3ADA5; --line:#343D37;
   --larch:#E2AE4C; --accent:#E2AE4C; --rock:#C9D1CB; --berry:#E58A9B; --moss:#9DBA86; --maple:#E5805F; color-scheme:dark}
