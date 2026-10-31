@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<title>1・2年目 秋旅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 縦書きタイトルの扉 → 2日間を一本の道（ルート線）でたどる行程 → 宿・ごはん・持ち物・予算 */
+:root{
+  --bg:#EDEFEA; --paper:#FDFDFB; --fg:#1B201D; --mute:#545D57; --line:#C9D0C6;
+  --larch:#B9821F; --accent:#9C6A10; --rock:#2E3833; --berry:#B0465C; --moss:#55703F; --maple:#B4462A;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121614; --paper:#1A1F1C; --fg:#E6E9E3; --mute:#A3ADA5; --line:#343D37;
+  --larch:#E2AE4C; --accent:#E2AE4C; --rock:#C9D1CB; --berry:#E58A9B; --moss:#9DBA86; --maple:#E5805F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --paper:#1A1F1C; --fg:#E6E9E3; --mute:#A3ADA5; --line:#343D37;
+  --larch:#E2AE4C; --accent:#E2AE4C; --rock:#C9D1CB; --berry:#E58A9B; --moss:#9DBA86; --maple:#E5805F; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+.wrap{max-width:880px;margin:0 auto}
+h2,h3{text-wrap:balance}
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* 扉 */
+.cover{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,5vw,56px);align-items:end;padding-block:clamp(28px,7vw,72px) 24px}
+.vtitle{writing-mode:vertical-rl;font-family:var(--f-display);font-weight:800;font-size:clamp(46px,11vw,96px);line-height:1.05;letter-spacing:.06em;margin:0}
+.vtitle small{display:block;font-size:.34em;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-left:.5em}
+.cover-r{min-width:0;display:grid;gap:18px}
+.mtn{width:100%;height:auto;display:block;max-width:100%}
+.dates{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-top:2px solid var(--fg);padding-top:12px}
+.dates .big{font-family:var(--f-mono);font-size:clamp(26px,5vw,40px);font-weight:500;letter-spacing:-.01em}
+.dates .sep{color:var(--accent)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.facts div{padding:10px 12px;border-right:1px solid var(--line);min-width:0}
+.facts div:last-child{border-right:0}
+.facts b{display:block;font-family:var(--f-display);font-size:22px;line-height:1.2}
+.facts span{font-size:12px;color:var(--mute)}
+
+/* セクション見出し */
+section{padding-block:40px 8px}
+.sec-h{display:flex;align-items:baseline;gap:14px;margin:0 0 20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.sec-h h2{font-family:var(--f-display);font-size:clamp(24px,4vw,32px);margin:0;line-height:1.3}
+.sec-h .label{margin-left:auto}
+
+/* 行程：ルート線 */
+.days{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media (max-width:720px){.days{grid-template-columns:1fr}}
+.day{min-width:0}
+.day-h{display:flex;align-items:baseline;gap:4px;margin-bottom:6px}
+.day-h .w{margin-left:10px}
+.day-h .n{font-family:var(--f-display);font-size:44px;line-height:1;color:var(--accent)}
+.day-h h3{margin:0;font-size:18px}
+.day-h .w{font-family:var(--f-mono);font-size:12px;color:var(--mute)}
+.route{list-style:none;margin:26px 0 0;padding:0;position:relative}
+.route::before{content:"";position:absolute;left:71px;top:10px;bottom:10px;border-left:2px dashed var(--line)}
+.stop{display:grid;grid-template-columns:52px 22px 1fr;gap:0 10px;padding:7px 0;position:relative}
+.stop time{font-family:var(--f-mono);font-size:13px;color:var(--mute);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--fg);background:var(--bg);margin:6px 0 0 4px;position:relative;z-index:1}
+.stop.key .dot{background:var(--accent);border-color:var(--accent);width:16px;height:16px;margin:4px 0 0 2px}
+.stop .body{min-width:0;display:flex;flex-direction:column;gap:2px}
+.st-head{display:flex;align-items:baseline;gap:8px;min-width:0}
+.st-head .st-ed{margin-left:auto}
+.stop .meta{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;font-size:12.5px;color:var(--mute);line-height:1.6}
+.stop .meta .s{font-size:12.5px}
+.stop .meta .sep{color:var(--line)}
+.stop .meta a.pin{display:inline-flex;align-items:center;gap:3px;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--accent)}
+.stop .meta a.pin svg{width:13px;height:13px;fill:none;stroke:var(--accent);stroke-width:2}
+.stop .meta a.pin:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stop .t{font-weight:700}
+.stop.key .t{font-family:var(--f-display);font-size:18px}
+.stop .s{font-size:12px;color:var(--mute)}
+.lk{display:inline-flex;gap:12px;flex-wrap:wrap}
+.lk a{font-family:var(--f-mono);font-size:12px;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px}
+.lk a:hover,.lk a:focus-visible{color:var(--accent);outline:none}
+
+/* 帯 */
+.band{margin-top:28px;background:var(--rock);color:var(--bg);border-radius:4px;padding-block:18px;padding-inline:clamp(16px,4vw,32px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.band .label{color:color-mix(in srgb,var(--bg) 65%,transparent)}
+.band b{display:block;font-family:var(--f-display);font-size:24px;line-height:1.3;margin-top:2px}
+
+/* 宿 */
+.stay{display:grid;grid-template-columns:1fr;gap:28px}
+.stay-card{background:var(--paper);border:1px solid var(--line);padding:20px;min-width:0}
+.stay-card h3{font-family:var(--f-display);font-size:22px;margin:0 0 4px}
+dl.kv{display:grid;grid-template-columns:7em 1fr;gap:6px 12px;margin:14px 0 0;font-size:14px}
+dl.kv dt{color:var(--mute)}
+dl.kv dd{margin:0;min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:13px;border:1px solid var(--line);padding:2px 10px;border-radius:999px;background:var(--bg)}
+.tag.no{text-decoration:line-through;color:var(--mute)}
+.av{display:inline-grid;place-content:center;width:28px;height:28px;border-radius:50%;color:var(--paper);font-family:var(--f-body);font-weight:700;font-size:12px;flex:none;line-height:1}
+.mem{display:inline-flex;align-items:center;gap:8px;font-size:15px;padding:3px 12px 3px 3px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.pay-form{margin-top:12px;padding:16px;border-radius:18px;background:var(--paper);border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-form input,.pay-form select{font:inherit;padding:9px 12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;min-width:0;width:100%}
+.pay-form input:focus-visible,.pay-form select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pay-form #pay-title{grid-column:1/-1}
+.receipt-btn{grid-column:1/-1;text-align:center;font-weight:700;padding:9px 16px;border:1px dashed var(--accent);border-radius:999px;color:var(--accent);cursor:pointer}
+.pay-form .who{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.who-l{font-size:12px;color:var(--mute);margin-right:4px}
+.who label{display:inline-flex;align-items:center;gap:5px;font-size:13px;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--bg);cursor:pointer}
+.who label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--paper))}
+.who input{accent-color:var(--accent);width:auto}
+.pay-form button{grid-column:1/-1;font:inherit;font-weight:700;padding:10px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--paper);cursor:pointer}
+.pay-form button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+@media (max-width:480px){.pay-form{grid-template-columns:1fr}}
+.pay-list,.settle{margin-top:12px;display:grid;gap:8px}
+.pay-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:0 12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--paper);border:1px solid var(--line)}
+.pay-row .av{grid-row:1/3}
+.pay-row .pt{font-weight:700;min-width:0;grid-column:2}
+.pay-row .pm{font-size:12px;color:var(--mute);grid-column:2;min-width:0}
+.pay-row .pa{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:16px;grid-row:1/3;grid-column:3}
+.pay-row .dish-x{grid-row:1/3;grid-column:4}
+.pay-total{display:flex;justify-content:space-between;padding:4px 14px;font-weight:700}
+.pay-total span:last-child{font-family:var(--f-mono)}
+.settle-row{display:flex;align-items:center;gap:7px;padding:12px;border-radius:16px;background:var(--paper);border:1px solid var(--line);flex-wrap:wrap}
+.settle-row .p{display:inline-flex;align-items:center;gap:8px}
+.settle-row .nm{font-family:var(--f-display);font-size:17px}
+.settle-row .line{flex:1;min-width:14px;border-top:2px dashed var(--line);position:relative}
+.settle-row .line::after{content:"";position:absolute;right:-2px;top:-7px;border-left:9px solid var(--line);border-top:6px solid transparent;border-bottom:6px solid transparent}
+.settle-row .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;color:var(--paper);background:var(--accent);padding:4px 11px;border-radius:999px;margin-left:auto}
+.split-empty{font-size:14px;color:var(--mute);padding:16px;border-radius:16px;border:1px dashed var(--line);text-align:center}
+.amen{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.amen summary{cursor:pointer;font-size:14px;font-weight:700;list-style:none;display:flex;align-items:center;gap:8px}
+.amen summary::-webkit-details-marker{display:none}
+.amen summary::before{content:"+";font-family:var(--f-mono);color:var(--accent);width:1em}
+.amen[open] summary::before{content:"−"}
+.amen summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.amen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 28px;margin-top:8px}
+.amen-grid > div{min-width:0}
+.amen h4{font-family:var(--f-display);font-size:16px;margin:10px 0 2px}
+.amen ul{list-style:none;padding:0;margin:0;font-size:13px}
+.amen li{padding:4px 0;border-bottom:1px dotted var(--line)}
+.spots .amen-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.spot{display:grid;gap:1px;text-decoration:none;color:inherit;padding:4px 0}
+.spot .sn{font-weight:700;font-size:14px}
+.spot .sd{font-size:12px;color:var(--mute);line-height:1.5}
+.spot .sm{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+.spot:hover .sn,.spot:focus-visible .sn{color:var(--accent)}
+.spot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ごはん */
+.menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid var(--fg)}
+.menu > div{padding:16px 16px 4px 0;min-width:0}
+.menu > div + div{padding-left:16px;border-left:1px solid var(--line)}
+@media (max-width:720px){.menu{grid-template-columns:1fr}.menu > div + div{padding-left:0;border-left:0;border-top:1px solid var(--line)}}
+.menu h3{font-family:var(--f-display);font-size:19px;margin:0}
+.menu ul{list-style:none;padding:0;margin:10px 0 12px;font-size:14px}
+.menu li{padding:5px 0;border-bottom:1px dotted var(--line)}
+.menu li:last-child{border-bottom:0}
+.tbd{border-top:2px solid var(--fg);border-bottom:1px solid var(--line);padding-block:22px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.tbd b{font-family:var(--f-display);font-size:24px}
+.tbd span{font-size:14px;color:var(--mute)}
+.sub-h.first{margin-top:0}
+.dishes{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.dish{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:16px;border:1px solid var(--fg);padding:4px 12px;border-radius:999px;background:var(--paper)}
+.dish-x{border:0;background:none;color:var(--mute);font-size:16px;line-height:1;cursor:pointer;padding:0 0 0 2px}
+.dish-x:hover,.dish-x:focus-visible{color:var(--accent);outline:none}
+.dish-empty{font-size:14px;color:var(--mute)}
+.ro-note{font-size:12px;color:var(--mute);margin:8px 0 0}
+.ro-note .diag{display:block;margin-top:6px;font-family:var(--f-mono);font-size:10px;opacity:.7;word-break:break-all}
+.unlock{font:inherit;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid var(--accent);background:var(--paper);color:var(--accent);cursor:pointer}
+.unlock:hover,.unlock:focus-visible{background:var(--accent);color:var(--paper);outline:none}
+.dish .sv{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:12px;color:var(--mute);margin-left:4px;font-variant-numeric:tabular-nums}
+.sv-b{width:22px;height:22px;border:1px solid var(--line);border-radius:50%;background:var(--bg);color:var(--fg);font:inherit;font-size:13px;line-height:1;cursor:pointer;display:grid;place-content:center;padding:0}
+.sv-b:hover,.sv-b:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+.dish-editor{margin-top:16px;padding:16px;border-radius:18px;background:var(--paper);border:1px solid var(--line);display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.preset{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:3px 10px;border-radius:999px;cursor:pointer}
+.preset:hover,.preset:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+.dish-form{display:flex;gap:8px}
+.dish-form input{flex:1;min-width:0;font:inherit;padding:9px 12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px}
+.dish-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.dish-form button{font:inherit;font-weight:700;padding:9px 18px;border:0;border-radius:999px;background:var(--accent);color:var(--paper);cursor:pointer}
+.dish-form button:disabled{opacity:.5;cursor:default}
+.dish-status{display:block;font-size:12px;color:var(--mute);min-height:1.2em;margin-top:4px}
+.dish-status.err{color:var(--berry);font-weight:700}
+.pay-form .dish-status{grid-column:1/-1;margin:0}
+.hint{font-size:12px;color:var(--mute);margin:-4px 0 0}
+.extra-form{margin-top:0}
+.sched-toggle{display:block;margin:18px auto 0;font:inherit;font-size:13px;font-weight:700;padding:8px 18px;border:1px dashed var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
+.sched-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sched-form{margin-top:10px;padding:10px;border-radius:16px;background:var(--paper);border:1px solid var(--line);display:grid;gap:8px}
+.sched-form[hidden]{display:none}
+.sc-row{display:flex;gap:6px;min-width:0}
+.sched-form input,.sched-form select{font:inherit;font-size:16px;padding:7px 10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;min-width:0}
+.sched-form #sc-d{flex:0 0 auto}.sched-form #sc-t{flex:0 0 84px;font-family:var(--f-mono)}.sched-form #sc-n{flex:1}
+.sched-form #sc-submit{flex:none;font:inherit;font-weight:700;padding:7px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--paper);cursor:pointer}
+.sc-more summary{font-size:12px;color:var(--mute);cursor:pointer;list-style:none;padding:2px 0}
+.sc-more summary::-webkit-details-marker{display:none}
+.sc-more summary::before{content:"+ ";font-family:var(--f-mono);color:var(--accent)}
+.sc-more[open] summary::before{content:"− "}
+.sc-more[open]{display:grid;gap:6px}
+.sched-form .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.sched-form .chk input{width:auto;accent-color:var(--accent)}
+.sched-form .ghost{font:inherit;font-size:13px;padding:6px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);cursor:pointer}
+.sched-form .ghost[hidden]{display:none}
+.pay-form button.ghost{background:none;color:var(--mute);border:1px solid var(--line)}
+.st-ed{display:inline-flex;align-items:center;gap:8px;margin-left:auto}
+.st-fix{font:inherit;font-size:12px;padding:1px 10px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer}
+.stop.editing .t{color:var(--accent)}
+.count{width:100%;font-size:14px;color:var(--mute)}
+.count b{font-family:var(--f-display);font-size:26px;color:var(--maple);margin:0 3px;font-weight:800}
+.route .now-line{position:absolute;left:71px;width:2px;background:var(--accent);border-radius:2px;pointer-events:none}
+.route .now-cow{position:absolute;left:72px;width:38px;height:24px;margin:-22px 0 0 -19px;pointer-events:none;z-index:2;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))}
+.route .now-cow svg{display:block;width:100%;height:100%}
+.stop time{position:relative;z-index:3}
+@media (prefers-reduced-motion:no-preference){.route .now-cow svg{animation:cowstep .55s ease-in-out infinite alternate}
+  @keyframes cowstep{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-1.5px) rotate(2deg)}}
+  .route .now-cow{transition:top 1s ease}}
+.settle-row.paid{opacity:.55}
+.settle-row.paid .amt{background:var(--mute)}
+.paid-chk{display:inline-flex;align-items:center;cursor:pointer;padding:2px}
+.paid-chk input{accent-color:var(--moss);width:18px;height:18px;margin:0}
+.settle-done{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;font-weight:700;color:var(--moss);padding:6px}
+.joy{position:relative;display:block;width:120px;height:64px}
+.joy .cw{position:absolute;left:36px;bottom:0;width:50px;height:31px;animation:hop 1.1s cubic-bezier(.3,0,.4,1) infinite}
+.joy .h{position:absolute;bottom:18px;width:13px;height:13px;opacity:0;animation:pop 2.2s ease-out infinite}
+.joy .h1{left:22px;fill:var(--berry);color:var(--berry)}.joy .h2{left:88px;color:var(--maple);animation-delay:.5s}
+.joy .h3{left:80px;fill:var(--berry);animation-delay:1.1s}.joy .h4{left:30px;color:var(--accent);animation-delay:1.6s}
+.joy .h use{fill:currentColor}
+@keyframes hop{0%,100%{transform:translateY(0) rotate(0)}15%{transform:translateY(1px) scaleY(.94)}45%{transform:translateY(-20px) rotate(-8deg)}70%{transform:translateY(0) rotate(4deg)}}
+@keyframes pop{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-34px) scale(1.05) rotate(25deg);opacity:0}}
+/* 夜（16:40〜6:00）は星空 */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;display:none}
+.wrap{position:relative;z-index:1}
+:root.night{--bg:#0F1420;--paper:#182033;--fg:#EEF0F5;--mute:#A9B1C3;--line:#2E3850;--larch:#E2AE4C;--accent:#E8B85A;--rock:#C9D1CB;--berry:#E58A9B;--moss:#9DBA86;--maple:#E5805F;color-scheme:dark}
+:root.night body{background:linear-gradient(#0B1020,var(--bg) 60%) fixed}
+:root.night .stars{display:block}
+.stars i{position:absolute;border-radius:50%;background:#fff;opacity:.7}
+@media (prefers-reduced-motion:no-preference){.stars i{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{from{opacity:.15}to{opacity:.9}}}
+.wx{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-height:24px;margin:0 0 2px 2px;font-size:13px}
+.wx-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+.wx-ic.sun,.wx-ic.part{color:var(--accent)}.wx-ic.cloud{color:var(--mute)}.wx-ic.rain{color:#5B86B5}.wx-ic.snow{color:#7FA7C9}
+.wx-t{font-weight:700}
+.wx-temp{font-family:var(--f-mono);color:var(--mute)}.wx-temp b{color:var(--maple);font-weight:600}
+.wx-p{font-family:var(--f-mono);font-size:12px;color:var(--mute)}
+.wx-none{font-size:12px;color:var(--mute)}
+.dish.top{border-color:var(--accent)}
+.crown{display:inline-flex;margin-right:2px}.crown svg{width:16px;height:11px;fill:var(--accent)}
+.album{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.album:empty{display:none}
+.album-btn{display:inline-block;font-weight:700;text-decoration:none;padding:10px 18px;border-radius:999px;background:var(--accent);color:var(--paper)}
+.album-btn:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+#album-form[hidden]{display:none}
+.notes{display:grid;gap:8px;margin-bottom:12px}
+.note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--paper);border:1px solid var(--line)}
+.note-b{flex:1;min-width:0}.note-n{font-size:12px;color:var(--mute)}.note p{margin:0;overflow-wrap:anywhere}
+/* iPhone：入力欄が16px未満だとタップ時に画面が拡大されるので、すべて16pxに */
+input[type=text],input[type=url],input[type=number],select,textarea{font-size:16px!important}
+.sv-b{width:28px;height:28px;font-size:15px}
+.dish-x{min-width:28px;min-height:28px;display:inline-grid;place-content:center}
+.like{padding:3px 9px 3px 7px;font-size:12px}
+.st-fix{padding:4px 12px}
+.toc{top:max(8px,env(safe-area-inset-top))}
+.pay-quick{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.pay-form .pay-quick button{grid-column:auto;font:inherit;font-size:13px;font-weight:400;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer}
+.pay-form .pay-quick button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pack.person{grid-column:1/-1}
+.ptabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;margin:6px 0 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.ptabs::-webkit-scrollbar{display:none}
+.ptab{flex:none;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer}
+.ptab .pc{font-family:var(--f-mono);font-size:11px;color:var(--mute)}
+.ptab.on{background:var(--accent);border-color:var(--accent);color:var(--paper)}.ptab.on .pc{color:var(--paper);opacity:.85}
+.ptab.ok:not(.on){border-color:var(--moss)}.ptab.ok .pc{color:var(--moss)}
+.ptab:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pall{margin-left:auto;font-size:10px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:0 6px;align-self:center}
+.pack-form{margin-top:10px}
+.pack-form select{flex:0 1 auto;width:auto;font:inherit;padding:9px 8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;max-width:36%}
+.pack-form[hidden]{display:none}
+.members{padding-block:20px 0}
+.mem-card{padding:14px 16px;border-radius:18px;background:var(--paper);border:1px solid var(--line);display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+.mem-h{margin:0;font-size:15px}
+.me-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.me-row[hidden]{display:none}
+.me-row select{font:inherit;padding:6px 10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px}
+.mem-card .mem-fold{margin:0}
+.me-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;padding:4px 2px}
+.me-line[hidden]{display:none}
+.me-line b{font-family:var(--f-display);font-size:16px}
+.me-n{font-size:12px;color:var(--mute)}
+.me-line .st-fix{margin-left:auto}
+.mem-card[hidden]{display:none}
+.mem-top{display:flex;align-items:center;justify-content:space-between}
+#mem-close[hidden]{display:none}
+.now-card{margin-top:12px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--accent) 12%,var(--paper));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
+.now-card[hidden]{display:none}
+.now-l{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
+.now-acts{display:grid;gap:8px}
+.now-act{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper);color:var(--fg);cursor:pointer}
+.now-act b{display:block;font-size:15px}
+.now-act small{display:block;font-size:12px;color:var(--mute)}
+.now-act::after{content:"→";margin-left:auto;color:var(--accent);font-family:var(--f-mono)}
+.now-act:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.to-stay{font:inherit;font-size:12.5px;padding:0;border:0;border-bottom:1px solid var(--accent);background:none;color:var(--fg);cursor:pointer;line-height:1.6}
+.kv dt{white-space:nowrap}
+.want2{padding:8px 0;align-items:center;min-height:44px}
+.w-main{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
+.w-n{font-size:14px}
+.w-by{display:flex;flex-wrap:wrap;gap:3px}
+.w-by .av{width:22px;height:22px;font-size:11px}
+.w-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:1px 8px 1px 2px;border-radius:999px;background:color-mix(in srgb,var(--moss) 16%,var(--paper))}
+.w-chip .av{width:18px;height:18px;font-size:10px}
+.w-none{font-size:12px;color:var(--mute)}
+.w-btn{flex:none;font:inherit;font-size:12px;font-weight:700;padding:6px 12px;border:1px solid var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
+.w-btn.on{border-color:var(--line);color:var(--mute);font-weight:400}
+.w-btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.capbox{position:relative}
+.capped{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--line)}
+.capped:not(.at-end){-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
+#pay-total .pay-total{margin-top:8px}
+.to-top{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:8;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 88%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--fg);
+  display:grid;place-content:center;cursor:pointer;box-shadow:0 6px 16px -8px rgba(30,36,32,.45);opacity:.85;transition:opacity .2s,transform .2s}
+.to-top[hidden]{display:none}
+.to-top svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.to-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.net:not([hidden]) ~ .to-top,body.neton .to-top{bottom:calc(76px + env(safe-area-inset-bottom))}
+.net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
+.net[hidden]{display:none}
+.recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
+.busy{opacity:.5;pointer-events:none}
+.dish .dish-ln{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.like{display:inline-flex;align-items:center;gap:3px;margin-left:4px;padding:1px 7px 1px 5px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--mute);font:inherit;font-family:var(--f-mono);font-size:11px;cursor:pointer}
+.like svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.like.on{color:var(--berry);border-color:var(--berry);background:color-mix(in srgb,var(--berry) 12%,var(--paper))}
+.like.on svg{fill:currentColor}
+.like:focus-visible{outline:2px solid var(--berry);outline-offset:1px}
+.shop li.zero .nm,.shop li.zero .sv{opacity:.45}
+.preset-g{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.preset-g + .preset-g{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.preset-l{font-size:11px;color:var(--mute);width:100%;letter-spacing:.08em}
+.shop li.ex .sv{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mem-fold{margin:0 0 10px}
+.mem-fold .dishes{margin-top:10px}
+.who-pick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
+.who-pick[hidden]{display:none}
+.who .who-all{font-weight:700}
+.extra-form .q-in{flex:0 0 64px;width:64px}
+.want-form{margin-top:10px}
+.pack .hint{margin:0 0 4px}
+.want-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.pack .want-row label{flex:1;border-bottom:0}
+.shop li.ex{display:flex;align-items:center;gap:8px}
+.shop li.ex{border-bottom:1px dotted var(--line)}
+.shop li.ex label{flex:1;border-bottom:0}
+.sec-h .lf{width:18px;height:18px;flex:none;align-self:center;transform:rotate(-12deg)}
+section:nth-of-type(3n+1) .sec-h .lf{color:var(--maple)}
+section:nth-of-type(3n+2) .sec-h .lf{color:var(--accent)}
+section:nth-of-type(3n) .sec-h .lf{color:var(--berry)}
+/* 項目のあいだの飾り：落ち葉と、歩く牛 */
+.deco{position:relative;height:52px;margin:24px 0 -16px;overflow:hidden}
+.deco .ground{position:absolute;left:0;right:0;bottom:6px;border-top:1px solid var(--line)}
+.deco .lv{position:absolute;bottom:3px;transform:rotate(var(--r,0deg))}
+.deco .walker{position:absolute;bottom:5px;left:62%;width:54px;height:34px}
+.deco .walker.rev{left:22%}
+.deco .flip,.deco .flip svg{display:block;width:100%;height:100%}
+.deco .walker.rev .flip{transform:scaleX(-1)}
+/* 牛は端末の「動きを減らす」設定に関係なく、ゆっくり歩かせる */
+.deco .walker{left:auto;-webkit-animation:walk 24s linear infinite;animation:walk 24s linear infinite}
+.deco .walker.rev{-webkit-animation-name:walkback;animation-name:walkback;-webkit-animation-duration:28s;animation-duration:28s;-webkit-animation-delay:-9s;animation-delay:-9s}
+@-webkit-keyframes walk{from{left:-60px}to{left:100%}}
+@keyframes walk{from{left:-60px}to{left:100%}}
+@-webkit-keyframes walkback{from{left:100%}to{left:-60px}}
+@keyframes walkback{from{left:100%}to{left:-60px}}
+@media (prefers-reduced-motion:no-preference){
+  .deco .lv.drop{animation:drop 10s linear infinite}
+  @keyframes drop{0%{transform:translate(-6px,-46px) rotate(0deg);opacity:0}8%{opacity:1}
+    35%{transform:translate(5px,-28px) rotate(120deg)}62%{transform:translate(-3px,-10px) rotate(220deg)}
+    75%{transform:translate(0,0) rotate(260deg);opacity:1}100%{transform:translate(0,0) rotate(260deg);opacity:0}}
+  .deco .flip svg{animation:bob .5s ease-in-out infinite alternate}
+  @keyframes bob{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-1.5px) rotate(1deg)}}
+}
+.foot-scene{display:block;width:100%;max-width:320px;height:auto;margin:0 0 8px}
+.mtn use,.foot-scene use{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){
+  .fall{animation:sway 6s ease-in-out infinite alternate}
+  .fall.f2{animation-duration:7.5s;animation-delay:-2s}
+  .fall.f3{animation-duration:5s;animation-delay:-1s}
+  @keyframes sway{from{transform:translate(-3px,-2px) rotate(-14deg)}to{transform:translate(4px,5px) rotate(16deg)}}
+}
+.dish-x.arm{font-size:12px;font-weight:700;color:var(--paper);background:var(--berry);border-radius:999px;padding:2px 8px}
+.toc{position:sticky;top:8px;z-index:5;display:flex;gap:2px;margin:12px 0 0;padding:5px;border:1px solid var(--line);border-radius:24px;
+  background:color-mix(in srgb,var(--paper) 96%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 18px -10px rgba(30,36,32,.35)}
+.toc button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;font:inherit;font-size:11px;font-weight:700;letter-spacing:.04em;
+  padding:6px 2px 5px;border:0;border-radius:19px;background:none;color:var(--mute);cursor:pointer;transition:background .2s,color .2s}
+.toc svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.toc button.on{background:color-mix(in srgb,var(--accent) 20%,var(--paper));color:var(--fg)}
+.toc button.on svg{color:var(--maple)}
+.toc button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+section,#stay{scroll-margin-top:84px}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px 28px;border-top:2px solid var(--fg);margin-top:12px;padding-top:6px}
+.shop h4{font-family:var(--f-display);font-size:17px;margin:10px 0 2px}
+.shop ul{list-style:none;padding:0;margin:0 0 8px;font-size:14px}
+.shop li label{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px dotted var(--line);cursor:pointer}
+.shop li .q{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--mute);white-space:nowrap}
+.shop input{accent-color:var(--accent);flex:none}
+.shop input:checked ~ .nm{color:var(--mute);text-decoration:line-through}
+.menu li{display:flex;justify-content:space-between;gap:12px}
+.menu li .q{font-family:var(--f-mono);font-size:12px;color:var(--mute);white-space:nowrap}
+.menu.one{grid-template-columns:1fr}
+.menu.one ul{columns:2;column-gap:32px}
+.menu.one li{break-inside:avoid}
+@media (max-width:560px){.menu.one ul{columns:1}}
+.cars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.car{border:1px solid var(--line);background:var(--paper);padding:14px 16px;display:flex;align-items:baseline;gap:12px;min-width:0}
+.car b{font-family:var(--f-display);font-size:20px}
+.car .mono{font-size:12px;color:var(--mute);margin-left:auto}
+@media (max-width:480px){.cars{grid-template-columns:1fr}}
+.sub-h{font-family:var(--f-display);font-size:20px;margin:28px 0 0}
+
+/* 持ち物 */
+.packs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+@media (max-width:640px){.packs{grid-template-columns:minmax(0,1fr)}}
+.pack{min-width:0}
+.pack h3{font-size:15px;margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline}
+.pack h3 .mono{font-size:12px;color:var(--mute);font-weight:400}
+.pack label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.pack input[type=checkbox]{appearance:none;width:18px;height:18px;border:1.5px solid var(--fg);border-radius:3px;flex:none;margin-top:3px;display:grid;place-content:center;background:var(--paper)}
+.pack input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+.pack input[type=checkbox]:checked::after{content:"";width:5px;height:9px;border:solid var(--paper);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.pack input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pack input:checked + span{color:var(--mute);text-decoration:line-through}
+
+/* 予算 */
+.budget{width:100%;border-collapse:collapse;font-size:14px}
+.budget td{padding:10px 0;border-bottom:1px solid var(--line)}
+.budget td:last-child{text-align:right;font-family:var(--f-mono);white-space:nowrap;padding-left:12px}
+.budget tr.total td{border-top:2px solid var(--fg);border-bottom:0;font-weight:700;padding-top:12px}
+.budget tr.total td:last-child{font-size:18px;color:var(--accent)}
+
+footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid var(--line);margin-top:40px}
+
+@media (prefers-reduced-motion:no-preference){
+  .mtn .ridge{stroke-dasharray:1400;stroke-dashoffset:0;animation:draw 2.2s ease-out both}
+  @keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+}
+</style>
+
+</head>
+<body>
+<div class="stars" id="stars" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="leaf" viewBox="0 0 24 24"><path d="M12 2l1.6 4.2 3-1.6-.6 3.8 3.6-.6-1.8 3 3.2 1.4-3.6 1.6.8 2.4-3.4-.6L13 19.4V23h-2v-3.6l-2.8-3-3.4.6.8-2.4L2 12.6l3.2-1.4-1.8-3 3.6.6-.6-3.8 3 1.6z" fill="currentColor"/></symbol>
+  <symbol id="ginkgo" viewBox="0 0 24 24"><path d="M12 21v-7M12 14C7 14 3 10 3 6c3 1 5 0 7-2 .8 1.5 1.2 3 2 3.5.8-.5 1.2-2 2-3.5 2 2 4 3 7 2 0 4-4 8-9 8z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+  <symbol id="cow" viewBox="-2 -4 68 42">
+        <rect x="7" y="22" width="4" height="14" rx="2" fill="var(--fg)"/>
+        <rect x="15" y="22" width="4" height="13" rx="2" fill="var(--fg)"/>
+        <rect x="33" y="22" width="4" height="13" rx="2" fill="var(--fg)"/>
+        <rect x="41" y="22" width="4" height="14" rx="2" fill="var(--fg)"/>
+        <path d="M3 13 q-6 6 -3 13" fill="none" stroke="var(--fg)" stroke-width="1.4" stroke-linecap="round"/>
+        <rect x="2" y="6" width="48" height="22" rx="10" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <path d="M13 7.5 c6 -1 10 3 8 8 c-2 4 -8 3 -10 0 c-2 -3 -1 -7 2 -8z" fill="var(--fg)"/>
+        <path d="M33 15 c5 -2 9 1 8 5 c-1 4 -6 5 -9 3 c-3 -2 -2 -6 1 -8z" fill="var(--fg)"/>
+        <path d="M49 3 l-1 -4 M58 3 l1.5 -4" stroke="var(--larch)" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M47 6 l-6 -2" stroke="var(--fg)" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="46" y="2" width="16" height="16" rx="6" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <rect x="51" y="11" width="13" height="9" rx="4.5" fill="var(--berry)"/>
+        <circle cx="55" cy="15.5" r=".9" fill="var(--fg)"/><circle cx="60" cy="15.5" r=".9" fill="var(--fg)"/>
+        <circle cx="52" cy="7.5" r="1.4" fill="var(--fg)"/>
+      </symbol>
+</svg>
+<div class="wrap">
+
+<header class="cover">
+  <h1 class="vtitle">秋旅<small>一・二年目</small></h1>
+  <div class="cover-r">
+    <svg class="mtn" viewBox="0 0 600 220" role="img" aria-label="浅間山とカラマツの林">
+      <path d="M0 220 L0 176 C60 170 110 150 170 120 C210 98 240 70 262 56 C276 47 288 44 300 44 C318 44 332 52 348 64 C380 88 420 120 470 142 C520 162 560 168 600 170 L600 220 Z" fill="var(--rock)" opacity=".14"/>
+      <path class="ridge" d="M0 176 C60 170 110 150 170 120 C210 98 240 70 262 56 C276 47 288 44 300 44 C318 44 332 52 348 64 C380 88 420 120 470 142 C520 162 560 168 600 170" fill="none" stroke="var(--fg)" stroke-width="2"/>
+      <path d="M300 44 C302 30 296 18 306 6 M306 44 C312 32 320 26 316 12" fill="none" stroke="var(--mute)" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+      <g class="cow" transform="translate(222 172) scale(1.15)" aria-hidden="true">
+        <rect x="7" y="22" width="4" height="14" rx="2" fill="var(--fg)"/>
+        <rect x="15" y="22" width="4" height="13" rx="2" fill="var(--fg)"/>
+        <rect x="33" y="22" width="4" height="13" rx="2" fill="var(--fg)"/>
+        <rect x="41" y="22" width="4" height="14" rx="2" fill="var(--fg)"/>
+        <path d="M3 13 q-6 6 -3 13" fill="none" stroke="var(--fg)" stroke-width="1.4" stroke-linecap="round"/>
+        <rect x="2" y="6" width="48" height="22" rx="10" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <path d="M13 7.5 c6 -1 10 3 8 8 c-2 4 -8 3 -10 0 c-2 -3 -1 -7 2 -8z" fill="var(--fg)"/>
+        <path d="M33 15 c5 -2 9 1 8 5 c-1 4 -6 5 -9 3 c-3 -2 -2 -6 1 -8z" fill="var(--fg)"/>
+        <path d="M49 3 l-1 -4 M58 3 l1.5 -4" stroke="var(--larch)" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M47 6 l-6 -2" stroke="var(--fg)" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="46" y="2" width="16" height="16" rx="6" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <rect x="51" y="11" width="13" height="9" rx="4.5" fill="var(--berry)"/>
+        <circle cx="55" cy="15.5" r=".9" fill="var(--fg)"/><circle cx="60" cy="15.5" r=".9" fill="var(--fg)"/>
+        <circle cx="52" cy="7.5" r="1.4" fill="var(--fg)"/>
+      </g>
+      <g fill="var(--larch)">
+        <path d="M40 220 l10 -38 l10 38 Z"/><path d="M62 220 l8 -28 l8 28 Z"/><path d="M86 220 l12 -46 l12 46 Z"/>
+        <path d="M470 220 l11 -40 l11 40 Z"/><path d="M496 220 l8 -30 l8 30 Z"/><path d="M518 220 l13 -50 l13 50 Z"/><path d="M548 220 l9 -32 l9 32 Z"/>
+      </g>
+      <g fill="var(--rock)" opacity=".55">
+        <path d="M112 220 l7 -24 l7 24 Z"/><path d="M572 220 l7 -26 l7 26 Z"/>
+      </g>
+      <g aria-hidden="true">
+        <use class="fall f1" href="#leaf" x="128" y="62" width="30" height="30" style="color:var(--maple)"/>
+        <use class="fall f2" href="#ginkgo" x="418" y="50" width="26" height="26" style="color:var(--larch)"/>
+        <use class="fall f3" href="#leaf" x="372" y="96" width="22" height="22" style="color:var(--berry)"/>
+        <use class="fall f2" href="#leaf" x="180" y="22" width="20" height="20" style="color:var(--larch)"/>
+        <use href="#leaf" x="140" y="198" width="18" height="18" style="color:var(--maple)"/>
+        <use href="#ginkgo" x="436" y="200" width="16" height="16" style="color:var(--larch)"/>
+      </g>
+      <text x="300" y="36" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="var(--mute)" letter-spacing="2">TSUMAGOI</text>
+    </svg>
+    <div class="dates">
+      <span class="big">11.07<span class="sep"> — </span>11.08</span>
+      <span class="label">Sat — Sun / 2026</span>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+  </div>
+</header>
+<nav class="toc" aria-label="目次"><button type="button" data-to="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg><span>予定</span></button><button type="button" data-to="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5h16c0 4-3.6 6.5-8 6.5s-8-2.5-8-6.5z"/><path d="M8 16.5 6.5 20.5M16 16.5l1.5 4M9.5 7.5c-1-1 1-2 0-3.5M14.5 7.5c-1-1 1-2 0-3.5"/></svg><span>BBQ</span></button><button type="button" data-to="buy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4"/></svg><span>買い出し</span></button><button type="button" data-to="pack"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7.5" width="14" height="13" rx="4"/><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><rect x="8.5" y="13" width="7" height="4.5" rx="1.5"/></svg><span>持ち物</span></button><button type="button" data-to="budget"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4 3-4M12 11.5v5.5M9.5 12.5h5M9.5 15h5"/></svg><span>割り勘</span></button></nav>
+
+<section id="members" class="members">
+  <div class="me-line" id="me-line" hidden><span>あなた：<b id="me-name"></b></span><span class="me-n" id="me-count"></span><button type="button" class="st-fix" id="me-open">変える・追加</button></div>
+  <div class="mem-card" id="mem-card">
+    <div class="mem-top"><h2 class="mem-h">メンバー</h2><button type="button" class="st-fix" id="mem-close" hidden>閉じる</button></div>
+    <form class="dish-form" id="mem-form">
+      <input id="mem-input" type="text" placeholder="自分のニックネームを入れる" aria-label="自分のニックネーム" autocomplete="off" maxlength="20">
+      <button type="submit">登録</button>
+    </form>
+    <span class="dish-status" id="mem-status" role="status"></span>
+    <div class="me-row" id="me-row" hidden><label for="me-sel">あなたは</label><select id="me-sel"></select></div>
+    <details class="amen mem-fold">
+      <summary>メンバー一覧（<span id="mem-n">0</span>人）</summary>
+      <div class="dishes" id="mem-list"></div>
+    </details>
+  </div>
+  <div class="now-card" id="now-card" hidden>
+    <span class="now-l">いまやること</span>
+    <div class="now-acts" id="now-acts"></div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-h"><h2>スケジュール</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Schedule</span></div>
+  <div class="days">
+
+    <div class="day">
+      <div class="day-h"><span class="n">1</span><h3>日目</h3><span class="w">11/7 土</span></div>
+      <div class="wx" id="wx-1"></div>
+      <ol class="route" id="route-1">
+        <li class="stop"><time>7:00</time><span class="dot"></span><div class="body"><span class="t">小田原 出発</span></div></li>
+        <li class="stop key"><time>11:15</time><span class="dot"></span><div class="body"><span class="t">いちご狩り</span><span class="lk"><a href="https://www.google.com/maps/search/?api=1&amp;query=軽井沢ガーデンファームいちご園" target="_blank" rel="noopener">地図</a></span></div></li>
+        <li class="stop"><time>12:15</time><span class="dot"></span><div class="body"><span class="t">軽井沢で昼食</span></div></li>
+        <li class="stop"><time>14:00</time><span class="dot"></span><div class="body"><span class="t">買い出し（ツルヤ）</span><span class="lk"><a href="https://www.google.com/maps/search/?api=1&amp;query=ツルヤ+軽井沢店" target="_blank" rel="noopener">地図</a></span></div></li>
+        <li class="stop"><time>14:45</time><span class="dot"></span><div class="body"><span class="t">白糸の滝</span><span class="lk"><a href="https://www.google.com/maps/search/?api=1&amp;query=白糸の滝+軽井沢" target="_blank" rel="noopener">地図</a></span></div></li>
+        <li class="stop key"><time>15:30</time><span class="dot"></span><div class="body"><span class="t">チェックイン</span><span class="lk"><a href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener">地図</a></span></div></li>
+        <li class="stop key"><time>16:00</time><span class="dot"></span><div class="body"><span class="t">BBQ・焚き火</span><span class="s">日没 16:40</span></div></li>
+        <li class="stop"><time>21:00</time><span class="dot"></span><div class="body"><span class="t">星空とまったり</span><span class="s">夜は0℃前後</span></div></li>
+      </ol>
+    </div>
+
+    <div class="day">
+      <div class="day-h"><span class="n">2</span><h3>日目</h3><span class="w">11/8 日</span></div>
+      <div class="wx" id="wx-2"></div>
+      <ol class="route" id="route-2">
+        <li class="stop"><time>???</time><span class="dot"></span><div class="body"><span class="t">朝ごはん？</span></div></li>
+        <li class="stop"><time>10:00</time><span class="dot"></span><div class="body"><span class="t">チェックアウト</span></div></li>
+        <li class="stop key"><time>10:10</time><span class="dot"></span><div class="body"><span class="t">紅葉めぐり</span><span class="s">候補</span><span class="lk"><a href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B5%85%E9%96%93%E7%89%A7%E5%A0%B4%E8%8C%B6%E5%B1%8B" target="_blank" rel="noopener">浅間牧場</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%90%BE%E5%A6%BB%E6%B8%93%E6%A9%8B" target="_blank" rel="noopener">吾妻渓谷</a></span></div></li>
+        <li class="stop"><time>12:00</time><span class="dot"></span><div class="body"><span class="t">昼食</span></div></li>
+        <li class="stop"><time>13:00</time><span class="dot"></span><div class="body"><span class="t">帰路</span></div></li>
+        <li class="stop"><time>18:00</time><span class="dot"></span><div class="body"><span class="t">小田原 着</span></div></li>
+      </ol>
+    </div>
+  </div>
+  <button type="button" class="sched-toggle" id="sched-toggle" aria-expanded="false">スケジュールを編集</button>
+  <form class="sched-form" id="sched-form" hidden>
+    <div class="sc-row">
+      <select id="sc-d" aria-label="日にち"><option value="1">1日目</option><option value="2">2日目</option></select>
+      <input id="sc-t" type="text" inputmode="numeric" placeholder="13:30" aria-label="時間（未定なら空のまま）" autocomplete="off">
+    </div>
+    <div class="sc-row">
+      <input id="sc-n" type="text" placeholder="内容（例：白糸の滝）" aria-label="内容" autocomplete="off">
+      <button type="submit" id="sc-submit">追加</button>
+    </div>
+    <details class="sc-more" id="sc-more">
+      <summary>メモ・地図・目立たせる</summary>
+      <input id="sc-s" type="text" placeholder="メモ（例：日没 16:40）" aria-label="メモ" autocomplete="off">
+      <input id="sc-m" type="text" placeholder="地図の場所（複数は「、」で区切る）" aria-label="地図で開く場所" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="sc-k"> 大事な予定として目立たせる</label>
+    </details>
+    <button type="button" id="sc-cancel" class="ghost" hidden>やめる</button>
+    <span class="dish-status" id="sched-status" role="status"></span>
+  </form>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
+
+<section id="food">
+  <div class="sec-h"><h2>BBQの準備</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">11 people</span></div>
+  <h3 class="sub-h first">作りたいもの</h3>
+  <div class="dishes" id="dish-list"><span class="dish-empty">読み込み中…</span></div>
+  <div class="dish-editor" id="dish-editor">
+    <div class="presets" id="preset-list"></div>
+    <form class="dish-form" id="dish-form">
+      <input id="dish-input" type="text" placeholder="ほかに作りたいもの（例：ピザ）" autocomplete="off">
+      <button type="submit" id="dish-add">追加</button>
+    </form>
+    <div class="recipe">
+      <span class="preset-l">レシピから追加（材料が11人分で入ります）</span>
+      <form class="dish-form" id="recipe-form" novalidate>
+        <input id="recipe-url" type="url" inputmode="url" placeholder="レシピのURLを貼る" aria-label="レシピのURL" autocomplete="off">
+        <button type="submit">読む</button>
+      </form>
+      <label class="receipt-btn" id="recipe-img-label" for="recipe-img">レシピのスクショから読む</label><input type="file" id="recipe-img" accept="image/*" hidden>
+    </div>
+    <span class="dish-status" id="dish-status" role="status"></span>
+  </div>
+  <h3 class="sub-h">飲み物・そのほか</h3>
+  <p class="hint">料理以外で買いたいもの。押すと買い出しリストに入り、数はリストで変えられます。</p>
+  <div class="dish-editor">
+    <div class="presets" id="drink-list"></div>
+    <form class="dish-form extra-form" id="extra-form">
+      <input id="extra-n" type="text" placeholder="ほかに買うもの" aria-label="買うもの" autocomplete="off">
+      <input id="extra-q" type="text" inputmode="numeric" placeholder="数" aria-label="数" autocomplete="off" class="q-in">
+      <button type="submit">追加</button>
+    </form>
+    <span class="dish-status" id="extra-status" role="status"></span>
+  </div>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:8%;width:13px;height:13px;color:var(--maple);--r:-20deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:22%;width:16px;height:16px;color:var(--maple);--r:0deg;animation-delay:0s;animation-duration:10s"><use href="#leaf"/></svg><svg class="lv drop" style="left:47%;width:12px;height:12px;color:var(--larch);--r:10deg;animation-delay:-4s;animation-duration:12s"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:71%;width:11px;height:11px;color:var(--berry);--r:30deg;animation-delay:-7s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:90%;width:11px;height:11px;color:var(--larch);--r:-15deg"><use href="#ginkgo"/></svg></div>
+
+<section id="buy">
+  <div class="sec-h"><h2>買い出しリスト</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Shopping</span></div>
+  <p class="hint">買ったらチェック。チェックはみんなに共有されます。</p>
+  <span class="dish-status" id="shop-status" role="status"></span>
+  <div class="shop" id="shop"></div>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:30%;width:15px;height:15px;color:var(--maple);--r:-10deg"><use href="#leaf"/></svg><svg class="lv" style="left:33%;width:12px;height:12px;color:var(--larch);--r:35deg"><use href="#leaf"/></svg><svg class="lv" style="left:36%;width:11px;height:11px;color:var(--larch);--r:-25deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:39%;width:10px;height:10px;color:var(--berry);--r:60deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:64%;width:14px;height:14px;color:var(--maple);--r:0deg;animation-delay:-2s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv drop" style="left:86%;width:12px;height:12px;color:var(--larch);--r:0deg;animation-delay:-6s;animation-duration:13s"><use href="#ginkgo"/></svg></div>
+
+<section id="pack">
+  <div class="sec-h"><h2>持ち物</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Check list</span></div>
+  <div class="packs">
+    <div class="pack person">
+      <h3>各自</h3>
+      <p class="hint">名前を選ぶと、その人の持ち物が出ます。チェックはみんなに共有されます。</p>
+      <div class="ptabs" id="pack-tabs" role="group" aria-label="だれの持ち物か"></div>
+      <div id="pack-list"></div>
+      <form class="dish-form pack-form" id="pack-form">
+        <input id="pack-n" type="text" placeholder="持ち物を追加" aria-label="持ち物" autocomplete="off">
+        <select id="pack-all" aria-label="だれに追加するか"><option value="one" id="pack-who-l">この人だけ</option><option value="all">全員</option></select>
+        <button type="submit">追加</button>
+      </form>
+      <span class="dish-status" id="pack-status" role="status"></span>
+    </div>
+    <div class="pack">
+      <h3>あれば嬉しい <span class="mono" id="want-count"></span></h3>
+      <p class="hint">持っていける人は「持っていく」を押してね。</p>
+      <div id="want-list"></div>
+      <form class="dish-form want-form" id="want-form">
+        <input id="want-n" type="text" placeholder="例：ホットサンドメーカー" aria-label="あれば嬉しいもの" autocomplete="off">
+        <button type="submit">追加</button>
+      </form>
+      <span class="dish-status" id="want-status" role="status"></span>
+    </div>
+  </div>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
+
+<section id="budget">
+  <div class="sec-h"><h2>割り勘</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Split</span></div>
+  <h3 class="sub-h first">支払い</h3>
+  <form class="pay-form split-ed" id="pay-form">
+    <div class="pay-quick" id="pay-quick">
+      <button type="button" data-t="ETC（みなみ）" data-p="南|みなみ|ミナミ">ETC（みなみ）</button><button type="button" data-t="ETC（あお）" data-p="青|あお|アオ">ETC（あお）</button><button type="button" data-t="ガソリン">ガソリン</button><button type="button" data-t="駐車場">駐車場</button><button type="button" data-t="レンタカー">レンタカー</button>
+    </div>
+    <label class="receipt-btn" for="receipt" id="receipt-label">レシートの写真から読み取る</label><input type="file" id="receipt" accept="image/*" hidden>
+    <input id="pay-title" type="text" placeholder="内容（例：レンタカー）" aria-label="内容" autocomplete="off">
+    <input id="pay-amount" type="number" inputmode="numeric" min="1" step="1" placeholder="金額（円）" aria-label="金額">
+    <select id="pay-payer" aria-label="払った人"></select>
+    <div class="who" id="pay-who"></div>
+    <button type="submit">支払いを追加</button>
+    <span class="dish-status" id="pay-status" role="status"></span>
+  </form>
+  <div class="pay-list" id="pay-list"></div>
+  <div id="pay-total"></div>
+  <h3 class="sub-h">精算</h3>
+  <div class="settle" id="settle"></div>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv drop" style="left:12%;width:12px;height:12px;color:var(--maple);--r:0deg;animation-delay:-1s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:40%;width:14px;height:14px;color:var(--larch);--r:-15deg"><use href="#leaf"/></svg><svg class="lv" style="left:44%;width:10px;height:10px;color:var(--larch);--r:40deg"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:77%;width:13px;height:13px;color:var(--berry);--r:0deg;animation-delay:-5s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv" style="left:93%;width:11px;height:11px;color:var(--maple);--r:10deg"><use href="#leaf"/></svg></div>
+
+<section id="memo">
+  <div class="sec-h"><h2>思い出</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Memories</span></div>
+  <div class="album" id="album"></div>
+  <form class="dish-form" id="album-form" novalidate>
+    <input id="album-url" type="url" inputmode="url" placeholder="共有アルバムのリンクを貼る" aria-label="共有アルバムのリンク" autocomplete="off">
+    <button type="submit">保存</button>
+  </form>
+  <span class="dish-status" id="memo-status" role="status"></span>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:8%;width:15px;height:15px;color:var(--maple);--r:-10deg"><use href="#leaf"/></svg><svg class="lv" style="left:11%;width:12px;height:12px;color:var(--larch);--r:35deg"><use href="#leaf"/></svg><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:-25deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:17%;width:10px;height:10px;color:var(--berry);--r:60deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:64%;width:14px;height:14px;color:var(--maple);--r:0deg;animation-delay:-2s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv drop" style="left:86%;width:12px;height:12px;color:var(--larch);--r:0deg;animation-delay:-6s;animation-duration:13s"><use href="#ginkgo"/></svg></div>
+
+<section id="guide">
+  <div class="sec-h"><h2>現地ガイド</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Guide</span></div>
+  <h3 class="sub-h first" id="stay">宿</h3>
+  <div class="stay">
+    <div class="stay-card">
+      <h3>Re to Li（りとり）</h3>
+      <dl class="kv">
+        <dt>住所</dt><dd>群馬県吾妻郡嬬恋村鎌原1054-37</dd>
+        <dt>チェックイン</dt><dd class="mono">15:00 – 21:00</dd>
+        <dt>チェックアウト</dt><dd class="mono">– 10:00</dd>
+      </dl>
+      <details class="amen">
+        <summary>アメニティ一覧を見る</summary>
+        <div class="amen-grid">
+          <div><h4>キッチン</h4><ul><li>IHコンロ・シンク・食洗機</li><li>冷蔵庫・電子レンジ</li><li>炊飯器（3合）・ケトル</li><li>食器（平皿・スープ皿・グラス・箸・スプーン・フォーク）</li><li>塩・コショウ</li></ul></div>
+          <div><h4>調理器具</h4><ul><li>フライパン（大・小）・鍋</li><li>ボウル・ザル</li><li>まな板・包丁</li><li>菜箸・トング・お玉・フライ返し・しゃもじ</li><li>ラップ・ホイル</li></ul></div>
+          <div><h4>BBQ・焚き火</h4><ul><li>BBQコンロ・網</li><li>炭 6kg・着火剤</li><li>トング（炭用・食材用）</li><li>革手袋</li><li>焚き火台・薪</li></ul></div>
+          <div><h4>お風呂・洗面</h4><ul><li>バスタオル・フェイスタオル（人数分）</li><li>ハブラシ（人数分）</li><li>シャンプー・コンディショナー・ボディソープ</li><li>ドライヤー</li><li>洗濯機（洗剤・ハンガー・物干し）</li></ul></div>
+          <div><h4>寝具（各棟）</h4><ul><li>1階：シングルベッド 2台</li><li>2階：ダブルマットレス 3枚（自分でセット）</li><li>ダイニングテーブル 1・椅子 5脚</li></ul></div>
+          <div><h4>その他</h4><ul><li>Wi-Fi・TV・エアコン</li><li>Bluetoothスピーカー</li><li>LEDランタン・カードゲーム</li><li>虫よけスプレー・掃除機</li><li>ウェルカムドリンク（無料）</li></ul></div>
+        </div>
+      </details>
+      <div class="lk" style="margin-top:16px"><a href="https://retoli.jp/" target="_blank" rel="noopener">公式サイト</a><a href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener">地図</a></div>
+    </div>
+  </div>
+  <h3 class="sub-h">周辺のおすすめ</h3>
+  <details class="amen spots">
+    <summary>おすすめスポットを見る</summary>
+    <div class="amen-grid">
+      <div><h4>景色・散歩</h4><ul>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%AC%BC%E6%8A%BC%E5%87%BA%E3%81%97%E5%9C%92" target="_blank" rel="noopener"><span class="sn">鬼押出し園</span><span class="sd">浅間山の溶岩がつくった奇岩の景色。宿から車で約5分</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B5%85%E9%96%93%E7%89%A7%E5%A0%B4%E8%8C%B6%E5%B1%8B" target="_blank" rel="noopener"><span class="sn">浅間牧場</span><span class="sd">牧草地の向こうに浅間山。茶屋のソフトクリームと牛乳が名物。約6分</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%B0%8F%E6%B5%85%E9%96%93%E5%B1%B1%20%E7%99%BB%E5%B1%B1%E5%8F%A3" target="_blank" rel="noopener"><span class="sn">小浅間山</span><span class="sd">1時間弱で山頂へ。目の前に浅間山が迫る軽登山</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%99%BD%E7%B3%B8%E3%81%AE%E6%BB%9D%20%E8%BB%BD%E4%BA%95%E6%B2%A2" target="_blank" rel="noopener"><span class="sn">白糸の滝</span><span class="sd">岩肌から幕のように流れる滝。軽井沢から宿へ向かう途中</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%90%BE%E5%A6%BB%E6%B8%93%E6%A9%8B" target="_blank" rel="noopener"><span class="sn">吾妻渓谷</span><span class="sd">渓谷の青い流れと紅葉。11月上旬〜中旬が見頃。約30分</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%85%AB%E3%83%83%E5%A0%B4%E3%83%80%E3%83%A0" target="_blank" rel="noopener"><span class="sn">八ッ場ダム</span><span class="sd">高さ116mのダムとダム湖の大きな景色。約30分</span><span class="sm">Google マップ</span></a></li>
+      </ul></div>
+      <div><h4>ごはん・カフェ</h4><ul>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=kicori%20pizza%20%E5%8C%97%E8%BB%BD%E4%BA%95%E6%B2%A2" target="_blank" rel="noopener"><span class="sn">kicori pizza</span><span class="sd">森の中の窯焼きピザ。同じ敷地のLuomuも楽しい</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=Cafe%20Junrino%20%E5%8C%97%E8%BB%BD%E4%BA%95%E6%B2%A2" target="_blank" rel="noopener"><span class="sn">Cafe Junrino</span><span class="sd">宿から一番近いピザとカフェ。日曜は13:30まで</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%8F%E3%82%B3%E3%83%8B%E3%83%AF%E9%A3%9F%E5%A0%82%20%E5%8C%97%E8%BB%BD%E4%BA%95%E6%B2%A2" target="_blank" rel="noopener"><span class="sn">ハコニワ食堂</span><span class="sd">上州牛のカレーが人気。宿から約5分、予約がおすすめ</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%81%82%E3%81%95%E3%81%BE%E3%81%AE%E3%81%84%E3%81%B6%E3%81%8D%20%E5%AC%AC%E6%81%8B" target="_blank" rel="noopener"><span class="sn">あさまのいぶきカフェ</span><span class="sd">地元野菜のランチ。直売所も一緒</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%81%93%E3%81%AE%E9%A7%85%20%E5%85%AB%E3%83%83%E5%A0%B4%E3%81%B5%E3%82%8B%E3%81%95%E3%81%A8%E9%A4%A8" target="_blank" rel="noopener"><span class="sn">道の駅 八ッ場ふるさと館</span><span class="sd">八ッ場ダムカレーと無料の足湯</span><span class="sm">Google マップ</span></a></li>
+      </ul></div>
+      <div><h4>買い物</h4><ul>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%84%E3%83%AB%E3%83%A4%20%E8%BB%BD%E4%BA%95%E6%B2%A2%E5%BA%97" target="_blank" rel="noopener"><span class="sn">ツルヤ 軽井沢店</span><span class="sd">地元のスーパー。お土産のジャムやジュースも</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B5%85%E9%96%93%E3%83%9F%E3%83%BC%E3%83%88%20%E5%AC%AC%E6%81%8B" target="_blank" rel="noopener"><span class="sn">浅間ミート</span><span class="sd">地元の肉がそろう精肉店。宿から約18分</span><span class="sm">Google マップ</span></a></li>
+      </ul></div>
+      <div><h4>温泉</h4><ul>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%8D%89%E6%B4%A5%E6%B8%A9%E6%B3%89%20%E6%B9%AF%E7%95%91" target="_blank" rel="noopener"><span class="sn">草津温泉</span><span class="sd">湯畑と湯もみで有名な温泉街。宿から約40分</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E4%B8%87%E5%BA%A7%E6%B8%A9%E6%B3%89" target="_blank" rel="noopener"><span class="sn">万座温泉</span><span class="sd">標高1,800mの白いにごり湯。約40分</span><span class="sm">Google マップ</span></a></li>
+        <li><a class="spot" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%88%E3%83%B3%E3%83%9C%E3%81%AE%E6%B9%AF%20%E8%BB%BD%E4%BA%95%E6%B2%A2" target="_blank" rel="noopener"><span class="sn">トンボの湯</span><span class="sd">軽井沢の星野エリアにある日帰り温泉</span><span class="sm">Google マップ</span></a></li>
+      </ul></div>
+    </div>
+  </details>
+</section>
+
+<button type="button" class="to-top" id="to-top" aria-label="いちばん上へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11.5 12 5.5l6 6"/></svg></button>
+<div class="net" id="net" role="status" hidden>通信できません。電波のいいところで開き直すと最新になります</div>
+<footer>
+  <svg class="foot-scene" viewBox="0 0 320 60" aria-hidden="true">
+    <path d="M0 52 C80 46 160 50 240 47 C280 46 300 48 320 49" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <use href="#cow" x="196" y="18" width="58" height="36" style="color:var(--fg)"/>
+    <use href="#leaf" x="40" y="40" width="11" height="11" style="color:var(--maple)"/>
+    <use href="#ginkgo" x="62" y="44" width="8" height="8" style="color:var(--larch)"/>
+    <use href="#leaf" x="120" y="12" width="9" height="9" style="color:var(--berry)" class="fall f3"/>
+    <use href="#leaf" x="282" y="42" width="9" height="9" style="color:var(--larch)"/>
+  </svg>
+  <span>1・2年目 秋旅 / 2026.11.07 – 08</span>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var CATS=["肉・魚","野菜・果物","主食・締め","飲み物","調味料","その他"];
+  // 飲み物などは「料理」ではなく、そのまま買い出しリストに入れる
+  var DRINKS=[["ビール","24本"],["ハイボール","12本"],["チューハイ","12本"],["ソフトドリンク（2L）","4本"],["お茶（2L）","4本"],["水（2L）","4本"]];
+  var DRINK_RE=/ビール|ハイボール|チューハイ|サワー|ワイン|日本酒|焼酎|梅酒|ジュース|コーラ|サイダー|お茶|麦茶|緑茶|水|ドリンク|コーヒー|酒/;
+  var whoAll=true;
+  var LKEY='retoli-like-v1',liked={};
+  try{liked=JSON.parse(localStorage.getItem(LKEY)||'{}')||{}}catch(e){liked={}}
+  var CROWN='<svg viewBox="0 0 24 16" aria-hidden="true"><path d="M2 14 1 4l6 5 5-8 5 8 6-5-1 10z"/></svg>';
+  var HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+  var SHARED={"アルミホイル":1};
+  var BASE=[["焼肉のたれ","2本","調味料"],["サラダ油","1本","調味料"],["醤油","1本","調味料"],
+    ["紙皿（30枚入り）","2袋","その他"],["紙コップ（25個入り）","1袋","その他"],["割り箸（50膳入り）","1袋","その他"],["ゴミ袋（10枚入り）","1袋","その他"],["氷","2袋","その他"]];
+  var PRESETS={
+    "焼肉":[["牛カルビ","1kg","肉・魚"],["豚バラ","1kg","肉・魚"],["鶏もも","1kg","肉・魚"],["玉ねぎ","3個","野菜・果物"],["ピーマン","1袋","野菜・果物"]],
+    "ソーセージ":[["ソーセージ","3袋","肉・魚"]],
+    "焼きとうもろこし":[["とうもろこし","4本","野菜・果物"],["バター","1箱","調味料"]],
+    "ホイル焼き":[["生鮭","4切れ","肉・魚"],["きのこ","3パック","野菜・果物"],["バター","1箱","調味料"],["アルミホイル","1本","その他"]],
+    "じゃがバター":[["じゃがいも","6個","野菜・果物"],["バター","1箱","調味料"],["アルミホイル","1本","その他"]],
+    "焼きおにぎり":[["パックご飯","6個","主食・締め"]],
+    "焼きそば":[["焼きそば麺","8玉","主食・締め"],["キャベツ","1玉","野菜・果物"],["豚こま","300g","肉・魚"]],
+    "アヒージョ":[["むきえび","300g","肉・魚"],["マッシュルーム","2パック","野菜・果物"],["にんにく","1玉","野菜・果物"],["オリーブオイル","1本","調味料"],["バゲット","1本","主食・締め"]],
+    "カマンベールフォンデュ":[["カマンベール","2個","その他"],["バゲット","1本","主食・締め"]],
+    "ビア缶チキン":[["丸鶏","1羽","肉・魚"],["缶ビール","1本","その他"],["ハーブソルト","1本","調味料"]],
+    "カツオのたたき":[["カツオ（柵）","2本","肉・魚"],["玉ねぎ","1個","野菜・果物"],["にんにく","1玉","野菜・果物"],["ポン酢","1本","調味料"]],
+    "豚汁":[["豚こま","400g","肉・魚"],["大根","1本","野菜・果物"],["にんじん","2本","野菜・果物"],["味噌","1パック","調味料"]],
+    "焼き芋":[["さつまいも","4本","野菜・果物"],["アルミホイル","1本","その他"]],
+    "スモア":[["マシュマロ","2袋","その他"],["ビスケット","1箱","その他"],["板チョコ","2枚","その他"]],
+    "焼きりんご":[["りんご","5個","野菜・果物"],["バター","1箱","調味料"],["シナモンシュガー","1本","調味料"]]
+  };
+  var sched=null,editId=null,schedEdit=false,memo={album:'',notes:[]},pack=null,packWho='',me='';
+  try{me=localStorage.getItem('retoli-me')||''}catch(e){}
+  packWho=me;
+  var memOpen=false;
+  function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
+  var state={dishes:[]},split={members:[],expenses:[]};
+  var pending=0,loaded=false;
+  var STATUS={pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
+  var $=function(id){return document.getElementById(id)};
+
+  function call(fn,arg){
+    return new Promise(function(res,rej){
+      try{google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](arg)}catch(e){rej(e)}
+    });
+  }
+  function apply(s){
+    if(!s)return;
+    if(s.bbq&&Array.isArray(s.bbq.dishes)){state=s.bbq;if(!state.bought||typeof state.bought!=='object')state.bought={};if(!Array.isArray(state.wants))state.wants=[];if(!Array.isArray(state.extras))state.extras=[];if(!state.adj||typeof state.adj!=='object')state.adj={}}
+    if(s.split&&Array.isArray(s.split.members)&&Array.isArray(s.split.expenses))split=s.split;
+    if(s.sched&&Array.isArray(s.sched.stops))sched=s.sched;
+    if(s.memo&&Array.isArray(s.memo.notes))memo=s.memo;
+    if(s.pack&&Array.isArray(s.pack.common))pack=s.pack;
+    loaded=true;renderAll();
+  }
+  // メッセージは、操作した場所のすぐ近くに出す
+  function status(t,w,plain){
+    Object.keys(STATUS).forEach(function(k){var e=$(STATUS[k]);if(!e)return;
+      if(w==='all'||k===w){e.textContent=t;e.classList.toggle('err',/できません|でした|ください|もう|上限|使い切り|ません|ようです/.test(t)&&!plain&&!/保存しました|読み取りました|追加しました/.test(t))
+        clearTimeout(e._t);if(t==='保存しました')e._t=setTimeout(function(){if(e.textContent===t)e.textContent=''},2500)}
+      else if(w!=='all')e.textContent=''});
+  }
+  function net(ok){var n=$('net');if(n)n.hidden=ok;document.body.classList.toggle('neton',!ok)}
+  async function op(o,w){
+    pending++;status('保存中…',w);renderAll();
+    try{var s=await call('applyOp',o);apply(s);net(true);status('保存しました',w)}
+    catch(e){status('保存できませんでした。電波のいいところでもう一度お試しください',w);refresh()}
+    finally{pending--}
+  }
+  // ×ボタン：1回目で「消す？」に変わり、もう1回押すと消える
+  function armed(btn,fn){
+    var t=null;
+    btn.addEventListener('click',function(){
+      if(btn.classList.contains('arm')){clearTimeout(t);fn();return}
+      btn.classList.add('arm');btn.textContent='消す';
+      t=setTimeout(function(){btn.classList.remove('arm');btn.textContent='×'},3000);
+    });
+  }
+  async function refresh(){
+    if(pending)return;
+    try{var s=await call('getState');net(true);if(!pending)apply(s)}catch(e){if(!loaded)status('読み込めませんでした。ページを開き直してください','all');else net(false)}
+  }
+
+  function parseQ(q){var m=/^(\d+(?:\.\d+)?)(\D*)$/.exec(q||'');return m?{v:parseFloat(m[1]),u:m[2]}:null}
+  function shared(n,c){return c==="調味料"||SHARED[n]}
+  function scaleQ(q,s){
+    var p=parseQ(q);if(!p||s===11)return q;
+    var v=p.v*s/11,u=p.u;
+    if(u==='kg'){if(v<1)return(Math.ceil(v*1000/50)*50)+'g';return(Math.ceil(v*10)/10)+'kg'}
+    if(u==='g')return Math.max(50,Math.ceil(v/50)*50)+'g';
+    return Math.max(1,Math.ceil(v))+u;
+  }
+  function aggregate(){
+    var map={},order=[];
+    function add(n,q,c){
+      if(!n)return;
+      if(CATS.indexOf(c)<0)c="その他";
+      if(!map[n]){map[n]={n:n,q:q||"",c:c};order.push(n);return}
+      var a=map[n];
+      if(shared(n,a.c))return;
+      var pa=parseQ(a.q),pb=parseQ(q);
+      if(pa&&pb&&pa.u===pb.u){a.q=(Math.round((pa.v+pb.v)*10)/10)+pa.u}
+      else if(pa&&pb&&/^k?g$/.test(pa.u)&&/^k?g$/.test(pb.u)){var tg=(pa.u==='kg'?pa.v*1000:pa.v)+(pb.u==='kg'?pb.v*1000:pb.v);a.q=tg>=1000?(Math.round(tg/100)/10)+'kg':tg+'g'}
+      else if(q&&a.q!==q){a.q=a.q+"＋"+q}
+    }
+    BASE.forEach(function(b){add(b[0],b[1],b[2])});
+    state.dishes.forEach(function(d){var s=d.servings||11;(d.items||[]).forEach(function(it){add(it.n,shared(it.n,it.c)?it.q:scaleQ(it.q,s),it.c)})});
+    (state.extras||[]).forEach(function(x){add(x.n,x.q,x.c==='飲み物'?'飲み物':'その他')});
+    return order.map(function(k){return map[k]});
+  }
+  // 増えていくリストは、4件を超えたら枠の中でスクロールさせる（5件目が少しのぞく高さ）
+  var SCR={},FOCUS=null;
+  function capList(c,key,rowSel){
+    if(!c)return;c.dataset.k=key;c.classList.add('capbox');c.classList.remove('capped','at-end');c.style.maxHeight='';
+    var rows=[].filter.call(c.children,function(x){return!rowSel||x.matches(rowSel)});
+    if(rows.length>4){
+      var h=rows[3].offsetTop+rows[3].offsetHeight-rows[0].offsetTop+Math.round(rows[4].offsetHeight*.45);
+      c.style.maxHeight=h+'px';c.classList.add('capped');
+      var f=FOCUS&&rows.filter(function(r){return r.dataset.n===FOCUS})[0];
+      c.scrollTop=f?Math.max(0,f.offsetTop-h+f.offsetHeight):(SCR[key]||0);
+      var end=function(){c.classList.toggle('at-end',c.scrollTop+c.clientHeight>=c.scrollHeight-2)};end();
+      c.onscroll=function(){SCR[key]=c.scrollTop;end()};
+    }else c.onscroll=null;
+  }
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  var PAL=['accent','berry','moss','rock'];
+  function av(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;var a=el('span','av',Array.from(name)[0]||'');a.style.background='var(--'+PAL[h%PAL.length]+')';a.setAttribute('aria-hidden','true');return a}
+  function xBtn(label,fn,confirm){var x=el('button','dish-x','×');x.type='button';x.setAttribute('aria-label',label);if(confirm)armed(x,fn);else x.addEventListener('click',fn);return x}
+
+  function renderDishes(){
+    var box=$('dish-list');box.textContent='';
+    if(!loaded){box.appendChild(el('span','dish-empty','読み込み中…'));return}
+    if(!state.dishes.length)box.appendChild(el('span','dish-empty','まだ決まっていません'));
+    var top=Math.max.apply(null,[0].concat(state.dishes.map(function(d){return d.likes||0}))),crowned=false;
+    state.dishes.map(function(d,i){return{d:d,i:i}}).sort(function(a,b){return((b.d.likes||0)-(a.d.likes||0))||(a.i-b.i)}).forEach(function(o){
+      var d=o.d,chip=el('span','dish');
+      if(top>0&&(d.likes||0)===top&&!crowned){crowned=true;chip.className='dish top';var cr=el('span','crown');cr.innerHTML=CROWN;cr.title='いちばん人気';chip.appendChild(cr)}
+      if(d.url){var a=el('a','dish-ln',d.name);a.href=d.url;a.target='_blank';a.rel='noopener';chip.appendChild(a)}else chip.appendChild(el('span',null,d.name));
+      var lk=el('button','like'+(liked[d.name]?' on':''));lk.type='button';lk.innerHTML=HEART;lk.appendChild(el('span',null,String(d.likes||0)));
+      lk.setAttribute('aria-label',d.name+'にいいね'+(liked[d.name]?'（取り消す）':''));lk.setAttribute('aria-pressed',liked[d.name]?'true':'false');
+      lk.addEventListener('click',function(){var on=!liked[d.name];if(on)liked[d.name]=1;else delete liked[d.name];try{localStorage.setItem(LKEY,JSON.stringify(liked))}catch(e){}
+        d.likes=Math.max(0,(d.likes||0)+(on?1:-1));op({type:'likeDish',name:d.name,d:on?1:-1},'dish')});
+      chip.appendChild(lk);
+      var sv=el('span','sv'),num=el('span',null,(d.servings||11)+'人前');
+      [['−',-1],['+',1]].forEach(function(pair,k){
+        var b=el('button','sv-b',pair[0]);b.type='button';
+        b.setAttribute('aria-label',d.name+'を'+(pair[1]<0?'1人前減らす':'1人前増やす'));
+        b.addEventListener('click',function(){var s=(d.servings||11)+pair[1];if(s<1||s>30)return;d.servings=s;op({type:'setServings',name:d.name,servings:s},'dish')});
+        if(k===0){sv.appendChild(b);sv.appendChild(num)}else sv.appendChild(b);
+      });
+      chip.appendChild(sv);
+      chip.appendChild(xBtn(d.name+'を外す',function(){state.dishes=state.dishes.filter(function(x){return x!==d});op({type:'removeDish',name:d.name},'dish')},true));
+      box.appendChild(chip);
+    });
+  }
+  var ORDER=[["定番",["焼肉","ソーセージ","焼きそば","焼きおにぎり","焼きとうもろこし","じゃがバター","ホイル焼き","豚汁","焼き芋","スモア"]],
+             ["変わり種",["アヒージョ","カマンベールフォンデュ","焼きりんご","ビア缶チキン","カツオのたたき"]]];
+  function renderPresets(){
+    var box=$('preset-list');box.textContent='';
+    ORDER.forEach(function(g){
+      var names=g[1].filter(function(name){return PRESETS[name]&&!state.dishes.some(function(d){return d.name===name})});
+      if(!names.length)return;
+      var row=el('div','preset-g');
+      names.forEach(function(name){var b=el('button','preset','＋ '+name);b.type='button';b.addEventListener('click',function(){addPreset(name)});row.appendChild(b)});
+      box.appendChild(row);
+    });
+    var db=$('drink-list');db.textContent='';
+    DRINKS.forEach(function(d){
+      if((state.extras||[]).some(function(x){return x.n===d[0]}))return;
+      var b=el('button','preset','＋ '+d[0]);b.type='button';b.addEventListener('click',function(){addExtra(d[0],d[1],'飲み物')});db.appendChild(b);
+    });
+  }
+  function addExtra(n,q,c,w,msg){
+    w=w||'extra';
+    if(aggregate().some(function(it){return it.n===n})){status(n+'はもう買い出しリストにあります',w);return false}
+    var x={n:n,q:q||'1',c:c||(DRINK_RE.test(n)?'飲み物':'その他')};FOCUS=n;
+    state.extras.push(x);op({type:'addExtra',n:x.n,q:x.q,c:x.c},w).then(function(){if(msg)status(msg,w)});return true;
+  }
+  // 数の −/＋：重さは g でそろえて 100g（1kg 以上は 500g）ずつ、ほかは 1 ずつ
+  function qInfo(q){var p=parseQ(q);if(!p)return null;if(p.u==='kg')return{v:p.v*1000,u:'g',w:1};if(p.u==='g')return{v:p.v,u:'g',w:1};return{v:p.v,u:p.u,w:0}}
+  function fmtQ(v,i){if(i.w)return v>=1000?(Math.round(v/100)/10)+'kg':v+'g';return v+i.u}
+  function shrinkImage(f){
+    return new Promise(function(res,rej){
+      var img=new Image(),url=URL.createObjectURL(f);
+      img.onload=function(){var k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement('canvas');
+        c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg',0.82).split(',')[1])};
+      img.onerror=function(){rej(new Error('画像を開けませんでした'))};img.src=url;
+    });
+  }
+  async function addRecipe(arg){
+    var btns=document.querySelectorAll('#recipe-form button,#recipe-img-label');btns.forEach(function(b){b.classList.add('busy')});
+    status('Geminiがレシピを読んでいます…','dish');
+    try{
+      arg.have=aggregate().filter(function(it){return it.c==='調味料'}).map(function(it){return it.n}).join('、');
+      var r=await call('recipe',arg);
+      if(!r||!r.name){status('レシピを読み取れませんでした','dish');return}
+      var name=r.name;if(state.dishes.some(function(d){return d.name===name})){status(name+'はもう入っています','dish');return}
+      var dish={name:name,servings:11,items:(r.items||[]).slice(0,10),url:arg.url||''};
+      state.dishes.push(dish);await op({type:'addDish',dish:dish},'dish');
+      status(name+'を追加しました（材料'+dish.items.length+'品）','dish');
+    }catch(e){status('レシピを読み取れませんでした'+(e&&e.message?'（'+e.message+'）':''),'dish')}
+    finally{btns.forEach(function(b){b.classList.remove('busy')})}
+  }
+  function renderShop(){
+    var box=$('shop');box.textContent='';var list=aggregate();
+    CATS.forEach(function(c){
+      var items=list.filter(function(it){return it.c===c});if(!items.length)return;
+      var g=el('div');g.appendChild(el('h4',null,c));
+      var ul=el('ul');
+      items.forEach(function(it){
+        var li=el('li'),lb=el('label'),cb=document.createElement('input');li.dataset.n=it.n;
+        cb.type='checkbox';cb.checked=!!(state.bought||{})[it.n];cb.disabled=!loaded;
+        cb.addEventListener('change',function(){state.bought=state.bought||{};if(cb.checked)state.bought[it.n]=1;else delete state.bought[it.n];op({type:'setBought',n:it.n,v:cb.checked},'shop')});
+        var ex=(state.extras||[]).filter(function(x){return x.n===it.n})[0],qi=qInfo(it.q);
+        lb.appendChild(cb);lb.appendChild(el('span','nm',it.n));if(!qi)lb.appendChild(el('span','q',it.q));li.appendChild(lb);li.className='ex';
+        if(qi){
+          var adj=Number((state.adj||{})[it.n])||0,cur=Math.max(0,qi.v+adj);
+          if(cur===0)li.className='ex zero';
+          var sv=el('span','sv'),num=el('span',null,fmtQ(cur,qi));
+          [['−',-1],['+',1]].forEach(function(pair,k){
+            var b=el('button','sv-b',pair[0]);b.type='button';b.setAttribute('aria-label',it.n+'を'+(pair[1]<0?'減らす':'増やす'));
+            b.addEventListener('click',function(){
+              var st=qi.w?((pair[1]<0?cur>1000:cur>=1000)?500:100):1;
+              var nv=Math.max(0,Math.round((cur+pair[1]*st)*10)/10);if(nv===cur)return;
+              state.adj[it.n]=nv-qi.v;op({type:'adjQ',n:it.n,d:nv-qi.v},'shop');
+            });
+            if(k===0){sv.appendChild(b);sv.appendChild(num)}else sv.appendChild(b);
+          });
+          li.appendChild(sv);
+        }
+        if(ex){li.className+=' ex2';li.appendChild(xBtn(it.n+'を消す',function(){state.extras=state.extras.filter(function(x){return x!==ex});op({type:'removeExtra',n:it.n},'shop')},true))}
+        ul.appendChild(li);
+      });
+      g.appendChild(ul);box.appendChild(g);capList(ul,'shop-'+c);
+    });
+  }
+  function yen(n){return n.toLocaleString('ja-JP')+'円'}
+  function settle(){
+    var bal={};split.members.forEach(function(m){bal[m]=0});
+    split.expenses.forEach(function(x){
+      var s=(x.s||[]).filter(function(m){return m in bal});if(!s.length||!(x.p in bal))return;
+      var a=Math.round(x.a),share=Math.floor(a/s.length),rem=a-share*s.length;
+      bal[x.p]+=a;s.forEach(function(m,i){bal[m]-=share+(i<rem?1:0)});
+    });
+    var cr=[],dr=[];
+    Object.keys(bal).forEach(function(m){if(bal[m]>0)cr.push({m:m,v:bal[m]});else if(bal[m]<0)dr.push({m:m,v:-bal[m]})});
+    cr.sort(function(a,b){return b.v-a.v});dr.sort(function(a,b){return b.v-a.v});
+    var out=[],i=0,j=0;
+    while(i<dr.length&&j<cr.length){var v=Math.min(dr[i].v,cr[j].v);if(v>0)out.push({f:dr[i].m,t:cr[j].m,v:v});dr[i].v-=v;cr[j].v-=v;if(!dr[i].v)i++;if(!cr[j].v)j++}
+    return out;
+  }
+  function renderSplit(){
+    var ml=$('mem-list');ml.textContent='';$('mem-n').textContent=split.members.length;
+    var ms=$('me-sel');ms.textContent='';var mo=el('option',null,'自分を選ぶ');mo.value='';ms.appendChild(mo);
+    split.members.forEach(function(m){var o=el('option',null,m);o.value=m;ms.appendChild(o)});
+    ms.value=split.members.indexOf(me)>=0?me:'';$('me-row').hidden=!split.members.length;
+    var isIn=split.members.indexOf(me)>=0;
+    $('me-line').hidden=!(isIn&&!memOpen);$('mem-card').hidden=isIn&&!memOpen;
+    $('mem-close').hidden=!isIn;$('me-name').textContent=me;$('me-count').textContent='メンバー'+split.members.length+'人';
+    $('mem-input').placeholder=isIn?'ほかのメンバーを追加':'自分のニックネームを入れる';
+    $('mem-form').querySelector('button').textContent=isIn?'追加':'登録';
+    if(!split.members.length)ml.appendChild(el('span','dish-empty',loaded?'まだ誰もいません':'読み込み中…'));
+    split.members.forEach(function(m){
+      var chip=el('span','mem');chip.appendChild(av(m));chip.appendChild(el('span',null,m));
+      chip.appendChild(xBtn(m+'を外す',function(){
+        if(split.expenses.some(function(x){return x.p===m||(x.s||[]).indexOf(m)>=0})){status(m+'さんは支払いに入っているので外せません。先にその支払いを消してください','mem');return}
+        split.members=split.members.filter(function(x){return x!==m});op({type:'removeMember',name:m},'mem');
+      }));
+      ml.appendChild(chip);
+    });
+    var sel=$('pay-payer'),cur=sel.value;sel.textContent='';
+    var o0=el('option',null,'払った人');o0.value='';sel.appendChild(o0);
+    split.members.forEach(function(m){var o=el('option',null,m);o.value=m;sel.appendChild(o)});
+    if(split.members.indexOf(cur)>=0)sel.value=cur;
+    var who=$('pay-who'),was={};
+    who.querySelectorAll('.who-pick input').forEach(function(c){was[c.value]=c.checked});
+    who.textContent='';
+    var al=el('label','who-all'),ac=document.createElement('input');ac.type='checkbox';ac.checked=whoAll;
+    ac.addEventListener('change',function(){whoAll=ac.checked;pick.hidden=whoAll});
+    al.appendChild(ac);al.appendChild(document.createTextNode('全員で割る'));who.appendChild(al);
+    var pick=el('div','who-pick');pick.hidden=whoAll;pick.appendChild(el('span','who-l','割る人を選ぶ'));
+    split.members.forEach(function(m){var lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=(m in was)?was[m]:true;cb.value=m;lb.appendChild(cb);lb.appendChild(document.createTextNode(m));pick.appendChild(lb)});
+    who.appendChild(pick);
+    var pl=$('pay-list');pl.textContent='';
+    if(!split.expenses.length)pl.appendChild(el('div','split-empty','支払いはまだありません'));
+    var total=0;
+    split.expenses.forEach(function(x){
+      total+=x.a;var row=el('div','pay-row');
+      row.appendChild(av(x.p));
+      row.appendChild(el('span','pt',x.t));
+      row.appendChild(el('span','pa',yen(x.a)));
+      row.appendChild(xBtn(x.t+'を消す',function(){split.expenses=split.expenses.filter(function(y){return y!==x});op({type:'removeExpense',id:x.id},'pay')},true));
+      var n=(x.s||[]).length;
+      row.appendChild(el('span','pm',x.p+'さんが払った・'+(n===split.members.length?'全員':n+'人')+'で割る'));
+      row.dataset.n=x.id||'';pl.appendChild(row);
+    });
+    capList(pl,'pay','.pay-row');
+    var pt=$('pay-total');pt.textContent='';
+    if(split.expenses.length){var tr=el('div','pay-total');tr.appendChild(el('span',null,'合計'));tr.appendChild(el('span',null,yen(total)));pt.appendChild(tr)}
+    var st=$('settle');st.textContent='';var res=settle();
+    if(!split.expenses.length)st.appendChild(el('div','split-empty','支払いを入れると、誰が誰にいくら払えばいいかがここに出ます'));
+    else if(!res.length)st.appendChild(el('div','split-empty','精算はありません'));
+    var paid=split.paid||{},done=0;
+    res.forEach(function(r){
+      var key=r.f+'>'+r.t+':'+r.v,isPaid=!!paid[key];if(isPaid)done++;
+      var row=el('div','settle-row'+(isPaid?' paid':''));
+      var a=el('span','p');a.appendChild(av(r.f));a.appendChild(el('span','nm',r.f));row.appendChild(a);
+      var ln=el('span','line');ln.setAttribute('aria-label','から');row.appendChild(ln);
+      var b=el('span','p');b.appendChild(av(r.t));b.appendChild(el('span','nm',r.t+' へ'));row.appendChild(b);
+      row.appendChild(el('span','amt',yen(r.v)));
+      var pc=el('label','paid-chk'),pi=document.createElement('input');pi.type='checkbox';pi.checked=isPaid;
+      pi.setAttribute('aria-label',r.f+'さんから'+r.t+'さんへ'+yen(r.v)+'、払った');
+      pi.addEventListener('change',function(){split.paid=split.paid||{};if(pi.checked)split.paid[key]=1;else delete split.paid[key];op({type:'setPaid',k:key,v:pi.checked},'pay')});
+      pc.appendChild(pi);row.insertBefore(pc,row.firstChild);
+      st.appendChild(row);
+    });
+    if(res.length&&done===res.length){
+      var dn=el('div','settle-done');
+      dn.innerHTML='<span class="joy" aria-hidden="true"><svg class="h h1" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>'+
+        '<svg class="h h2" viewBox="0 0 24 24"><use href="#leaf"/></svg><svg class="h h3" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>'+
+        '<svg class="h h4" viewBox="0 0 24 24"><use href="#ginkgo"/></svg><svg class="cw" viewBox="-2 -4 68 42"><use href="#cow"/></svg></span><span>精算おわり</span>';
+      st.appendChild(dn);
+    }
+  }
+  function renderWants(){
+    var box=$('want-list');box.textContent='';var ws=state.wants||[];
+    if(!loaded)box.appendChild(el('span','dish-empty','読み込み中…'));
+    var reg=split.members.indexOf(me)>=0;
+    ws.forEach(function(w){
+      var by=(w.by||[]).filter(function(m){return split.members.indexOf(m)>=0}),mine=by.indexOf(me)>=0;
+      var row=el('div','want-row want2'+(by.length?' has':''));
+      var main=el('div','w-main');main.appendChild(el('span','w-n',w.n));
+      var who=el('span','w-by');
+      by.forEach(function(m){var a=av(m);a.removeAttribute('aria-hidden');a.setAttribute('role','img');a.setAttribute('aria-label',m);a.title=m;who.appendChild(a)});
+      if(by.length)main.appendChild(who);row.appendChild(main);
+      var b=el('button','w-btn'+(mine?' on':''),mine?'取り消す':'持っていく');b.type='button';
+      b.setAttribute('aria-label',w.n+(mine?'を持っていくのをやめる':'を持っていく'));
+      b.addEventListener('click',function(){
+        if(!reg){status('先にいちばん上の「メンバー」でニックネームを登録してください','want');return}
+        var v=!mine;w.by=by.filter(function(m){return m!==me});if(v)w.by.push(me);w.ok=w.by.length?1:0;
+        op({type:'wantBy',n:w.n,who:me,v:v},'want');
+      });
+      row.appendChild(b);
+      row.appendChild(xBtn(w.n+'を消す',function(){state.wants=state.wants.filter(function(x){return x!==w});op({type:'removeWant',n:w.n},'want')},true));
+      row.dataset.n=w.n;box.appendChild(row);
+    });
+    capList(box,'want');
+    $('want-count').textContent='';
+  }
+  var PIN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>';
+  function mapUrl(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
+  function tmin(t){var m=/^(\d{1,2}):(\d{2})$/.exec(t||'');return m?(+m[1])*60+(+m[2]):-1}
+  function renderSched(){
+    if(!sched)return;
+    [1,2].forEach(function(day){
+      var ol=$('route-'+day);if(!ol)return;ol.textContent='';
+      sched.stops.map(function(x,i){return{x:x,i:i}}).filter(function(o){return o.x.d===day})
+        .sort(function(a,b){return(tmin(a.x.t)-tmin(b.x.t))||(a.i-b.i)})
+        .forEach(function(o){
+          var x=o.x,li=el('li','stop'+(x.k?' key':'')+(editId===x.id?' editing':''));
+          li.appendChild(el('time',null,x.t||'???'));li.appendChild(el('span','dot'));
+          var body=el('div','body'),head=el('div','st-head');head.appendChild(el('span','t',x.n));body.appendChild(head);
+          // 2行目：メモと地図リンクを同じ小さな文字でそろえる
+          var m=x.m||[],meta=el('div','meta');
+          function mapA(label,q){var a=el('a','pin');a.href=mapUrl(q);a.target='_blank';a.rel='noopener';a.innerHTML=PIN;a.appendChild(document.createTextNode(label));return a}
+          if(m.length===1&&x.s&&!/^候補/.test(x.s))meta.appendChild(mapA(x.s,m[0]));
+          else{
+            if(x.s)meta.appendChild(el('span','s',x.s+(m.length>1?'：':'')));
+            if(m.length===1)meta.appendChild(mapA('地図',m[0]));
+            else m.forEach(function(q,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(q,q))});
+          }
+          if(/チェックイン/.test(x.n)){var sb=el('button','to-stay','宿の情報');sb.type='button';sb.addEventListener('click',function(){var t=$('stay');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});meta.appendChild(sb)}
+          if(meta.childNodes.length)body.appendChild(meta);
+          if(schedEdit){
+            var ed=el('span','st-ed');
+            var fix=el('button','st-fix','直す');fix.type='button';fix.addEventListener('click',function(){startEdit(x)});ed.appendChild(fix);
+            ed.appendChild(xBtn(x.n+'を消す',function(){if(editId===x.id)resetSched();sched.stops=sched.stops.filter(function(y){return y!==x});op({type:'removeStop',id:x.id},'sched')},true));
+            head.appendChild(ed);
+          }
+          li.appendChild(body);ol.appendChild(li);
+        });
+    });
+    if(typeof placeCow==='function')placeCow();
+  }
+  function startEdit(x){
+    editId=x.id;$('sc-d').value=String(x.d);$('sc-t').value=x.t||'';$('sc-n').value=x.n;$('sc-s').value=x.s||'';$('sc-m').value=(x.m||[]).join('、');$('sc-k').checked=!!x.k;
+    $('sc-more').open=!!(x.s||(x.m&&x.m.length)||x.k);
+    $('sc-submit').textContent='直す';$('sc-cancel').hidden=false;status(x.n+'を直しています','sched');renderSched();
+    $('sched-form').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  function resetSched(){editId=null;$('sched-form').reset();$('sc-more').open=false;$('sc-submit').textContent='追加';$('sc-cancel').hidden=true}
+  // ---- 時間で変わるもの：カウントダウン、スケジュールの線を歩く牛、夜の星空
+  var TRIP=[new Date(2026,10,7),new Date(2026,10,8)];
+  function now(){return window.__now?new Date(window.__now):new Date()}
+  function dayIdx(d){var t=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();return TRIP.findIndex(function(x){return x.getTime()===t})}
+  function renderCount(){
+    var n=now(),c=$('count');if(!c)return;
+    var t0=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),days=Math.round((TRIP[0].getTime()-t0)/864e5),di=dayIdx(n);
+    if(days>1)c.innerHTML='出発まで あと<b>'+days+'</b>日';
+    else if(days===1)c.innerHTML='出発は <b>あした</b>';
+    else if(di>=0)c.innerHTML='<b>'+(di+1)+'日目</b> いってらっしゃい';
+    else c.textContent='おつかれさまでした';
+  }
+  function placeCow(){
+    document.querySelectorAll('.now-cow,.now-line').forEach(function(e){e.remove()});
+    var n=now(),di=dayIdx(n),day,mins=n.getHours()*60+n.getMinutes();
+    if(di>=0)day=di+1;else if(n<TRIP[0])day=1;else day=2;
+    var ol=$('route-'+day);if(!ol)return;
+    var pts=[].map.call(ol.querySelectorAll('.stop'),function(li){var m=tmin(li.querySelector('time').textContent);var d=li.querySelector('.dot');return{m:m,y:d.offsetTop+d.offsetHeight/2+li.offsetTop}}).filter(function(p){return p.m>=0});
+    if(!pts.length)return;
+    var y;
+    if(di<0)y=n<TRIP[0]?pts[0].y-20:pts[pts.length-1].y;
+    else if(mins<pts[0].m)y=pts[0].y-20;
+    else if(mins<=pts[0].m)y=pts[0].y;
+    else if(mins>=pts[pts.length-1].m)y=pts[pts.length-1].y;
+    else for(var i=0;i<pts.length-1;i++){if(mins>=pts[i].m&&mins<pts[i+1].m){y=pts[i].y+(pts[i+1].y-pts[i].y)*(mins-pts[i].m)/(pts[i+1].m-pts[i].m);break}}
+    // 牛が丸（予定の点）に重ならないよう、点の近くでは点の少し上か下に立たせる
+    if(di>=0&&mins>=pts[0].m&&mins<pts[pts.length-1].m)pts.forEach(function(p){if(y>p.y-12&&y<p.y+30)y=(y<p.y+8)?p.y-12:p.y+30});
+    else if(di>=0&&mins>=pts[pts.length-1].m)y=pts[pts.length-1].y+30;
+    var top=pts[0].y;
+    if(di>=0||n>TRIP[1]){var ln=el('span','now-line');ln.style.top=top+'px';ln.style.height=Math.max(0,y-top)+'px';ol.appendChild(ln)}
+    var cw=el('span','now-cow');cw.style.top=y+'px';cw.innerHTML='<svg viewBox="-2 -4 68 42"><use href="#cow"/></svg>';
+    cw.title=di>=0?'いまここ':(n<TRIP[0]?'出発まち':'おつかれさま');ol.appendChild(cw);
+  }
+  function nightMode(){
+    var n=now(),m=n.getHours()*60+n.getMinutes(),on=m>=16*60+40||m<6*60;
+    document.documentElement.classList.toggle('night',on);
+    var sky=$('stars');
+    if(on&&sky&&!sky.childNodes.length){for(var i=0;i<70;i++){var s=el('i');s.style.left=(Math.random()*100)+'%';s.style.top=(Math.random()*100)+'%';
+      var z=Math.random()<.15?3:Math.random()<.5?2:1.4;s.style.width=s.style.height=z+'px';s.style.animationDelay=(-Math.random()*4)+'s';s.style.animationDuration=(2.5+Math.random()*3)+'s';sky.appendChild(s)}}
+  }
+  function tick(){renderCount();placeCow();nightMode();renderNow()}
+  setInterval(tick,60000);window.addEventListener('resize',placeCow);
+  // 文字（フォント）が読み込まれて行の高さが変わったら、牛の位置を測り直す
+  try{document.fonts.ready.then(placeCow)}catch(e){}
+  if(window.ResizeObserver){var ro=new ResizeObserver(function(){clearTimeout(ro._t);ro._t=setTimeout(placeCow,50)});[1,2].forEach(function(d){var o=$('route-'+d);if(o)ro.observe(o)})}
+  // ---- 天気
+  var WX=null;
+  function wxKind(c){if(c<=1)return['sun','晴れ'];if(c===2)return['part','晴れ時々くもり'];if(c===3)return['cloud','くもり'];if(c===45||c===48)return['cloud','霧'];
+    if((c>=71&&c<=77)||c===85||c===86)return['snow','雪'];if(c>=95)return['rain','雷雨'];if(c>=51)return['rain','雨'];return['cloud','くもり']}
+  var WXI={sun:'<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
+    part:'<circle cx="9" cy="9" r="3.5"/><path d="M9 2.5v1.5M2.5 9H4M4.4 4.4l1 1M13.6 4.4l-1 1"/><path d="M8 19h9a3.5 3.5 0 0 0 .3-7A5 5 0 0 0 8.2 14 2.5 2.5 0 0 0 8 19z"/>',
+    cloud:'<path d="M7 18.5h10a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7 12a3.3 3.3 0 0 0 0 6.5z"/>',
+    rain:'<path d="M7 15h10a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7 8.5a3.3 3.3 0 0 0 0 6.5z"/><path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5"/>',
+    snow:'<path d="M7 15h10a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7 8.5a3.3 3.3 0 0 0 0 6.5z"/><path d="M8.5 19h.01M12 20.5h.01M15.5 19h.01"/>'};
+  function renderWeather(){
+    [1,2].forEach(function(day){
+      var box=$('wx-'+day);if(!box)return;box.textContent='';
+      var w=WX&&WX[day-1];
+      if(!w||w.hi==null){box.appendChild(el('span','wx-none',WX?'天気は1週間前ごろから出ます':''));return}
+      var k=wxKind(w.c),ic=el('span','wx-ic '+k[0]);ic.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+WXI[k[0]]+'</svg>';box.appendChild(ic);
+      box.appendChild(el('span','wx-t',k[1]));
+      var tp=el('span','wx-temp');tp.innerHTML='<b>'+Math.round(w.hi)+'°</b> / '+Math.round(w.lo)+'°';box.appendChild(tp);
+      if(w.p!=null)box.appendChild(el('span','wx-p','雨 '+w.p+'%'));
+    });
+  }
+  function loadWeather(){call('weather').then(function(r){WX=Array.isArray(r)?r:[];renderWeather()}).catch(function(){WX=[];renderWeather()})}
+  // ---- 思い出
+  function renderMemo(){
+    var al=$('album');if(!al)return;al.textContent='';
+    if(memo.album){
+      var a=el('a','album-btn','みんなの写真アルバムを開く');a.href=memo.album;a.target='_blank';a.rel='noopener';al.appendChild(a);
+      var ch=el('button','st-fix','リンクを変える');ch.type='button';ch.addEventListener('click',function(){$('album-form').hidden=false;$('album-url').value=memo.album;$('album-url').focus()});al.appendChild(ch);
+      $('album-form').hidden=true;
+    }else $('album-form').hidden=false;
+  }
+  // ---- 持ち物（一人ずつ）
+  function packItems(m){
+    var list=pack.common.map(function(n){return{n:n,all:1}}).concat(((pack.own||{})[m]||[]).map(function(n){return{n:n,all:0}}));
+    // 「あれば嬉しい」で「持っていく」を押したものも、その人の持ち物に入れる
+    (state.wants||[]).forEach(function(w){if((w.by||[]).indexOf(m)>=0&&!list.some(function(it){return it.n===w.n}))list.push({n:w.n,all:0,want:1})});
+    return list;
+  }
+  function packDone(m){var d=(pack.done||{})[m]||{};return packItems(m).filter(function(it){return d[it.n]}).length}
+  function renderPack(){
+    var tabs=$('pack-tabs'),list=$('pack-list');if(!tabs)return;tabs.textContent='';list.textContent='';
+    if(!pack){list.appendChild(el('span','dish-empty','読み込み中…'));return}
+    if(!split.members.length){list.appendChild(el('div','split-empty','いちばん上の「メンバー」にニックネームを入れると、ここに一人ずつのタブが出ます'));$('pack-form').hidden=true;return}
+    $('pack-form').hidden=false;
+    if(split.members.indexOf(packWho)<0)packWho=split.members.indexOf(me)>=0?me:split.members[0];
+    split.members.forEach(function(m){
+      var all=packItems(m).length,dn=packDone(m);
+      var b=el('button','ptab'+(m===packWho?' on':'')+(all&&dn===all?' ok':''));b.type='button';b.setAttribute('aria-pressed',m===packWho?'true':'false');
+      b.appendChild(el('span',null,m));b.appendChild(el('span','pc',dn+'/'+all));
+      b.addEventListener('click',function(){packWho=m;renderPack()});
+      tabs.appendChild(b);
+    });
+    var d=(pack.done||{})[packWho]||{};
+    packItems(packWho).forEach(function(it){
+      var row=el('div','want-row'),lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!d[it.n];
+      cb.addEventListener('change',function(){pack.done[packWho]=pack.done[packWho]||{};if(cb.checked)pack.done[packWho][it.n]=1;else delete pack.done[packWho][it.n];op({type:'setPack',who:packWho,n:it.n,v:cb.checked},'pack')});
+      lb.appendChild(cb);lb.appendChild(el('span',null,it.n));if(it.want)lb.appendChild(el('span','pall','あれば嬉しい'));else if(!it.all)lb.appendChild(el('span','pall','この人だけ'));row.appendChild(lb);
+      row.appendChild(xBtn(it.n+'を消す'+(it.all?'（全員から）':''),function(){
+        if(it.want){var w=(state.wants||[]).filter(function(x){return x.n===it.n})[0];if(w){w.by=(w.by||[]).filter(function(x){return x!==packWho});w.ok=w.by.length?1:0}
+          op({type:'wantBy',n:it.n,who:packWho,v:false},'pack').then(function(){status(it.n+'は「あれば嬉しい」の持っていく人から外しました','pack',true)});return}
+        if(it.all)pack.common=pack.common.filter(function(x){return x!==it.n});else pack.own[packWho]=(pack.own[packWho]||[]).filter(function(x){return x!==it.n});
+        op({type:'removePack',who:packWho,n:it.n,all:it.all},'pack').then(function(){if(it.all)status(it.n+'を全員の持ち物から消しました','pack',true)});
+      },true));
+      row.dataset.n=it.n;list.appendChild(row);
+    });
+    capList(list,'pack-'+packWho);
+  }
+  // ---- いまやること（時期で変わる）
+  function go(id){var t=$(id);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
+  function stopMin(day,re,fb){var x=sched&&sched.stops.filter(function(y){return y.d===day&&re.test(y.n)&&tmin(y.t)>=0})[0];return x?tmin(x.t):fb}
+  function renderNow(){
+    var box=$('now-acts');if(!box)return;box.textContent='';
+    if(!loaded){$('now-card').hidden=true;return}
+    var n=now(),di=dayIdx(n),mins=n.getHours()*60+n.getMinutes(),acts=[];
+    var t0=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),days=Math.round((TRIP[0].getTime()-t0)/864e5);
+    var reg=split.members.indexOf(me)>=0;
+    var packLeft=reg&&pack?packItems(me).length-packDone(me):null;
+    var shopLeft=aggregate().filter(function(it){return!(state.bought||{})[it.n]}).length;
+    if(days>=1){
+      if(days>1)acts.push(['food','作りたいものを選ぶ','食べたいものにいいね']);
+      acts.push(['pack',days===1?'持ち物の最終チェック':'持ち物をチェック',packLeft==null?'自分のタブで確認':(packLeft?'あと'+packLeft+'個':'全部そろっています')]);
+    }else if(di===0){
+      // 予定は押しがちなので、切り替えは少し遅めに（買い出しの15分前から、買い終わるかチェックインの1時間後まで）
+      var buy=stopMin(1,/買い出し|ツルヤ/,14*60),ci=stopMin(1,/チェックイン/,15*60+30);
+      if(mins<buy-15)acts.push(['plan','今日の予定','牛がいるところが今です']);
+      else if(mins<ci+60&&(shopLeft||mins<buy+30))acts.push(['buy','買い出しリストを開く',shopLeft?'まだ'+shopLeft+'品':'全部買えました']);
+      else acts.push(['food','BBQのメニュー','作るものを確認']);
+    }else if(di===1&&mins<stopMin(2,/小田原.*着|帰着/,18*60)-30){
+      acts.push(['plan','今日の予定',mins<stopMin(2,/帰路/,13*60)+30?'紅葉めぐりの候補と地図':'帰り道。気をつけて']);
+    }else{
+      var res=settle(),paid=split.paid||{},left=res.filter(function(r){return!paid[r.f+'>'+r.t+':'+r.v]}).length;
+      acts.push(['budget','精算する',split.expenses.length?(left?'未精算が'+left+'件':'精算おわり'):'支払いを入れよう']);
+      acts.push(['memo','写真をアルバムに','みんなの写真を集めよう']);
+    }
+    acts.slice(0,2).forEach(function(a){
+      var b=el('button','now-act');b.type='button';var t=el('span');t.appendChild(el('b',null,a[1]));t.appendChild(el('small',null,a[2]));b.appendChild(t);
+      b.addEventListener('click',function(){if(a[0]==='members'){memOpen=true;renderSplit();$('mem-input').focus()}go(a[0])});box.appendChild(b);
+    });
+    $('now-card').hidden=!acts.length;
+  }
+  function renderAll(){renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
+
+  function addPreset(name){
+    if(state.dishes.some(function(d){return d.name===name}))return;
+    var dish={name:name,servings:11,items:PRESETS[name].map(function(r){return{n:r[0],q:r[1],c:r[2]}})};
+    state.dishes.push(dish);op({type:'addDish',dish:dish},'dish');
+  }
+  async function addCustom(name){
+    name=(name||'').trim().slice(0,30);if(!name)return;
+    if(PRESETS[name]){addPreset(name);return}
+    if(DRINK_RE.test(name)&&name.length<=12){var dq=(DRINKS.filter(function(d){return d[0]===name})[0]||[])[1]||'1本';addExtra(name,dq,'飲み物','dish',name+'は飲み物として買い出しリストに入れました。数はリストで変えられます');return}
+    if(state.dishes.some(function(d){return d.name===name})){status(name+'はもう入っています','dish');return}
+    var btn=$('dish-add'),items=[];
+    btn.disabled=true;status('Geminiが材料を考えています…','dish');
+    try{
+      var have=aggregate().filter(function(it){return it.c==='調味料'}).map(function(it){return it.n}).join('、');
+      var r=await call('suggest',{name:name,have:have});
+      if(Array.isArray(r))items=r.filter(function(it){return it&&it.n}).slice(0,8).map(function(it){return{n:String(it.n).slice(0,30),q:String(it.q||'').slice(0,12),c:CATS.indexOf(it.c)>=0?it.c:'その他'}});
+    }catch(e){status('材料を出せなかったので、料理だけ追加しました'+(e&&e.message?'（'+e.message+'）':''),'dish')}
+    btn.disabled=false;
+    var dish={name:name,servings:11,items:items};
+    state.dishes.push(dish);op({type:'addDish',dish:dish},items.length?'dish':null);
+  }
+
+  $('dish-form').addEventListener('submit',function(ev){ev.preventDefault();var inp=$('dish-input');var v=inp.value;inp.value='';addCustom(v)});
+  $('mem-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var inp=$('mem-input'),v=inp.value.trim().slice(0,20);
+    if(!v)return;if(split.members.indexOf(v)>=0){status(v+'さんはもういます','mem');return}
+    var self=split.members.indexOf(me)<0;
+    inp.value='';split.members.push(v);if(self)setMe(v);
+    op({type:'addMember',name:v},'mem').then(function(){status(self?v+'さん、ようこそ。自分の持ち物は「持ち物」で見られます':v+'さんを追加しました','mem',true)});
+  });
+  $('receipt').addEventListener('change',function(){
+    var f=this.files&&this.files[0],inp=this;if(!f)return;
+    var lab=$('receipt-label');lab.textContent='読み取り中…';
+    var img=new Image(),url=URL.createObjectURL(f);
+    img.onload=function(){
+      var k=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');
+      c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+      var b64=c.toDataURL('image/jpeg',0.8).split(',')[1];
+      status('レシートを読んでいます…','pay');
+      call('readReceipt',{data:b64,mime:'image/jpeg'}).then(function(r){
+        if(r&&r.t)$('pay-title').value=r.t;
+        if(r&&r.a)$('pay-amount').value=r.a;
+        status(r&&r.a?'読み取りました。金額を確認して、払った人と割る人を選んで「支払いを追加」を押してください':'金額が読み取れませんでした。手で入れてください','pay');
+      }).catch(function(e){status('レシートを読み取れませんでした'+(e&&e.message?'（'+e.message+'）':''),'pay')})
+      .then(function(){lab.textContent='レシートの写真から読み取る';inp.value=''});
+    };
+    img.onerror=function(){status('画像を開けませんでした','pay');lab.textContent='レシートの写真から読み取る';inp.value=''};
+    img.src=url;
+  });
+  $('recipe-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var u=$('recipe-url').value.trim();
+    if(!/^https?:\/\//.test(u)){status('レシピのURL（https://〜）を貼ってください','dish');return}
+    $('recipe-url').value='';addRecipe({url:u});
+  });
+  $('recipe-img').addEventListener('change',function(){
+    var f=this.files&&this.files[0],inp=this;if(!f)return;
+    shrinkImage(f).then(function(b64){return addRecipe({data:b64})}).catch(function(e){status(e.message,'dish')}).then(function(){inp.value=''});
+  });
+  $('extra-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var n=$('extra-n').value.trim().slice(0,30),q=$('extra-q').value.trim().slice(0,12);
+    if(!n){status('追加するものを入れてください','extra');return}
+    if(/^\d+(\.\d+)?$/.test(q))q=q+(DRINK_RE.test(n)?'本':'個');
+    if(addExtra(n,q)){$('extra-n').value='';$('extra-q').value=''}
+  });
+  $('want-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var n=$('want-n').value.trim().slice(0,30);
+    if(!n)return;
+    if((state.wants||[]).some(function(w){return w.n===n})){status(n+'はもう入っています','want');return}
+    $('want-n').value='';FOCUS=n;state.wants.push({n:n,ok:0});op({type:'addWant',n:n},'want');
+  });
+  $('sched-toggle').addEventListener('click',function(){
+    schedEdit=!schedEdit;$('sched-form').hidden=!schedEdit;this.textContent=schedEdit?'編集をおわる':'スケジュールを編集';this.setAttribute('aria-expanded',schedEdit);
+    if(!schedEdit){resetSched();status('','sched')}
+    if(schedEdit&&!sched)status('読み込み中です。少し待ってからもう一度押してください','sched');
+    renderSched();
+  });
+  $('sc-cancel').addEventListener('click',function(){resetSched();status('','sched');renderSched()});
+  $('sched-form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    if(!sched){status('読み込み中です。少し待ってからお試しください','sched');return}
+    var t=$('sc-t').value.trim().replace(/：/g,':').replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248)});
+    if(/^\d{3,4}$/.test(t))t=t.slice(0,-2)+':'+t.slice(-2);
+    var n=$('sc-n').value.trim().slice(0,30);
+    if(!n){status('内容を入れてください','sched');return}
+    if(t&&!/^\d{1,2}:\d{2}$/.test(t)){status('時間は 13:30 のように入れてください（未定なら空のまま）','sched');return}
+    if(t&&(tmin(t)>=24*60||+t.split(':')[1]>59)){status('時間が正しくありません','sched');return}
+    var x={d:+$('sc-d').value===2?2:1,t:t,n:n,s:$('sc-s').value.trim().slice(0,40),k:$('sc-k').checked?1:0,
+      m:$('sc-m').value.split(/[、,，]/).map(function(q){return q.trim().slice(0,40)}).filter(String).slice(0,4)};
+    if(editId){
+      if(!sched.stops.some(function(y){return y.id===editId})){status('この予定はほかの人が消したようです','sched');resetSched();return}
+      var id=editId;sched.stops=sched.stops.map(function(y){return y.id===id?Object.assign({id:id},x):y});resetSched();op({type:'updateStop',id:id,stop:x},'sched');
+    }else{
+      sched.stops.push(x);$('sched-form').reset();$('sc-more').open=false;op({type:'addStop',stop:x},'sched');
+    }
+  });
+  $('album-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var u=$('album-url').value.trim();
+    if(!/^https:\/\//.test(u)){status('アルバムのリンク（https://〜）を貼ってください','memo');return}
+    memo.album=u;$('album-url').value='';op({type:'setAlbum',u:u},'memo');
+  });
+  // 交通費などのよく使う内容は、ボタンで入れられるように
+  document.querySelectorAll('#pay-quick button').forEach(function(b){b.addEventListener('click',function(){
+    $('pay-title').value=b.dataset.t;payKey='';
+    var who=b.dataset.p&&split.members.filter(function(m){return new RegExp('^('+b.dataset.p+')').test(m)})[0];
+    if(who)$('pay-payer').value=who;
+    $('pay-amount').focus();status(b.dataset.t+'の金額を入れてください'+(who?'':'。払った人も選んでください'),'pay',true);
+  })});
+  $('pack-form').addEventListener('submit',function(ev){
+    ev.preventDefault();if(!pack)return;
+    var n=$('pack-n').value.trim().slice(0,30),all=$('pack-all').value==='all';
+    if(!n){status('持ち物の名前を入れてください','pack');return}
+    if(packItems(packWho).some(function(it){return it.n===n})){status(n+'はもう入っています','pack');return}
+    $('pack-n').value='';FOCUS=n;
+    if(all)pack.common.push(n);else{pack.own[packWho]=pack.own[packWho]||[];pack.own[packWho].push(n)}
+    op({type:'addPack',who:packWho,n:n,all:all},'pack');
+  });
+  $('me-sel').addEventListener('change',function(){setMe(this.value);memOpen=false;renderAll()});
+  $('me-open').addEventListener('click',function(){memOpen=true;renderSplit()});
+  $('mem-close').addEventListener('click',function(){memOpen=false;status('','mem');renderSplit()});
+  var payKey='';
+  ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
+  var tocB=document.querySelectorAll('.toc button');
+  tocB.forEach(function(b){b.addEventListener('click',function(){var t=$(b.dataset.to);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+  function tocOn(){var cur=null;tocB.forEach(function(b){var t=$(b.dataset.to);if(t){var r=t.getBoundingClientRect();if(r.top<140&&r.bottom>140)cur=b}});
+    tocB.forEach(function(b){b.classList.toggle('on',b===cur)})}
+  window.addEventListener('scroll',tocOn,{passive:true});tocOn();
+  // いちばん上へ戻るボタン（少し下に進んだら出す）
+  var tt=$('to-top');
+  // 上にスクロールしたときだけ出して、読んでいるときは邪魔しない
+  var lastY=window.scrollY;
+  function ttOn(){var y=window.scrollY;if(y<700||y>lastY+4)tt.hidden=true;else if(y<lastY-4)tt.hidden=false;lastY=y}
+  tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+  window.addEventListener('scroll',ttOn,{passive:true});ttOn();
+  $('pay-form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var t=$('pay-title').value.trim().slice(0,30)||'支払い',a=parseInt($('pay-amount').value,10),p=$('pay-payer').value;
+    var s=whoAll?split.members.slice():Array.prototype.map.call(document.querySelectorAll('#pay-who .who-pick input:checked'),function(c){return c.value});
+    if(!split.members.length){status('先にいちばん上の「メンバー」にニックネームを入れてください','pay');return}
+    if(!(a>0)){status('金額を入れてください','pay');return}
+    if(!p){status('払った人を選んでください','pay');return}
+    if(!s.length){status('割る人を1人以上選んでください','pay');return}
+    // 二重登録・桁まちがいの確認（同じ内容でもう一度押すと追加）
+    var key=[t,a,p,s.join(',')].join('|'),warn='';
+    if(split.expenses.some(function(y){return y.a===a&&y.p===p}))warn=p+'さんの'+yen(a)+'の支払いはもう入っています。別の支払いなら、もう一度「支払いを追加」を押してください';
+    else if(a>=100000)warn=yen(a)+'で合っていますか？合っていれば、もう一度「支払いを追加」を押してください';
+    if(warn&&payKey!==key){payKey=key;status(warn,'pay');return}
+    payKey='';
+    $('pay-title').value='';$('pay-amount').value='';
+    whoAll=true;$('pay-who').querySelectorAll('.who-pick input').forEach(function(c){c.checked=true});
+    var x={t:t,a:a,p:p,s:s};
+    split.expenses.push(x);op({type:'addExpense',expense:x},'pay');
+  });
+
+  renderAll();refresh();tick();loadWeather();setInterval(loadWeather,3600000);
+  setInterval(function(){if(document.visibilityState==='visible')refresh()},20000);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refresh()});
+})();
+</script>
+
+
+</body>
+</html>
