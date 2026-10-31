@@ -292,6 +292,10 @@ function mutate_(s, o) {
       else if (av.a.length || av.d.length) s.memo.avoid[aw] = av; else delete s.memo.avoid[aw];
       return;
     }
+    case 'setCheckin':
+      // 宿のチェックイン方法（予約メールや宿からの案内を貼る）
+      s.memo.checkin = String(o.t == null ? '' : o.t).trim().slice(0, 1500);
+      return;
     case 'setAlbum': {
       var au = str_(o.u, 500);
       s.memo.album = /^https:\/\//.test(au) ? au : '';

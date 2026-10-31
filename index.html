@@ -395,12 +395,22 @@ html.locked,html.locked body{overflow:hidden}
 .av-nones{display:inline-flex;align-items:center;gap:3px;font-size:12px;color:var(--mute)}
 .av-nones .av{width:20px;height:20px;font-size:10px}
 .sc-places{display:grid;gap:6px}
-.pl-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 6px;padding:8px;border:1px dashed var(--line);border-radius:12px}
-.pl-row .pl-u{grid-column:1/2}
-.pl-row .dish-x{grid-row:1/3;grid-column:2;align-self:center}
+.pl-row{display:grid;gap:6px;padding:10px 12px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.pl-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--mute)}
 .sched-form .pl-row input{width:100%}
 .sc-addpl{justify-self:start}
 .sc-addpl[hidden]{display:none}
+.ci{margin:14px 0 4px;padding:12px 14px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.ci-h{display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.ci-h b{color:var(--accent)}
+#ci-edit[hidden],#ci-cancel[hidden],.ci-form[hidden],.ci-t[hidden]{display:none}
+.ci-t{margin:6px 0 0;font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.ci-t.empty{color:var(--mute)}
+.ci-form{display:grid;gap:8px;margin-top:8px}
+.ci-form textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--fg);resize:vertical}
+.ci-btns{display:flex;gap:8px;align-items:center}
+.ci-save{font:inherit;font-weight:700;padding:8px 18px;border:0;border-radius:999px;background:var(--accent);color:var(--paper);cursor:pointer}
+.sc-more #sc-s{width:100%}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -803,6 +813,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       <h3>Re to Li（りとり）</h3>
       <a class="stay-addr" href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>嬬恋村鎌原1054-37</a>
       <div class="stay-times"><span><b>IN</b>15:00〜21:00</span><span><b>OUT</b>〜10:00</span></div>
+      <div class="ci" id="ci">
+        <div class="ci-h"><b>チェックイン方法</b><button type="button" class="st-fix" id="ci-edit" hidden>直す</button></div>
+        <p class="ci-t" id="ci-t"></p>
+        <form class="ci-form" id="ci-form" hidden>
+          <textarea id="ci-in" rows="5" placeholder="予約メールや宿からの案内（鍵の受け取り方・駐車場など）を貼ってください" aria-label="チェックイン方法"></textarea>
+          <div class="ci-btns"><button type="submit" class="ci-save">保存</button><button type="button" class="st-fix" id="ci-cancel">やめる</button></div>
+        </form>
+        <span class="dish-status" id="ci-status" role="status"></span>
+      </div>
       <details class="amen">
         <summary>アメニティ（あるもの）</summary>
         <div class="amen-grid">
@@ -919,7 +938,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
   var state={dishes:[]},split={members:[],expenses:[]};
   var pending=0,loaded=false;
-  var STATUS={av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
+  var STATUS={ci:'ci-status',av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
   var $=function(id){return document.getElementById(id)};
 
   function call(fn,arg){
@@ -1292,12 +1311,13 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     return /^https?:/.test(q)?{l:'',u:q,q:''}:{l:'',u:'',q:q}}
   function addPlaceRow(p){
     var box=$('sc-places');if(box.children.length>=4)return;
-    var row=el('div','pl-row'),n=document.createElement('input'),u=document.createElement('input');
+    var row=el('div','pl-row'),head=el('div','pl-head'),n=document.createElement('input'),u=document.createElement('input');
     n.type='text';n.className='pl-n';n.placeholder='場所の名前（例：ツルヤ 軽井沢店）';n.setAttribute('aria-label','場所の名前');n.autocomplete='off';n.value=p?(p.l||p.q||''):'';
     u.type='url';u.className='pl-u';u.placeholder='Googleマップのリンク（任意）';u.setAttribute('aria-label','Googleマップのリンク');u.autocomplete='off';u.value=p&&p.u?p.u:'';
-    var x=el('button','dish-x','×');x.type='button';x.setAttribute('aria-label','この場所を消す');x.addEventListener('click',function(){row.remove();if(!box.children.length)addPlaceRow();placeBtn()});
-    row.appendChild(n);row.appendChild(u);row.appendChild(x);box.appendChild(row);placeBtn();return row;
+    var x=el('button','dish-x','×');x.type='button';x.setAttribute('aria-label','この場所を消す');x.addEventListener('click',function(){row.remove();if(!box.children.length)addPlaceRow();numberPlaces();placeBtn()});
+    head.appendChild(el('span','pl-no','場所'));head.appendChild(x);row.appendChild(head);row.appendChild(n);row.appendChild(u);box.appendChild(row);numberPlaces();placeBtn();return row;
   }
+  function numberPlaces(){[].forEach.call($('sc-places').children,function(r,i,all){r.querySelector('.pl-no').textContent=all.length>1?'場所'+(i+1):'場所'})}
   function placeBtn(){$('sc-addpl').hidden=$('sc-places').children.length>=4}
   function setPlaces(m){var box=$('sc-places');box.textContent='';(m&&m.length?m:['']).forEach(function(q){addPlaceRow(q?parsePlace(q):null)})}
   function getPlaces(){return[].map.call($('sc-places').children,function(r){
@@ -1524,7 +1544,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var nl=$('av-nones');nl.textContent='';var ns=split.members.filter(function(m){return avm[m]&&avm[m].none});
     if(ns.length){nl.appendChild(el('span',null,'特になし：'));ns.forEach(function(m){var a=av(m);a.title=m;a.setAttribute('role','img');a.setAttribute('aria-label',m);a.removeAttribute('aria-hidden');nl.appendChild(a)})}
   }
-  function renderAll(){renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
+  // ---- 宿のチェックイン方法
+  var ciEditing=false;
+  function renderCheckin(){
+    var t=(memo.checkin||'').trim(),txt=$('ci-t');if(!txt)return;
+    var editing=ciEditing||!t;
+    $('ci-form').hidden=!editing;txt.hidden=editing;$('ci-edit').hidden=editing;$('ci-cancel').hidden=!t;
+    txt.textContent=t;
+  }
+  function renderAll(){renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
 
   function addPreset(name){
     if(state.dishes.some(function(d){return d.name===name}))return;
@@ -1660,6 +1688,11 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(split.members.indexOf(me)<0){status('先にいちばん上の「メンバー」で自分を選んでください','av');return}
     memo.avoid=memo.avoid||{};memo.avoid[me]={a:[],d:[],none:1};op({type:'setAvoid',who:me,none:1},'av');
   });
+  $('ci-edit').addEventListener('click',function(){ciEditing=true;$('ci-in').value=memo.checkin||'';renderCheckin();$('ci-in').focus()});
+  $('ci-cancel').addEventListener('click',function(){ciEditing=false;renderCheckin()});
+  $('ci-form').addEventListener('submit',function(ev){ev.preventDefault();var t=$('ci-in').value.trim().slice(0,1500);
+    if(!t){status('チェックイン方法を入れてください','ci');return}
+    memo.checkin=t;ciEditing=false;renderCheckin();op({type:'setCheckin',t:t},'ci')});
   var payKey='';
   ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
   var tocB=document.querySelectorAll('.toc button');
