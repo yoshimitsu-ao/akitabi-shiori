@@ -483,3 +483,24 @@ function steps(arg) {
   var arr = callGemini_(cfg, [{ text: prompt }]);
   return Array.isArray(arr) ? arr.map(function (t) { return str_(t, 120); }).filter(String).slice(0, 8) : [];
 }
+
+/**
+ * チェックインコードを、パスコードが合ったときだけ返す。
+ * コードとパスコードはこのファイル（GitHub に公開される）には書かず、
+ * プロジェクトの設定 → スクリプト プロパティに入れる：
+ *   CHECKIN_CODE : チェックインコード
+ *   CHECKIN_PASS : 見るためのパスコード（4桁）
+ */
+function checkinCode(arg) {
+  var props = PropertiesService.getScriptProperties();
+  var code = props.getProperty('CHECKIN_CODE'), pass = props.getProperty('CHECKIN_PASS');
+  if (!code || !pass) throw new Error('まだ設定されていません');
+  var cache = CacheService.getScriptCache();
+  var fails = Number(cache.get('ci_fail') || 0);
+  if (fails >= 10) throw new Error('間違いが多いので、10分ほど待ってからお試しください');
+  if (String((arg && arg.p) || '').trim() !== String(pass).trim()) {
+    cache.put('ci_fail', String(fails + 1), 600);
+    throw new Error('パスコードが違います');
+  }
+  return { code: code };
+}

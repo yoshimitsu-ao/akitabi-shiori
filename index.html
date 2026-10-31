@@ -420,6 +420,16 @@ html.locked,html.locked body{overflow:hidden}
 .ci-steps .ci-warn{color:var(--berry);font-weight:700}
 .ci-note{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
 .ci-nl{font-size:12px;color:var(--mute)}
+.ci-code{margin-top:12px}
+.ci-lock{display:flex;gap:8px}
+.ci-lock[hidden],.ci-show[hidden]{display:none}
+.ci-lock input{flex:1;min-width:0;font:inherit;font-size:16px;letter-spacing:.3em;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--fg)}
+.ci-lock button{flex:none;font:inherit;font-weight:700;padding:9px 16px;border:0;border-radius:999px;background:var(--fg);color:var(--paper);cursor:pointer}
+.ci-lock button:disabled{opacity:.5}
+.ci-show{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:var(--paper);border:1px solid var(--accent)}
+.ci-show span{font-size:12px;color:var(--mute)}
+.ci-show b{font-family:var(--f-mono);font-size:26px;letter-spacing:.12em}
+.ci-show .st-fix{margin-left:auto}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -830,6 +840,13 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           <li><b>4桁の鍵番号が出る</b><span class="ci-warn">滞在中に忘れないよう、各自でメモしておく</span></li>
           <li><b>宿泊棟へ車で移動して入室</b><span>各宿泊棟の前に駐車スペースあり</span></li>
         </ol>
+        <div class="ci-code" id="ci-code">
+          <form class="ci-lock" id="ci-lock" novalidate>
+            <input id="ci-pass" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="パスコード4桁" aria-label="チェックインコードを見るためのパスコード">
+            <button type="submit">コードを見る</button>
+          </form>
+          <div class="ci-show" id="ci-show" hidden><span>チェックインコード</span><b id="ci-val"></b><button type="button" class="st-fix" id="ci-hide">隠す</button></div>
+        </div>
         <div class="ci-note">
           <div class="ci-h"><span class="ci-nl">メモ</span><button type="button" class="st-fix" id="ci-edit">書く</button></div>
           <p class="ci-t" id="ci-t" hidden></p>
@@ -1710,6 +1727,16 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   $('ci-form').addEventListener('submit',function(ev){ev.preventDefault();var t=$('ci-in').value.trim().slice(0,1500);
     if(/\b\d{4}\b/.test(t)&&/鍵|キー|番号/.test(t)&&!confirm('鍵の番号が入っていませんか？ しおりはリンクを知っている人なら誰でも見られます。このまま保存しますか？'))return;
     memo.checkin=t;ciEditing=false;renderCheckin();op({type:'setCheckin',t:t},'ci')});
+  // チェックインコードはパスコードが合ったときだけサーバーから受け取る（ページには書いていない）
+  $('ci-lock').addEventListener('submit',async function(ev){
+    ev.preventDefault();var p=$('ci-pass').value.trim();
+    if(!/^\d{4}$/.test(p)){status('パスコードは数字4桁です','ci');return}
+    var btn=this.querySelector('button');btn.disabled=true;
+    try{var r=await call('checkinCode',{p:p});$('ci-val').textContent=r.code;$('ci-show').hidden=false;$('ci-lock').hidden=true;$('ci-pass').value='';status('','ci')}
+    catch(e){status((e&&e.message)||'コードを出せませんでした','ci');$('ci-pass').value=''}
+    finally{btn.disabled=false}
+  });
+  $('ci-hide').addEventListener('click',function(){$('ci-val').textContent='';$('ci-show').hidden=true;$('ci-lock').hidden=false});
   var payKey='';
   ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
   var tocB=document.querySelectorAll('.toc button');
