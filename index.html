@@ -1068,12 +1068,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var who=$('pay-who'),was={};
     who.querySelectorAll('.who-pick input').forEach(function(c){was[c.value]=c.checked});
     who.textContent='';
-    var al=el('label','who-all'),ac=document.createElement('input');ac.type='checkbox';ac.checked=whoAll;
-    ac.addEventListener('change',function(){whoAll=ac.checked;pick.hidden=whoAll});
+    // 割る人はいつも見えていて、最初は全員にチェック。「全員で割る」で全員をまとめて付け外しできる
+    var al=el('label','who-all'),ac=document.createElement('input');ac.type='checkbox';
     al.appendChild(ac);al.appendChild(document.createTextNode('全員で割る'));who.appendChild(al);
-    var pick=el('div','who-pick');pick.hidden=whoAll;pick.appendChild(el('span','who-l','割る人を選ぶ'));
-    split.members.forEach(function(m){var lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=(m in was)?was[m]:true;cb.value=m;lb.appendChild(cb);lb.appendChild(document.createTextNode(m));pick.appendChild(lb)});
-    who.appendChild(pick);
+    var pick=el('div','who-pick');pick.appendChild(el('span','who-l','割る人'));
+    split.members.forEach(function(m){var lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=(m in was)?was[m]:true;cb.value=m;
+      cb.addEventListener('change',syncAll);lb.appendChild(cb);lb.appendChild(document.createTextNode(m));pick.appendChild(lb)});
+    function syncAll(){var bs=pick.querySelectorAll('input');ac.checked=bs.length>0&&[].every.call(bs,function(c){return c.checked})}
+    ac.addEventListener('change',function(){pick.querySelectorAll('input').forEach(function(c){c.checked=ac.checked})});
+    who.appendChild(pick);syncAll();
     var pl=$('pay-list');pl.textContent='';
     if(!split.expenses.length)pl.appendChild(el('div','split-empty','支払いはまだありません'));
     var total=0;
@@ -1467,7 +1470,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   $('pay-form').addEventListener('submit',function(ev){
     ev.preventDefault();
     var t=$('pay-title').value.trim().slice(0,30)||'支払い',a=parseInt($('pay-amount').value,10),p=$('pay-payer').value;
-    var s=whoAll?split.members.slice():Array.prototype.map.call(document.querySelectorAll('#pay-who .who-pick input:checked'),function(c){return c.value});
+    var s=Array.prototype.map.call(document.querySelectorAll('#pay-who .who-pick input:checked'),function(c){return c.value});
     if(!split.members.length){status('先にいちばん上の「メンバー」にニックネームを入れてください','pay');return}
     if(!(a>0)){status('金額を入れてください','pay');return}
     if(!p){status('払った人を選んでください','pay');return}
@@ -1479,7 +1482,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(warn&&payKey!==key){payKey=key;status(warn,'pay');return}
     payKey='';
     $('pay-title').value='';$('pay-amount').value='';
-    whoAll=true;$('pay-who').querySelectorAll('.who-pick input').forEach(function(c){c.checked=true});
+    $('pay-who').querySelectorAll('input').forEach(function(c){c.checked=true});
     var x={t:t,a:a,p:p,s:s};
     split.expenses.push(x);op({type:'addExpense',expense:x},'pay');
   });
