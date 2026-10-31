@@ -252,7 +252,7 @@ dl.kv dd{margin:0;min-width:0}
 .crown{display:inline-flex;margin-right:2px}.crown svg{width:16px;height:11px;fill:var(--accent)}
 .album{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
 .album:empty{display:none}
-.album-btn{display:inline-block;font-weight:700;text-decoration:none;padding:10px 18px;border-radius:999px;background:var(--accent);color:var(--paper)}
+.album-btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;padding:10px 18px;border-radius:999px;background:var(--accent);color:var(--paper)}
 .album-btn:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 #album-form[hidden]{display:none}
 .notes{display:grid;gap:8px;margin-bottom:12px}
@@ -328,6 +328,7 @@ input[type=text],input[type=url],input[type=number],select,textarea{font-size:16
 .to-top svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .to-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .net:not([hidden]) ~ .to-top,body.neton .to-top{bottom:calc(76px + env(safe-area-inset-bottom))}
+.album-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -697,10 +698,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 <div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv drop" style="left:12%;width:12px;height:12px;color:var(--maple);--r:0deg;animation-delay:-1s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:40%;width:14px;height:14px;color:var(--larch);--r:-15deg"><use href="#leaf"/></svg><svg class="lv" style="left:44%;width:10px;height:10px;color:var(--larch);--r:40deg"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:77%;width:13px;height:13px;color:var(--berry);--r:0deg;animation-delay:-5s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv" style="left:93%;width:11px;height:11px;color:var(--maple);--r:10deg"><use href="#leaf"/></svg></div>
 
 <section id="memo">
-  <div class="sec-h"><h2>思い出</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Memories</span></div>
+  <div class="sec-h"><h2>写真アルバム</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Photos</span></div>
   <div class="album" id="album"></div>
   <form class="dish-form" id="album-form" novalidate>
-    <input id="album-url" type="url" inputmode="url" placeholder="共有アルバムのリンクを貼る" aria-label="共有アルバムのリンク" autocomplete="off">
+    <input id="album-url" type="url" inputmode="url" placeholder="Googleフォトの共有リンクを貼る" aria-label="共有アルバムのリンク" autocomplete="off">
     <button type="submit">保存</button>
   </form>
   <span class="dish-status" id="memo-status" role="status"></span>
@@ -1247,7 +1248,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function renderMemo(){
     var al=$('album');if(!al)return;al.textContent='';
     if(memo.album){
-      var a=el('a','album-btn','みんなの写真アルバムを開く');a.href=memo.album;a.target='_blank';a.rel='noopener';al.appendChild(a);
+      var a=el('a','album-btn');a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>';a.appendChild(document.createTextNode('写真を見る・追加する'));a.href=memo.album;a.target='_blank';a.rel='noopener';al.appendChild(a);
       var ch=el('button','st-fix','リンクを変える');ch.type='button';ch.addEventListener('click',function(){$('album-form').hidden=false;$('album-url').value=memo.album;$('album-url').focus()});al.appendChild(ch);
       $('album-form').hidden=true;
     }else $('album-form').hidden=false;
@@ -1313,7 +1314,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     }else{
       var res=settle(),paid=split.paid||{},left=res.filter(function(r){return!paid[r.f+'>'+r.t+':'+r.v]}).length;
       acts.push(['budget','精算する',split.expenses.length?(left?'未精算が'+left+'件':'精算おわり'):'支払いを入れよう']);
-      acts.push(['memo','写真をアルバムに','みんなの写真を集めよう']);
+      acts.push(['memo','写真アルバム','撮った写真を見る・追加する']);
     }
     acts.slice(0,2).forEach(function(a){
       var b=el('button','now-act');b.type='button';var t=el('span');t.appendChild(el('b',null,a[1]));t.appendChild(el('small',null,a[2]));b.appendChild(t);
