@@ -329,6 +329,13 @@ input[type=text],input[type=url],input[type=number],select,textarea{font-size:16
 .to-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .net:not([hidden]) ~ .to-top,body.neton .to-top{bottom:calc(76px + env(safe-area-inset-bottom))}
 .album-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.stay-card h3{margin:0 0 6px}
+.stay-addr{display:inline-flex;align-items:center;gap:4px;font-size:14px;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--accent)}
+.stay-addr svg{width:15px;height:15px;fill:none;stroke:var(--accent);stroke-width:2}
+.stay-times{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.stay-times span{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--f-mono);font-size:14px;padding:4px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.stay-times b{font-size:11px;letter-spacing:.08em;color:var(--accent)}
+.stay-site{display:inline-block;margin-top:12px;font-size:13px;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--accent)}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -715,13 +722,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <div class="stay">
     <div class="stay-card">
       <h3>Re to Li（りとり）</h3>
-      <dl class="kv">
-        <dt>住所</dt><dd>群馬県吾妻郡嬬恋村鎌原1054-37</dd>
-        <dt>チェックイン</dt><dd class="mono">15:00 – 21:00</dd>
-        <dt>チェックアウト</dt><dd class="mono">– 10:00</dd>
-      </dl>
+      <a class="stay-addr" href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>嬬恋村鎌原1054-37</a>
+      <div class="stay-times"><span><b>IN</b>15:00〜21:00</span><span><b>OUT</b>〜10:00</span></div>
       <details class="amen">
-        <summary>アメニティ一覧を見る</summary>
+        <summary>アメニティ（あるもの）</summary>
         <div class="amen-grid">
           <div><h4>キッチン</h4><ul><li>IHコンロ・シンク・食洗機</li><li>冷蔵庫・電子レンジ</li><li>炊飯器（3合）・ケトル</li><li>食器（平皿・スープ皿・グラス・箸・スプーン・フォーク）</li><li>塩・コショウ</li></ul></div>
           <div><h4>調理器具</h4><ul><li>フライパン（大・小）・鍋</li><li>ボウル・ザル</li><li>まな板・包丁</li><li>菜箸・トング・お玉・フライ返し・しゃもじ</li><li>ラップ・ホイル</li></ul></div>
@@ -731,7 +735,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           <div><h4>その他</h4><ul><li>Wi-Fi・TV・エアコン</li><li>Bluetoothスピーカー</li><li>LEDランタン・カードゲーム</li><li>虫よけスプレー・掃除機</li><li>ウェルカムドリンク（無料）</li></ul></div>
         </div>
       </details>
-      <div class="lk" style="margin-top:16px"><a href="https://retoli.jp/" target="_blank" rel="noopener">公式サイト</a><a href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener">地図</a></div>
+      <a class="stay-site" href="https://retoli.jp/" target="_blank" rel="noopener">公式サイト</a>
     </div>
   </div>
   <h3 class="sub-h">周辺のおすすめ</h3>
