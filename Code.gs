@@ -72,7 +72,7 @@ function load_() {
   try { bbq = JSON.parse(r[0][0] || ''); } catch (e) {}
   try { split = JSON.parse(r[1][0] || ''); } catch (e) {}
   try { sched = JSON.parse(r[2][0] || ''); } catch (e) {}
-  if (!sched || !Array.isArray(sched.stops)) sched = { v: 2, stops: DEFAULT_STOPS.map(function (x, i) { var o = JSON.parse(JSON.stringify(x)); o.id = 's' + i; return o; }) };
+  if (!sched || !Array.isArray(sched.stops)) sched = { v: 3, stops: DEFAULT_STOPS.map(function (x, i) { var o = JSON.parse(JSON.stringify(x)); o.id = 's' + i; return o; }) };
   if (!sched.v) {
     // 2026/10/31 の変更：いちご狩りに会場名、チェックアウトもチェックインと同じ太字に
     sched.stops.forEach(function (x) {
@@ -80,6 +80,11 @@ function load_() {
       if (x.n === 'チェックアウト') x.k = 1;
     });
     sched.v = 2;
+  }
+  if (sched.v < 3) {
+    // 2026/11/01 の変更：買い出しの地図をお店の名前で出す
+    sched.stops.forEach(function (x) { if (/ツルヤ/.test(x.n) && !x.s) x.s = 'ツルヤ 軽井沢店'; });
+    sched.v = 3;
   }
   if (!bbq || !Array.isArray(bbq.dishes)) bbq = { dishes: [] };
   if (!bbq.bought || typeof bbq.bought !== 'object') bbq.bought = {};
@@ -125,7 +130,7 @@ var DEFAULT_STOPS = [
   { d: 1, t: '7:00', n: '小田原 出発' },
   { d: 1, t: '11:15', n: 'いちご狩り', k: 1, s: '軽井沢ガーデンファーム', m: ['軽井沢ガーデンファームいちご園'] },
   { d: 1, t: '12:15', n: '軽井沢で昼食' },
-  { d: 1, t: '14:00', n: '買い出し（ツルヤ）', m: ['ツルヤ 軽井沢店'] },
+  { d: 1, t: '14:00', n: '買い出し（ツルヤ）', s: 'ツルヤ 軽井沢店', m: ['ツルヤ 軽井沢店'] },
   { d: 1, t: '14:45', n: '白糸の滝', m: ['白糸の滝 軽井沢'] },
   { d: 1, t: '15:30', n: 'チェックイン', k: 1, m: ['Re to Li りとり 嬬恋村'] },
   { d: 1, t: '16:00', n: 'BBQ・焚き火', k: 1, s: '日没 16:40' },
@@ -141,7 +146,7 @@ var DEFAULT_STOPS = [
 function stop_(x) {
   var t = str_(x.t, 5);
   if (t && !/^\d{1,2}:\d{2}$/.test(t)) t = '';
-  var m = (Array.isArray(x.m) ? x.m : []).map(function (q) { return str_(q, 40); }).filter(String).slice(0, 4);
+  var m = (Array.isArray(x.m) ? x.m : []).map(function (q) { return str_(q, 300); }).filter(String).slice(0, 4);
   return { d: x.d == 2 ? 2 : 1, t: t, n: str_(x.n, 30), s: str_(x.s, 40), k: x.k ? 1 : 0, m: m };
 }
 

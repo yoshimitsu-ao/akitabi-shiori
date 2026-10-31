@@ -655,8 +655,8 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     </div>
     <details class="sc-more" id="sc-more">
       <summary>メモ・地図・目立たせる</summary>
-      <input id="sc-s" type="text" placeholder="メモ（例：日没 16:40）" aria-label="メモ" autocomplete="off">
-      <input id="sc-m" type="text" placeholder="地図の場所（複数は「、」で区切る）" aria-label="地図で開く場所" autocomplete="off">
+      <input id="sc-s" type="text" placeholder="メモ・お店の名前（例：ツルヤ 軽井沢店）" aria-label="メモ" autocomplete="off">
+      <input id="sc-m" type="text" placeholder="地図：場所の名前か Google マップのリンク" aria-label="地図で開く場所" autocomplete="off">
       <label class="chk"><input type="checkbox" id="sc-k"> 大事な予定として目立たせる</label>
     </details>
     <button type="button" id="sc-cancel" class="ghost" hidden>やめる</button>
@@ -1257,12 +1257,13 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           var body=el('div','body'),head=el('div','st-head');head.appendChild(el('span','t',x.n));body.appendChild(head);
           // 2行目：メモと地図リンクを同じ小さな文字でそろえる
           var m=x.m||[],meta=el('div','meta');
-          function mapA(label,q){var a=el('a','pin');a.href=mapUrl(q);a.target='_blank';a.rel='noopener';a.innerHTML=PIN;a.appendChild(document.createTextNode(label));return a}
+          // 地図の欄には、場所の名前でも Google マップのリンクでも入れられる
+          function mapA(label,q){var a=el('a','pin');a.href=/^https?:\/\//.test(q)?q:mapUrl(q);a.target='_blank';a.rel='noopener';a.innerHTML=PIN;a.appendChild(document.createTextNode(label));return a}
           if(m.length===1&&x.s&&!/^候補/.test(x.s))meta.appendChild(mapA(x.s,m[0]));
           else{
             if(x.s)meta.appendChild(el('span','s',x.s+(m.length>1?'：':'')));
             if(m.length===1)meta.appendChild(mapA('地図',m[0]));
-            else m.forEach(function(q,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(q,q))});
+            else m.forEach(function(q,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(/^https?:/.test(q)?'地図'+(i+1):q,q))});
           }
           if(/チェックイン/.test(x.n)){var sb=el('button','to-stay','宿の情報');sb.type='button';sb.addEventListener('click',function(){var t=$('stay');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});meta.appendChild(sb)}
           if(meta.childNodes.length)body.appendChild(meta);
@@ -1386,7 +1387,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     packItems(packWho).forEach(function(it){
       var row=el('div','want-row'),lb=el('label'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!d[it.n];
       cb.addEventListener('change',function(){pack.done[packWho]=pack.done[packWho]||{};if(cb.checked)pack.done[packWho][it.n]=1;else delete pack.done[packWho][it.n];op({type:'setPack',who:packWho,n:it.n,v:cb.checked},'pack')});
-      lb.appendChild(cb);lb.appendChild(el('span',null,it.n));if(!it.all&&!it.want)lb.appendChild(el('span','pall','この人だけ'));row.appendChild(lb);
+      lb.appendChild(cb);lb.appendChild(el('span',null,it.n));row.appendChild(lb);
       row.appendChild(xBtn(it.n+'を消す'+(it.all?'（全員から）':''),function(){
         if(it.want){var w=(state.wants||[]).filter(function(x){return x.n===it.n})[0];if(w){w.by=(w.by||[]).filter(function(x){return x!==packWho});w.ok=w.by.length?1:0}
           op({type:'wantBy',n:it.n,who:packWho,v:false},'pack').then(function(){status(it.n+'は「あれば嬉しい」の持っていく人から外しました','pack',true)});return}
@@ -1588,7 +1589,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(t&&!/^\d{1,2}:\d{2}$/.test(t)){status('時間は 13:30 のように入れてください（未定なら空のまま）','sched');return}
     if(t&&(tmin(t)>=24*60||+t.split(':')[1]>59)){status('時間が正しくありません','sched');return}
     var x={d:+$('sc-d').value===2?2:1,t:t,n:n,s:$('sc-s').value.trim().slice(0,40),k:$('sc-k').checked?1:0,
-      m:$('sc-m').value.split(/[、,，]/).map(function(q){return q.trim().slice(0,40)}).filter(String).slice(0,4)};
+      m:$('sc-m').value.split(/[、,，\s]+(?=https?:)|[、,，]/).map(function(q){return q.trim().slice(0,300)}).filter(String).slice(0,4)};
     if(editId){
       if(!sched.stops.some(function(y){return y.id===editId})){status('この予定はほかの人が消したようです','sched');resetSched();return}
       var id=editId;sched.stops=sched.stops.map(function(y){return y.id===id?Object.assign({id:id},x):y});resetSched();op({type:'updateStop',id:id,stop:x},'sched');
