@@ -430,6 +430,11 @@ html.locked,html.locked body{overflow:hidden}
 .ci-show span{font-size:12px;color:var(--mute)}
 .ci-show b{font-family:var(--f-mono);font-size:26px;letter-spacing:.12em}
 .ci-show .st-fix{margin-left:auto}
+.ci-sum{cursor:pointer;list-style:none}
+.ci-sum::-webkit-details-marker{display:none}
+.ci-sum b::before{content:"+ ";font-family:var(--f-mono)}
+.ci[open] .ci-sum b::before{content:"− "}
+.ci:not([open]){padding-block:10px}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -832,8 +837,8 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       <h3>Re to Li（りとり）</h3>
       <a class="stay-addr" href="https://www.google.com/maps/search/?api=1&amp;query=Re+to+Li+りとり+嬬恋村" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>嬬恋村鎌原1054-37</a>
       <div class="stay-times"><span><b>IN</b>15:00〜21:00</span><span><b>OUT</b>〜10:00</span></div>
-      <div class="ci" id="ci">
-        <div class="ci-h"><b>チェックイン方法</b><span class="ci-from">15:00から</span></div>
+      <details class="ci" id="ci">
+        <summary class="ci-h ci-sum"><b>チェックイン方法</b><span class="ci-from">15:00から</span></summary>
         <ol class="ci-steps">
           <li><b>管理棟の受付へ</b><span>管理棟の前に車を停めて、Reception カウンターへ</span></li>
           <li><b>タブレットでチェックイン</b><span>チェックインコードを入力するか、QRコードをかざす</span></li>
@@ -856,7 +861,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           </form>
         </div>
         <span class="dish-status" id="ci-status" role="status"></span>
-      </div>
+      </details>
       <details class="amen">
         <summary>アメニティ（あるもの）</summary>
         <div class="amen-grid">
@@ -1328,7 +1333,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
             if(x.s)meta.appendChild(el('span','s',x.s+(ps.length>1?'：':'')));
             ps.forEach(function(p,i){if(i)meta.appendChild(el('span','sep','/'));meta.appendChild(mapA(p.l||(ps.length===1?'地図':(p.u?'地図'+(i+1):p.q)),p))});
           }
-          if(/チェックイン/.test(x.n)){var sb=el('button','to-stay','宿の情報');sb.type='button';sb.addEventListener('click',function(){var t=$('stay');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});meta.appendChild(sb)}
+          if(/チェックイン/.test(x.n)){var sb=el('button','to-stay','宿の情報');sb.type='button';sb.addEventListener('click',function(){var t=$('stay');if($('ci'))$('ci').open=true;if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});meta.appendChild(sb)}
           if(meta.childNodes.length)body.appendChild(meta);
           if(schedEdit){
             var ed=el('span','st-ed');
