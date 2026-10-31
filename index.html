@@ -781,7 +781,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <script>
 (function(){
-  var CATS=["肉・魚","野菜・果物","主食・締め","飲み物","調味料","その他"];
+  var CATS=["肉・魚","野菜・果物","主食・締め","乳製品・おやつ","飲み物","調味料","その他"];
+  // 「その他」に入ってしまったものを、名前から正しい分類に振り分け直す
+  var SNACK_RE=/チーズ|カマンベール|モッツァレラ|マシュマロ|ビスケット|クラッカー|チョコ|牛乳|ヨーグルト|生クリーム|アイス|お菓子|スナック|ポテチ/;
+  function fixCat(n,c){if(c!=='その他')return c;if(SNACK_RE.test(n))return'乳製品・おやつ';if(/ビール|日本酒|ワイン|焼酎|ジュース|コーラ|サイダー|ハイボール|チューハイ/.test(n))return'飲み物';if(/こんにゃく/.test(n))return'野菜・果物';return c}
   // 飲み物などは「料理」ではなく、そのまま買い出しリストに入れる
   var DRINKS=[["ビール","24本"],["ハイボール","12本"],["チューハイ","12本"],["ソフトドリンク（2L）","4本"],["お茶（2L）","4本"],["水（2L）","4本"]];
   var DRINK_RE=/ビール|ハイボール|チューハイ|サワー|ワイン|日本酒|焼酎|梅酒|ジュース|コーラ|サイダー|お茶|麦茶|緑茶|水|ドリンク|コーヒー|酒/;
@@ -876,6 +879,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     function add(n,q,c){
       if(!n)return;
       if(CATS.indexOf(c)<0)c="その他";
+      c=fixCat(n,c);
       if(!map[n]){map[n]={n:n,q:q||"",c:c};order.push(n);return}
       var a=map[n];
       if(shared(n,a.c))return;
