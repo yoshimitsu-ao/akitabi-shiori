@@ -283,7 +283,8 @@ function mutate_(s, o) {
       if (members.indexOf(aw) < 0) return;
       var clean = function (arr) { return (Array.isArray(arr) ? arr : []).map(function (t) { return str_(t, 20); }).filter(String).slice(0, 12); };
       var av = { a: clean(o.a), d: clean(o.d) };
-      if (av.a.length || av.d.length) s.memo.avoid[aw] = av; else delete s.memo.avoid[aw];
+      if (o.none) s.memo.avoid[aw] = { a: [], d: [], none: 1 };
+      else if (av.a.length || av.d.length) s.memo.avoid[aw] = av; else delete s.memo.avoid[aw];
       return;
     }
     case 'setAlbum': {

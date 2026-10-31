@@ -391,6 +391,10 @@ html.locked,html.locked body{overflow:hidden}
 .dish .sv{white-space:nowrap;order:6;flex-basis:100%;margin-left:0}
 .dish>.dish-x{order:5;margin-left:auto}
 .dishes:has(.dish){gap:8px}
+.av-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:8px}
+#av-none[hidden]{display:none}
+.av-nones{display:inline-flex;align-items:center;gap:3px;font-size:12px;color:var(--mute)}
+.av-nones .av{width:20px;height:20px;font-size:10px}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -463,7 +467,7 @@ section:nth-of-type(3n) .sec-h .lf{color:var(--berry)}
 .toc button.on{background:color-mix(in srgb,var(--accent) 20%,var(--paper));color:var(--fg)}
 .toc button.on svg{color:var(--maple)}
 .toc button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-section,#stay{scroll-margin-top:84px}
+section,#stay,#avoid{scroll-margin-top:84px}
 .shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px 28px;border-top:2px solid var(--fg);margin-top:12px;padding-top:6px}
 .shop h4{font-family:var(--f-display);font-size:17px;margin:10px 0 2px}
 .shop ul{list-style:none;padding:0;margin:0 0 8px;font-size:14px}
@@ -674,6 +678,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       <select id="av-k" aria-label="種類"><option value="a">アレルギー</option><option value="d">苦手</option></select>
       <button type="submit">追加</button>
     </form>
+    <div class="av-foot"><button type="button" class="st-fix" id="av-none" hidden>自分は特になし</button><span class="av-nones" id="av-nones"></span></div>
     <span class="dish-status" id="av-status" role="status"></span>
   </div>
   <h3 class="sub-h">作りたいもの</h3>
@@ -1405,6 +1410,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var packLeft=reg&&pack?packItems(me).length-packDone(me):null;
     var shopLeft=aggregate().filter(function(it){return!(state.bought||{})[it.n]}).length;
     if(days>=1){
+      if(reg&&!(memo.avoid||{})[me])acts.push(['avoid','食べられないものを登録','アレルギー・苦手。なければ「特になし」']);
       if(days>1)acts.push(['food','作りたいものを選ぶ','食べたいものにいいね']);
       acts.push(['pack',days===1?'持ち物の最終チェック':'持ち物をチェック',packLeft==null?'自分のタブで確認':(packLeft?'あと'+packLeft+'個':'全部そろっています')]);
     }else if(di===0){
@@ -1488,6 +1494,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       })});
     });
     if(!any)box.appendChild(el('span','dish-empty','まだありません'));
+    // 自分がまだ何も登録していなければ「特になし」を出す
+    var nb=$('av-none');nb.hidden=!(split.members.indexOf(me)>=0&&!avm[me]);
+    var nl=$('av-nones');nl.textContent='';var ns=split.members.filter(function(m){return avm[m]&&avm[m].none});
+    if(ns.length){nl.appendChild(el('span',null,'特になし：'));ns.forEach(function(m){var a=av(m);a.title=m;a.setAttribute('role','img');a.setAttribute('aria-label',m);a.removeAttribute('aria-hidden');nl.appendChild(a)})}
   }
   function renderAll(){renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
 
@@ -1616,8 +1626,12 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(!w){status('食べられないものを入れてください','av');return}
     memo.avoid=memo.avoid||{};var cur=memo.avoid[me]||{a:[],d:[]};cur.a=cur.a||[];cur.d=cur.d||[];
     if(cur.a.concat(cur.d).indexOf(w)>=0){status(w+'はもう入っています','av');return}
-    cur[k].push(w);memo.avoid[me]=cur;$('av-n').value='';
+    delete cur.none;cur[k].push(w);memo.avoid[me]=cur;$('av-n').value='';
     op({type:'setAvoid',who:me,a:cur.a,d:cur.d},'av');
+  });
+  $('av-none').addEventListener('click',function(){
+    if(split.members.indexOf(me)<0){status('先にいちばん上の「メンバー」で自分を選んでください','av');return}
+    memo.avoid=memo.avoid||{};memo.avoid[me]={a:[],d:[],none:1};op({type:'setAvoid',who:me,none:1},'av');
   });
   var payKey='';
   ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
