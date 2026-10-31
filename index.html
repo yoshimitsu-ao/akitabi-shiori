@@ -37,6 +37,8 @@ h2,h3{text-wrap:balance}
 .vtitle{writing-mode:vertical-rl;font-family:var(--f-display);font-weight:800;font-size:clamp(46px,11vw,96px);line-height:1.05;letter-spacing:.06em;margin:0}
 .vtitle small{display:block;font-size:.34em;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-left:.5em}
 .cover-r{min-width:0;display:grid;gap:18px}
+/* iPhone：縦書きタイトルを上にそろえて少し大きく。上に大きな空きができないように */
+@media (max-width:480px){.cover{align-items:start;gap:14px;padding-top:16px}.vtitle{font-size:58px}.cover-r{gap:12px}}
 .mtn{width:100%;height:auto;display:block;max-width:100%}
 .dates{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-top:2px solid var(--fg);padding-top:12px}
 .dates .big{font-family:var(--f-mono);font-size:clamp(26px,5vw,40px);font-weight:500;letter-spacing:-.01em}
