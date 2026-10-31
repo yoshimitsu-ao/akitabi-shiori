@@ -339,7 +339,7 @@ input[type=text],input[type=url],input[type=number],select,textarea{font-size:16
 .fans{display:inline-flex;margin-left:2px}
 .fans .av{width:20px;height:20px;font-size:10px;border:2px solid var(--paper);margin-left:-6px}
 .fans .av:first-child{margin-left:0}
-.dish-nm{font:inherit;padding:0;border:0;background:none;color:inherit;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+.dish-nm{white-space:nowrap;font:inherit;padding:0;border:0;background:none;color:inherit;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
 .dish-nm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sheet{position:fixed;inset:0;z-index:20}
 .sheet[hidden]{display:none}
@@ -370,6 +370,27 @@ html.locked,html.locked body{overflow:hidden}
 .mchip.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--paper));font-weight:700}
 .mchip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .me-av:empty{display:none}.me-av .av{width:26px;height:26px;font-size:12px}
+.avoid{margin-bottom:6px}
+.av-list{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+.av-chip{display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:3px 4px 3px 3px;border:1px solid var(--line);border-radius:999px;background:var(--paper)}
+.av-chip .av{width:22px;height:22px;font-size:10px}
+.av-chip small{font-size:10.5px;color:var(--mute)}
+.av-chip.alg{border-color:color-mix(in srgb,var(--berry) 55%,var(--line))}
+.av-chip.alg small{color:var(--berry);font-weight:700}
+.av-form select{flex:0 0 auto;width:auto;font:inherit;padding:9px 8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px}
+.av-dot{display:inline-grid;place-content:center;color:#B7791F}
+.av-dot.alg{color:var(--berry)}
+.av-dot svg,.av-warn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.dish.warned{border-color:color-mix(in srgb,var(--berry) 45%,var(--fg))}
+.av-warn{display:flex;align-items:flex-start;gap:5px;font-size:12px;color:#9A6512;line-height:1.5}
+.av-warn.alg{color:var(--berry);font-weight:700}
+.av-warn.row{flex-basis:100%;order:9;padding:0 0 4px 26px;margin-top:-2px}
+.shop li.ex{flex-wrap:wrap}
+.av-warn.box{padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--berry) 9%,var(--paper));margin:4px 0 6px}
+.dish{flex-wrap:wrap;row-gap:4px;width:100%;border-radius:16px;padding:8px 10px 8px 14px}
+.dish .sv{white-space:nowrap;order:6;flex-basis:100%;margin-left:0}
+.dish>.dish-x{order:5;margin-left:auto}
+.dishes:has(.dish){gap:8px}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -644,7 +665,18 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <section id="food">
   <div class="sec-h"><h2>BBQの準備</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">11 people</span></div>
-  <h3 class="sub-h first">作りたいもの</h3>
+  <div class="avoid" id="avoid">
+    <h3 class="sub-h first">食べられないもの</h3>
+    <p class="hint">アレルギーや苦手なものを入れておくと、料理や買い出しリストに入ったときに注意が出ます。</p>
+    <div class="av-list" id="av-list"></div>
+    <form class="dish-form av-form" id="av-form">
+      <input id="av-n" type="text" placeholder="例：えび、きのこ" aria-label="食べられないもの" autocomplete="off" maxlength="20">
+      <select id="av-k" aria-label="種類"><option value="a">アレルギー</option><option value="d">苦手</option></select>
+      <button type="submit">追加</button>
+    </form>
+    <span class="dish-status" id="av-status" role="status"></span>
+  </div>
+  <h3 class="sub-h">作りたいもの</h3>
   <div class="dishes" id="dish-list"><span class="dish-empty">読み込み中…</span></div>
   <div class="dish-editor" id="dish-editor">
     <div class="presets" id="preset-list"></div>
@@ -875,7 +907,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
   var state={dishes:[]},split={members:[],expenses:[]};
   var pending=0,loaded=false;
-  var STATUS={pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
+  var STATUS={av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
   var $=function(id){return document.getElementById(id)};
 
   function call(fn,arg){
@@ -982,6 +1014,9 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       // 誰が作りたいか：追加した人＋いいねした人のアイコン
       var fans=[];if(d.by&&split.members.indexOf(d.by)>=0)fans.push(d.by);lb(d).forEach(function(m){if(fans.indexOf(m)<0)fans.push(m)});
       if(fans.length){var fw=el('span','fans');fans.forEach(function(m){var a=av(m);a.removeAttribute('aria-hidden');a.setAttribute('role','img');a.setAttribute('aria-label',m);a.title=m;fw.appendChild(a)});chip.appendChild(fw)}
+      var dh=avoidHits(nm(d.name)+' '+(d.items||[]).map(function(it){return nm(it.n)}).join(' '));
+      if(dh.length){chip.classList.add('warned');var wi=el('span','av-dot'+(dh.some(function(x){return x.k==='a'})?' alg':''));wi.title=hitText(dh);wi.setAttribute('role','img');wi.setAttribute('aria-label','注意：'+hitText(dh));
+        wi.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4.5M12 17.3v.2"/></svg>';chip.appendChild(wi)}
       var mine=reg?lb(d).indexOf(me)>=0:!!liked[d.name];
       var lk=el('button','like'+(mine?' on':''));lk.type='button';lk.innerHTML=HEART;lk.appendChild(el('span',null,String(lc(d))));
       lk.setAttribute('aria-label',d.name+'にいいね'+(mine?'（取り消す）':''));lk.setAttribute('aria-pressed',mine?'true':'false');
@@ -1078,6 +1113,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
           });
           li.appendChild(sv);
         }
+        var sh=avoidHits(it.n);if(sh.length){li.appendChild(warnEl(sh,'av-warn row'))}
         if(ex){li.className+=' ex2';li.appendChild(xBtn(it.n+'を消す',function(){state.extras=state.extras.filter(function(x){return x!==ex});op({type:'removeExtra',n:it.n},'shop')},true))}
         ul.appendChild(li);
       });
@@ -1399,6 +1435,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var d=state.dishes.filter(function(x){return x.name===sheetDish})[0];if(!d){closeSheet();return}
     $('sheet-t').textContent=nm(d.name);var b=$('sheet-body');b.textContent='';
     var sv=d.servings||11;b.appendChild(el('p','sh-sub',sv+'人前'));
+    var sh2=avoidHits(nm(d.name)+' '+(d.items||[]).map(function(it){return nm(it.n)}).join(' '));if(sh2.length)b.appendChild(warnEl(sh2,'av-warn box'));
     var its=(d.items||[]).filter(function(it){return it.n&&!NO_BUY.test(it.n)});
     if(/焼きおにぎり/.test(d.name))its=[{n:'ご飯（持参のお米）',q:'',c:''}].concat(its);
     if(its.length){b.appendChild(el('h4',null,'材料'));var ul=el('ul','sh-items');
@@ -1419,7 +1456,40 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   }
   document.querySelectorAll('#sheet [data-close]').forEach(function(x){x.addEventListener('click',closeSheet)});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('sheet').hidden)closeSheet()});
-  function renderAll(){renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
+  // ---- 食べられないもの（アレルギー・苦手）
+  var SYN=[['えび','海老','シュリンプ'],['かに','蟹'],['たまご','卵','玉子','マヨネーズ'],['乳','牛乳','チーズ','バター','生クリーム','ヨーグルト','乳製品'],
+    ['小麦','パン','バゲット','麺','焼きそば','うどん','パスタ','ビスケット','小麦粉','クラッカー'],['そば','蕎麦'],['ピーナッツ','落花生'],['くるみ','胡桃'],
+    ['さば','鯖'],['いか','烏賊'],['さけ','鮭','サーモン'],['きのこ','しいたけ','椎茸','しめじ','えのき','エリンギ','まいたけ','マッシュルーム'],['ねぎ','葱','長ねぎ','下仁田ねぎ'],
+    ['にんにく','ガーリック'],['ぶた','豚','豚肉','豚バラ','豚こま'],['うし','牛','牛肉','牛カルビ'],['とり','鶏','鶏肉','鶏もも','丸鶏','チキン'],['かつお','鰹','カツオ']];
+  function kana(t){return String(t||'').replace(/[\u30a1-\u30f6]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0x60)}).toLowerCase()}
+  function terms(w){var k=kana(w),out=[k];SYN.forEach(function(g){if(g.some(function(x){return kana(x)===k}))g.forEach(function(x){out.push(kana(x))})});return out}
+  function avoidHits(text){
+    var t=kana(text),hits=[],av=(memo.avoid||{});
+    Object.keys(av).forEach(function(m){if(split.members.indexOf(m)<0)return;
+      ['a','d'].forEach(function(k){(av[m][k]||[]).forEach(function(w){
+        if(terms(w).some(function(x){return x&&t.indexOf(x)>=0&&!(x==='そば'&&t.indexOf('やきそば')>=0)}))hits.push({m:m,w:w,k:k});
+      })});
+    });
+    return hits;
+  }
+  function hitText(h){var a=h.filter(function(x){return x.k==='a'}),d=h.filter(function(x){return x.k==='d'});
+    var f=function(arr){return arr.map(function(x){return x.m+'（'+x.w+'）'}).join('、')};
+    return(a.length?'アレルギー：'+f(a):'')+(a.length&&d.length?'　':'')+(d.length?'苦手：'+f(d):'')}
+  function warnEl(h,cls){var w=el('span',(cls||'av-warn')+(h.some(function(x){return x.k==='a'})?' alg':''));
+    w.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4.5M12 17.3v.2"/></svg>';w.appendChild(el('span',null,hitText(h)));return w}
+  function renderAvoid(){
+    var box=$('av-list');if(!box)return;box.textContent='';var avm=memo.avoid||{},any=false;
+    split.members.forEach(function(m){var x=avm[m];if(!x)return;
+      ['a','d'].forEach(function(k){(x[k]||[]).forEach(function(w){any=true;
+        var c=el('span','av-chip'+(k==='a'?' alg':''));c.appendChild(av(m));c.appendChild(el('span',null,w));c.appendChild(el('small',null,k==='a'?'アレルギー':'苦手'));
+        c.appendChild(xBtn(m+'さんの'+w+'を消す',function(){var cur=memo.avoid[m]||{a:[],d:[]};cur[k]=(cur[k]||[]).filter(function(y){return y!==w});memo.avoid[m]=cur;
+          op({type:'setAvoid',who:m,a:cur.a,d:cur.d},'av')},true));
+        box.appendChild(c);
+      })});
+    });
+    if(!any)box.appendChild(el('span','dish-empty','まだありません'));
+  }
+  function renderAll(){renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
 
   function addPreset(name){
     if(state.dishes.some(function(d){return d.name===name}))return;
@@ -1540,6 +1610,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   });
   $('me-open').addEventListener('click',function(){memOpen=true;renderSplit()});
   $('mem-close').addEventListener('click',function(){memOpen=false;status('','mem');renderSplit()});
+  $('av-form').addEventListener('submit',function(ev){
+    ev.preventDefault();var w=$('av-n').value.trim().slice(0,20),k=$('av-k').value==='d'?'d':'a';
+    if(split.members.indexOf(me)<0){status('先にいちばん上の「メンバー」で自分を選んでください','av');return}
+    if(!w){status('食べられないものを入れてください','av');return}
+    memo.avoid=memo.avoid||{};var cur=memo.avoid[me]||{a:[],d:[]};cur.a=cur.a||[];cur.d=cur.d||[];
+    if(cur.a.concat(cur.d).indexOf(w)>=0){status(w+'はもう入っています','av');return}
+    cur[k].push(w);memo.avoid[me]=cur;$('av-n').value='';
+    op({type:'setAvoid',who:me,a:cur.a,d:cur.d},'av');
+  });
   var payKey='';
   ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
   var tocB=document.querySelectorAll('.toc button');

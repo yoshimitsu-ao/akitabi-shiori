@@ -68,6 +68,7 @@ function load_() {
   if (!pack.done || typeof pack.done !== 'object') pack.done = {};
   try { memo = JSON.parse(r[3][0] || ''); } catch (e) {}
   if (!memo || !Array.isArray(memo.notes)) memo = { album: '', notes: [] };
+  if (!memo.avoid || typeof memo.avoid !== 'object') memo.avoid = {};
   try { bbq = JSON.parse(r[0][0] || ''); } catch (e) {}
   try { split = JSON.parse(r[1][0] || ''); } catch (e) {}
   try { sched = JSON.parse(r[2][0] || ''); } catch (e) {}
@@ -274,6 +275,15 @@ function mutate_(s, o) {
       var pk = str_(o.k, 80);
       if (!pk) return;
       if (o.v) s.split.paid[pk] = 1; else delete s.split.paid[pk];
+      return;
+    }
+    case 'setAvoid': {
+      // 食べられないもの（a: アレルギー、d: 苦手）。その人の分をまるごと置き換える
+      var aw = str_(o.who, 20);
+      if (members.indexOf(aw) < 0) return;
+      var clean = function (arr) { return (Array.isArray(arr) ? arr : []).map(function (t) { return str_(t, 20); }).filter(String).slice(0, 12); };
+      var av = { a: clean(o.a), d: clean(o.d) };
+      if (av.a.length || av.d.length) s.memo.avoid[aw] = av; else delete s.memo.avoid[aw];
       return;
     }
     case 'setAlbum': {
