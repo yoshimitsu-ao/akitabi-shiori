@@ -569,7 +569,6 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <div class="me-line" id="me-line" hidden><span class="me-av" id="me-av"></span><span>あなた：<b id="me-name"></b></span><span class="me-n" id="me-count"></span><button type="button" class="st-fix" id="me-open">切り替え</button></div>
   <div class="mem-card" id="mem-card">
     <div class="mem-top"><h2 class="mem-h">メンバー</h2><button type="button" class="st-fix" id="mem-close" hidden>閉じる</button></div>
-    <p class="me-q" id="me-q" hidden>あなたはどれ？ 名前をタップ</p>
     <div class="me-chips" id="me-chips" role="group" aria-label="自分を選ぶ"></div>
     <p class="me-q" id="me-q2">いなければ、ニックネームを登録</p>
     <form class="dish-form" id="mem-form">
@@ -1104,7 +1103,6 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     split.members.forEach(function(m){var b=el('button','mchip'+(m===me?' on':''));b.type='button';b.setAttribute('aria-pressed',m===me?'true':'false');
       b.appendChild(av(m));b.appendChild(el('span',null,m));
       b.addEventListener('click',function(){setMe(m);memOpen=false;renderAll();status(m+'さんに切り替えました','mem',true)});mc.appendChild(b)});
-    $('me-q').hidden=!split.members.length;
     var isIn=split.members.indexOf(me)>=0;
     $('me-q2').textContent=split.members.length?(isIn?'メンバーを追加':'いなければ、ニックネームを登録'):'まずは自分のニックネームを登録';
     var ma=$('me-av');ma.textContent='';if(isIn)ma.appendChild(av(me));
