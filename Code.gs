@@ -363,31 +363,39 @@ function gemini_() {
   var count = Number(props.getProperty(countKey) || 0);
   if (count >= DAILY_LIMIT) throw new Error('今日の上限に達しました');
   props.setProperty(countKey, String(count + 1));
-  var first = props.getProperty('GEMINI_MODEL');
+  // 前に自動で見つけて使えたモデルがあれば、それを最初に試す
+  var first = props.getProperty('GEMINI_MODEL') || props.getProperty('GEMINI_MODEL_AUTO');
   var models = first ? [first].concat(MODELS.filter(function (m) { return m !== first; })) : MODELS.slice();
   return { key: key, models: models };
 }
 
 /** Gemini に送り、返ってきた JSON を取り出す */
 function callGemini_(cfg, parts) {
-  var res = null;
-  for (var k = 0; k < cfg.models.length; k++) {
-    res = UrlFetchApp.fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(cfg.models[k]) + ':generateContent',
-      {
-        method: 'post',
-        contentType: 'application/json',
-        headers: { 'x-goog-api-key': cfg.key },
-        muteHttpExceptions: true,
-        payload: JSON.stringify({
-          contents: [{ role: 'user', parts: parts }],
-          generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
-        })
-      }
+  var body = JSON.stringify({
+    contents: [{ role: 'user', parts: parts }],
+    generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
+  });
+  function post(model) {
+    return UrlFetchApp.fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent',
+      { method: 'post', contentType: 'application/json', headers: { 'x-goog-api-key': cfg.key }, muteHttpExceptions: true, payload: body }
     );
+  }
+  var res = null, tried = {};
+  for (var k = 0; k < cfg.models.length; k++) {
+    tried[cfg.models[k]] = 1;
+    res = post(cfg.models[k]);
     var code = res.getResponseCode();
     if (code === 200) break;
     if (code !== 429 && code !== 404 && code !== 503) throw new Error('Gemini エラー ' + code);
+  }
+  // モデルが無くなっていた（404）ときは、今使えるモデルを Google に聞いて自動で切り替える
+  if (res.getResponseCode() === 404 || res.getResponseCode() === 429) {
+    var found = listModels_(cfg.key).filter(function (m) { return !tried[m]; }).slice(0, 4);
+    for (var n = 0; n < found.length; n++) {
+      res = post(found[n]);
+      if (res.getResponseCode() === 200) { PropertiesService.getScriptProperties().setProperty('GEMINI_MODEL_AUTO', found[n]); break; }
+    }
   }
   if (res.getResponseCode() === 429) throw new Error('今日の Gemini の無料枠を使い切りました');
   if (res.getResponseCode() !== 200) throw new Error('Gemini エラー ' + res.getResponseCode());
@@ -503,4 +511,20 @@ function checkinCode(arg) {
     throw new Error('パスコードが違います');
   }
   return { code: code };
+}
+
+/** 今のキーで使える Gemini のモデルを、新しくて軽いもの（flash）から順に返す */
+function listModels_(key) {
+  var res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',
+    { headers: { 'x-goog-api-key': key }, muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200) return [];
+  var ms = (JSON.parse(res.getContentText()).models || []).filter(function (m) {
+    return /gemini/.test(m.name) && /flash/.test(m.name) && (m.supportedGenerationMethods || []).indexOf('generateContent') >= 0 &&
+      !/tts|image|audio|live|embedding|vision|thinking|exp/.test(m.name);
+  }).map(function (m) { return m.name.replace(/^models\//, ''); });
+  function score(n) {
+    var v = Number((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || 0);
+    return v * 10 - (/lite/.test(n) ? 3 : 0) - (/preview/.test(n) ? 5 : 0) - (/\d{3,}/.test(n.replace(/gemini-\d+(\.\d+)?/, '')) ? 1 : 0);
+  }
+  return ms.sort(function (a, b) { return score(b) - score(a); });
 }
