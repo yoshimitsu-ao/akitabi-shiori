@@ -435,6 +435,22 @@ html.locked,html.locked body{overflow:hidden}
 .ci-sum b::before{content:"+ ";font-family:var(--f-mono)}
 .ci[open] .ci-sum b::before{content:"− "}
 .ci:not([open]){padding-block:10px}
+.intro{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:16px 16px calc(28px + env(safe-area-inset-bottom));
+  background:linear-gradient(rgba(15,20,18,.15),rgba(15,20,18,.55));cursor:pointer;-webkit-tap-highlight-color:transparent}
+.intro[hidden]{display:none}
+.intro-cow{width:120px;height:74px;margin-bottom:-6px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.intro-cow svg{width:100%;height:100%;display:block;color:#1B201D}
+@media (prefers-reduced-motion:no-preference){.intro-cow{animation:introhop 1.6s ease-in-out infinite}
+  @keyframes introhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}}
+.intro-box{position:relative;width:100%;max-width:520px;min-height:132px;padding:26px 22px 22px;border-radius:30px 30px 26px 26px / 26px;
+  background:#FFF8E7;color:#3B2F22;border:3px solid #E9D9B4;box-shadow:0 10px 30px -10px rgba(0,0,0,.45);outline:none}
+.intro-name{position:absolute;top:-16px;left:22px;padding:4px 16px;border-radius:999px;background:#E58A3C;color:#fff;font-weight:800;font-size:15px;letter-spacing:.08em;transform:rotate(-3deg);box-shadow:0 3px 0 #C46E28}
+.intro-text{margin:0;font-size:17px;line-height:1.8;font-weight:700;letter-spacing:.02em;min-height:3.6em;white-space:pre-wrap}
+.intro-next{position:absolute;right:20px;bottom:10px;color:#E58A3C;font-size:14px}
+.intro-next[hidden]{display:none}
+@media (prefers-reduced-motion:no-preference){.intro-next{animation:introblink 1s steps(2) infinite}@keyframes introblink{50%{opacity:0}}}
+.intro-skip{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(0,0,0,.35);color:#fff;cursor:pointer}
+.intro-again{display:block;margin-top:10px;font-size:12px}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -909,6 +925,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 </section>
 
 <button type="button" class="to-top" id="to-top" aria-label="いちばん上へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11.5 12 5.5l6 6"/></svg></button>
+<div class="intro" id="intro" hidden role="dialog" aria-modal="true" aria-label="しおりの案内">
+  <div class="intro-cow" aria-hidden="true"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div>
+  <div class="intro-box" id="intro-box">
+    <span class="intro-name">うし</span>
+    <p class="intro-text" id="intro-text" aria-live="polite"></p>
+    <span class="intro-next" id="intro-next" aria-hidden="true">▼</span>
+  </div>
+  <button type="button" class="intro-skip" id="intro-skip">スキップ</button>
+</div>
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-bg" data-close></div>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheet-t">
@@ -927,6 +952,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     <use href="#leaf" x="282" y="42" width="9" height="9" style="color:var(--larch)"/>
   </svg>
   <span>1・2年目 秋旅 / 2026.11.07 – 08</span>
+  <button type="button" class="st-fix intro-again" id="intro-again">うしの案内をもう一度見る</button>
 </footer>
 
 </div>
@@ -1776,7 +1802,40 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     split.expenses.push(x);op({type:'addExpense',expense:x},'pay');
   });
 
+  // ---- はじめての人への案内（うしが話す。文字が1文字ずつ出る）
+  var INTRO_KEY='retoli-intro-v1';
+  function introLines(){
+    var reg=split.members.indexOf(me)>=0,n=me;
+    var L=reg?['おかえり、'+n+'！ 秋旅の しおりだよ。']:['やあ！ 秋旅の しおりへ ようこそ！','ぼくは 嬬恋の うし。 この しおりの 案内係だよ。'];
+    if(!reg)L.push('まずは いちばん上の メンバーで、 自分の 名前を えらんでね。 なければ 登録してね。');
+    L.push('「いまやること」に、 今 やってほしいことが 出るよ。 タップすると その場所に とべるよ。');
+    L.push('作りたいものに いいね したり、 持ち物を チェックしたり、 割り勘も ここで できるよ。');
+    L.push('上の ボタンで いつでも 行きたいところに とべるからね。');
+    L.push('それじゃ、 11月7日、 嬬恋で 会おう！ もぉ〜！');
+    return L;
+  }
+  var introL=[],introI=0,introTimer=null,introTyping=false;
+  var introReduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function introType(){
+    var t=introL[introI],box=$('intro-text'),k=0;box.textContent='';$('intro-next').hidden=true;introTyping=true;clearInterval(introTimer);
+    if(introReduce){box.textContent=t;introTyping=false;$('intro-next').hidden=false;return}
+    introTimer=setInterval(function(){k++;box.textContent=t.slice(0,k);if(k>=t.length){clearInterval(introTimer);introTyping=false;$('intro-next').hidden=false}},45);
+  }
+  function introOpen(){introL=introLines();introI=0;$('intro').hidden=false;document.documentElement.classList.add('locked');introType();$('intro-box').focus()}
+  function introClose(){clearInterval(introTimer);$('intro').hidden=true;document.documentElement.classList.remove('locked');try{localStorage.setItem(INTRO_KEY,'1')}catch(e){}
+    if(split.members.indexOf(me)<0){var t=$('members');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}}
+  function introNext(){
+    if(introTyping){clearInterval(introTimer);$('intro-text').textContent=introL[introI];introTyping=false;$('intro-next').hidden=false;return}
+    introI++;if(introI>=introL.length){introClose();return}introType();
+  }
+  $('intro').addEventListener('click',function(e){if(e.target.id==='intro-skip')return;introNext()});
+  $('intro-skip').addEventListener('click',function(e){e.stopPropagation();introClose()});
+  document.addEventListener('keydown',function(e){if($('intro').hidden)return;if(e.key==='Escape')introClose();else if(e.key==='Enter'||e.key===' '){e.preventDefault();introNext()}});
+  $('intro-again').addEventListener('click',introOpen);
+  var introSeen=false;try{introSeen=localStorage.getItem(INTRO_KEY)==='1'}catch(e){}
   renderAll();refresh();tick();loadWeather();setInterval(loadWeather,3600000);
+  // 初めて開いた人には、データを読み込んでから案内を出す
+  if(!introSeen){var iw=setInterval(function(){if(loaded){clearInterval(iw);introOpen()}},300);setTimeout(function(){clearInterval(iw)},15000)}
   setInterval(function(){if(document.visibilityState==='visible')refresh()},20000);
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refresh()});
 })();
