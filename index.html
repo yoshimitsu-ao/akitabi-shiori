@@ -1805,13 +1805,12 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // ---- はじめての人への案内（うしが話す。文字が1文字ずつ出る）
   var INTRO_KEY='retoli-intro-v1';
   function introLines(){
-    var reg=split.members.indexOf(me)>=0,n=me;
-    var L=reg?['おかえり、'+n+'！ 秋旅の しおりだよ。']:['やあ！ 秋旅の しおりへ ようこそ！','ぼくは 嬬恋の うし。 この しおりの 案内係だよ。'];
-    if(!reg)L.push('まずは いちばん上の メンバーで、 自分の 名前を えらんでね。 なければ 登録してね。');
-    L.push('「いまやること」に、 今 やってほしいことが 出るよ。 タップすると その場所に とべるよ。');
-    L.push('作りたいものに いいね したり、 持ち物を チェックしたり、 割り勘も ここで できるよ。');
-    L.push('上の ボタンで いつでも 行きたいところに とべるからね。');
-    L.push('それじゃ、 11月7日、 嬬恋で 会おう！ もぉ〜！');
+    var reg=split.members.indexOf(me)>=0;
+    var L=reg?['おかえり、'+me+'！']:['ようこそ！ 案内係の うしだよ。','まずは 自分の名前を えらんでね。'];
+    L.push('「いまやること」を 見てね。');
+    L.push('作りたいものに いいね してね。');
+    L.push('持ち物を チェックしてね。');
+    L.push('11月7日、嬬恋で 会おう！');
     return L;
   }
   var introL=[],introI=0,introTimer=null,introTyping=false;
