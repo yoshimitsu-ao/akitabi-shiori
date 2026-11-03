@@ -120,6 +120,8 @@ dl.kv dd{margin:0;min-width:0}
 .mem-ren{display:flex;gap:6px;align-items:center;flex:1;min-width:0}
 .mem-ren .st-fix{flex:none;padding-inline:10px}
 .mem-ren input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 12px;border:1px solid var(--accent);border-radius:12px;background:var(--paper);color:var(--fg)}
+.sug{font-size:11px;color:var(--mute);animation:sugb 1.2s ease-in-out infinite}
+@keyframes sugb{50%{opacity:.4}}
 .mem-hint{font-size:12px;color:var(--mute);margin:6px 0 0}
 .me-chips .gplus{width:34px;height:34px;align-self:center}
 #mem-form[hidden]{display:none}
@@ -1120,7 +1122,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // 飲み物などは「料理」ではなく、そのまま買い出しリストに入れる
   var DRINKS=[["ビール","24本"],["ハイボール","12本"],["チューハイ","12本"],["ソフトドリンク（2L）","4本"],["お茶（2L）","4本"],["水（2L）","4本"]];
   var DRINK_RE=/ビール|ハイボール|チューハイ|サワー|ワイン|日本酒|焼酎|梅酒|ジュース|コーラ|サイダー|お茶|麦茶|緑茶|水|ドリンク|コーヒー|酒/;
-  var whoAll=true;
+  var whoAll=true,SUG={};
   var LKEY='retoli-like-v1',liked={};
   try{liked=JSON.parse(localStorage.getItem(LKEY)||'{}')||{}}catch(e){liked={}}
   var CROWN='<svg viewBox="0 0 24 16" aria-hidden="true"><path d="M2 14 1 4l6 5 5-8 5 8 6-5-1 10z"/></svg>';
@@ -1256,6 +1258,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       var d=o.d,chip=el('span','dish');
       if(top>0&&lc(d)===top&&!crowned){crowned=true;chip.className='dish top';var cr=el('span','crown');cr.innerHTML=CROWN;cr.title='いちばん人気';chip.appendChild(cr)}
       var nb=el('button','dish-nm',nm(d.name));nb.type='button';nb.setAttribute('aria-label',d.name+'の作り方を見る');nb.addEventListener('click',function(){openDish(d.name)});chip.appendChild(nb);
+      if(SUG[d.name])chip.appendChild(el('span','sug','材料を考え中…'));
       // 誰が作りたいか：追加した人＋いいねした人のアイコン
       var fans=[];if(d.by&&split.members.indexOf(d.by)>=0)fans.push(d.by);lb(d).forEach(function(m){if(fans.indexOf(m)<0)fans.push(m)});
       if(fans.length){var fw=el('span','fans');fans.forEach(function(m){var a=av(m);a.removeAttribute('aria-hidden');a.setAttribute('role','img');a.setAttribute('aria-label',m);a.title=m;fw.appendChild(a)});chip.appendChild(fw)}
@@ -1976,16 +1979,23 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(PRESETS[name]){addPreset(name);return}
     if(DRINK_RE.test(name)&&name.length<=12){var dq=(DRINKS.filter(function(d){return d[0]===name})[0]||[])[1]||'1本';addExtra(name,dq,'飲み物','dish',name+'は飲み物として買い出しリストに入れました。数はリストで変えられます');return}
     if(state.dishes.some(function(d){return d.name===name})){status(name+'はもう入っています','dish');return}
-    var btn=$('dish-add'),items=[];
-    btn.disabled=true;status('Geminiが材料を考えています…','dish');
+    // 先に料理だけ追加して、材料はGeminiの返事が来たらあとから入れる（待たずに次の操作ができる）
+    var have=aggregate().filter(function(it){return it.c==='調味料'}).map(function(it){return it.n}).join('、');
+    var dish={name:name,servings:11,items:[],by:me};SUG[name]=1;
+    state.dishes.push(dish);
+    var msg=function(){if(SUG[name])status(name+'を追加しました。材料はGeminiが考えています…','dish',true)};
+    var added=op({type:'addDish',dish:dish},'dish').then(msg);msg();
+    var items=[];
     try{
-      var have=aggregate().filter(function(it){return it.c==='調味料'}).map(function(it){return it.n}).join('、');
       var r=await call('suggest',{name:name,have:have});
       if(Array.isArray(r))items=r.filter(function(it){return it&&it.n}).slice(0,8).map(function(it){return{n:String(it.n).slice(0,30),q:String(it.q||'').slice(0,12),c:CATS.indexOf(it.c)>=0?it.c:'その他'}});
-    }catch(e){status('材料を出せなかったので、料理だけ追加しました'+(e&&e.message?'（'+e.message+'）':''),'dish')}
-    btn.disabled=false;
-    var dish={name:name,servings:11,items:items,by:me};
-    state.dishes.push(dish);op({type:'addDish',dish:dish},items.length?'dish':null);
+    }catch(e){delete SUG[name];renderAll();status('材料を出せなかったので、料理だけ追加しました'+(e&&e.message?'（'+e.message+'）':''),'dish');return}
+    delete SUG[name];await added;
+    var d=state.dishes.filter(function(x){return x.name===name})[0];
+    if(!d){renderAll();return}
+    if(!items.length){renderAll();status(name+'の材料は出せませんでした。買い出しリストに直接足してください','dish');return}
+    d.items=items;await op({type:'setItems',name:name,items:items},'dish');
+    status(name+'の材料（'+items.length+'品）を買い出しリストに入れました','dish',true);
   }
 
   $('dish-form').addEventListener('submit',function(ev){ev.preventDefault();var inp=$('dish-input');var v=inp.value;inp.value='';addCustom(v)});

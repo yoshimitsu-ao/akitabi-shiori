@@ -193,6 +193,14 @@ function mutate_(s, o) {
       s.bbq.dishes.forEach(function (x) { if (x.name === o.name) x.steps = ss; });
       return;
     }
+    case 'setItems': {
+      // あとから届いた Gemini の材料を入れる
+      var si = (Array.isArray(o.items) ? o.items : []).slice(0, 10).map(function (it) {
+        return { n: str_(it.n, 30), q: str_(it.q, 12), c: CATS.indexOf(it.c) >= 0 ? it.c : 'その他' };
+      }).filter(function (it) { return it.n; });
+      s.bbq.dishes.forEach(function (x) { if (x.name === o.name && !(x.items || []).length) x.items = si; });
+      return;
+    }
     case 'setServings':
       s.bbq.dishes.forEach(function (x) { if (x.name === o.name) x.servings = servings_(o.servings); });
       return;
@@ -395,11 +403,20 @@ function gemini_() {
 
 /** Gemini に送り、返ってきた JSON を取り出す */
 function callGemini_(cfg, parts) {
-  var body = JSON.stringify({
-    contents: [{ role: 'user', parts: parts }],
-    generationConfig: { responseMimeType: 'application/json', temperature: 0.2 }
-  });
+  // 「考える時間（thinking）」を0にすると、返事が数倍速くなる。買い出しリスト程度ならこれで十分
+  var gen = { responseMimeType: 'application/json', temperature: 0.2, maxOutputTokens: 2048 };
+  function bodyFor(think) {
+    var g = JSON.parse(JSON.stringify(gen));
+    if (think) g.thinkingConfig = { thinkingBudget: 0 };
+    return JSON.stringify({ contents: [{ role: 'user', parts: parts }], generationConfig: g });
+  }
   function post(model) {
+    var r = send(model, bodyFor(true));
+    // thinking を止められないモデルだったときは、設定なしでもう一度
+    if (r.getResponseCode() === 400) r = send(model, bodyFor(false));
+    return r;
+  }
+  function send(model, body) {
     return UrlFetchApp.fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent',
       { method: 'post', contentType: 'application/json', headers: { 'x-goog-api-key': cfg.key }, muteHttpExceptions: true, payload: body }
