@@ -329,14 +329,15 @@ input[type=text],input[type=url],input[type=number],select,textarea{font-size:16
 .mem-card[hidden]{display:none}
 .mem-top{display:flex;align-items:center;justify-content:space-between}
 #mem-close[hidden]{display:none}
-.now-card{margin-top:12px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--accent) 12%,var(--paper));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
+.now-card{display:flex;align-items:center;gap:8px;margin-top:4px;padding:2px 2px 4px;overflow-x:auto;scrollbar-width:none}
+.now-card::-webkit-scrollbar{display:none}
 .now-card[hidden]{display:none}
-.now-l{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
-.now-acts{display:grid;gap:8px}
-.now-act{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper);color:var(--fg);cursor:pointer}
-.now-act b{display:block;font-size:15px}
-.now-act small{display:block;font-size:12px;color:var(--mute)}
-.now-act::after{content:"→";margin-left:auto;color:var(--accent);font-family:var(--f-mono)}
+.now-l{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--mute)}
+.now-acts{display:flex;gap:6px}
+.now-act{flex:none;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:13px;padding:6px 12px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer;white-space:nowrap}
+.now-act b{font-weight:700}
+.now-act small{font-size:11px;color:var(--mute)}
+.now-act::after{content:"→";color:var(--accent);font-family:var(--f-mono);font-size:12px}
 .now-act:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .to-stay{font:inherit;font-size:12.5px;padding:0;border:0;border-bottom:1px solid var(--accent);background:none;color:var(--fg);cursor:pointer;line-height:1.6}
 .kv dt{white-space:nowrap}
@@ -743,7 +744,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     </div>
   </div>
 </header>
-<nav class="toc" aria-label="目次"><button type="button" data-to="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg><span>予定</span></button><button type="button" data-to="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5h16c0 4-3.6 6.5-8 6.5s-8-2.5-8-6.5z"/><path d="M8 16.5 6.5 20.5M16 16.5l1.5 4M9.5 7.5c-1-1 1-2 0-3.5M14.5 7.5c-1-1 1-2 0-3.5"/></svg><span>BBQ</span></button><button type="button" data-to="buy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4"/></svg><span>買い出し</span></button><button type="button" data-to="pack"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7.5" width="14" height="13" rx="4"/><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><rect x="8.5" y="13" width="7" height="4.5" rx="1.5"/></svg><span>持ち物</span></button><button type="button" data-to="budget"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4 3-4M12 11.5v5.5M9.5 12.5h5M9.5 15h5"/></svg><span>割り勘</span></button></nav>
+<nav class="toc" aria-label="目次"><button type="button" data-to="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg><span>予定</span></button><button type="button" data-to="pack"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7.5" width="14" height="13" rx="4"/><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><rect x="8.5" y="13" width="7" height="4.5" rx="1.5"/></svg><span>持ち物</span></button><button type="button" data-to="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5h16c0 4-3.6 6.5-8 6.5s-8-2.5-8-6.5z"/><path d="M8 16.5 6.5 20.5M16 16.5l1.5 4M9.5 7.5c-1-1 1-2 0-3.5M14.5 7.5c-1-1 1-2 0-3.5"/></svg><span>BBQ</span></button><button type="button" data-to="buy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4"/></svg><span>買い出し</span></button><button type="button" data-to="budget"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4 3-4M12 11.5v5.5M9.5 12.5h5M9.5 15h5"/></svg><span>割り勘</span></button></nav>
 
 <section id="members" class="members">
   <div class="me-line" id="me-line" hidden><span class="me-av" id="me-av"></span><span>ユーザー：<b id="me-name"></b></span><button type="button" class="st-fix" id="me-open">切り替え</button></div>
@@ -763,7 +764,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     </details>
   </div>
   <div class="now-card" id="now-card" hidden>
-    <span class="now-l">いまやること</span>
+    <span class="now-l">やること</span>
     <div class="now-acts" id="now-acts"></div>
   </div>
 </section>
@@ -824,6 +825,36 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
 
+<section id="pack">
+  <div class="sec-h"><h2>持ち物</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Check list</span></div>
+  <div class="packs">
+    <div class="pack person">
+      <h3>各自</h3>
+      <p class="hint">名前を選ぶと、その人の持ち物が出ます。チェックはみんなに共有されます。</p>
+      <div class="ptabs" id="pack-tabs" role="group" aria-label="だれの持ち物か"></div>
+      <div id="pack-list"></div>
+      <form class="dish-form pack-form" id="pack-form">
+        <input id="pack-n" type="text" placeholder="持ち物を追加" aria-label="持ち物" autocomplete="off">
+        <select id="pack-all" aria-label="だれに追加するか"><option value="one" id="pack-who-l">この人だけ</option><option value="all">全員</option></select>
+        <button type="submit">追加</button>
+      </form>
+      <span class="dish-status" id="pack-status" role="status"></span>
+    </div>
+    <div class="pack">
+      <h3>あれば嬉しい <span class="mono" id="want-count"></span></h3>
+      <p class="hint">持っていける人は「持っていく」を押してね。</p>
+      <div id="want-list"></div>
+      <form class="dish-form want-form" id="want-form">
+        <input id="want-n" type="text" placeholder="例：ホットサンドメーカー" aria-label="あれば嬉しいもの" autocomplete="off">
+        <button type="submit">追加</button>
+      </form>
+      <span class="dish-status" id="want-status" role="status"></span>
+    </div>
+  </div>
+</section>
+
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:8%;width:13px;height:13px;color:var(--maple);--r:-20deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:22%;width:16px;height:16px;color:var(--maple);--r:0deg;animation-delay:0s;animation-duration:10s"><use href="#leaf"/></svg><svg class="lv drop" style="left:47%;width:12px;height:12px;color:var(--larch);--r:10deg;animation-delay:-4s;animation-duration:12s"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:71%;width:11px;height:11px;color:var(--berry);--r:30deg;animation-delay:-7s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:90%;width:11px;height:11px;color:var(--larch);--r:-15deg"><use href="#ginkgo"/></svg></div>
+
 <section id="food">
   <div class="sec-h"><h2>BBQの準備</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">11 people</span></div>
   <div class="avoid" id="avoid">
@@ -869,43 +900,13 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </div>
 </section>
 
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:8%;width:13px;height:13px;color:var(--maple);--r:-20deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:22%;width:16px;height:16px;color:var(--maple);--r:0deg;animation-delay:0s;animation-duration:10s"><use href="#leaf"/></svg><svg class="lv drop" style="left:47%;width:12px;height:12px;color:var(--larch);--r:10deg;animation-delay:-4s;animation-duration:12s"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:71%;width:11px;height:11px;color:var(--berry);--r:30deg;animation-delay:-7s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:90%;width:11px;height:11px;color:var(--larch);--r:-15deg"><use href="#ginkgo"/></svg></div>
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:30%;width:15px;height:15px;color:var(--maple);--r:-10deg"><use href="#leaf"/></svg><svg class="lv" style="left:33%;width:12px;height:12px;color:var(--larch);--r:35deg"><use href="#leaf"/></svg><svg class="lv" style="left:36%;width:11px;height:11px;color:var(--larch);--r:-25deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:39%;width:10px;height:10px;color:var(--berry);--r:60deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:64%;width:14px;height:14px;color:var(--maple);--r:0deg;animation-delay:-2s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv drop" style="left:86%;width:12px;height:12px;color:var(--larch);--r:0deg;animation-delay:-6s;animation-duration:13s"><use href="#ginkgo"/></svg></div>
 
 <section id="buy">
   <div class="sec-h"><h2>買い出しリスト</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Shopping</span></div>
   <p class="hint">買ったらチェック。チェックはみんなに共有されます。</p>
   <span class="dish-status" id="shop-status" role="status"></span>
   <div class="shop" id="shop"></div>
-</section>
-
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:30%;width:15px;height:15px;color:var(--maple);--r:-10deg"><use href="#leaf"/></svg><svg class="lv" style="left:33%;width:12px;height:12px;color:var(--larch);--r:35deg"><use href="#leaf"/></svg><svg class="lv" style="left:36%;width:11px;height:11px;color:var(--larch);--r:-25deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:39%;width:10px;height:10px;color:var(--berry);--r:60deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:64%;width:14px;height:14px;color:var(--maple);--r:0deg;animation-delay:-2s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv drop" style="left:86%;width:12px;height:12px;color:var(--larch);--r:0deg;animation-delay:-6s;animation-duration:13s"><use href="#ginkgo"/></svg></div>
-
-<section id="pack">
-  <div class="sec-h"><h2>持ち物</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Check list</span></div>
-  <div class="packs">
-    <div class="pack person">
-      <h3>各自</h3>
-      <p class="hint">名前を選ぶと、その人の持ち物が出ます。チェックはみんなに共有されます。</p>
-      <div class="ptabs" id="pack-tabs" role="group" aria-label="だれの持ち物か"></div>
-      <div id="pack-list"></div>
-      <form class="dish-form pack-form" id="pack-form">
-        <input id="pack-n" type="text" placeholder="持ち物を追加" aria-label="持ち物" autocomplete="off">
-        <select id="pack-all" aria-label="だれに追加するか"><option value="one" id="pack-who-l">この人だけ</option><option value="all">全員</option></select>
-        <button type="submit">追加</button>
-      </form>
-      <span class="dish-status" id="pack-status" role="status"></span>
-    </div>
-    <div class="pack">
-      <h3>あれば嬉しい <span class="mono" id="want-count"></span></h3>
-      <p class="hint">持っていける人は「持っていく」を押してね。</p>
-      <div id="want-list"></div>
-      <form class="dish-form want-form" id="want-form">
-        <input id="want-n" type="text" placeholder="例：ホットサンドメーカー" aria-label="あれば嬉しいもの" autocomplete="off">
-        <button type="submit">追加</button>
-      </form>
-      <span class="dish-status" id="want-status" role="status"></span>
-    </div>
-  </div>
 </section>
 
 <div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
@@ -1736,7 +1737,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       acts.push(['memo','写真アルバム','撮った写真を見る・追加する']);
     }
     acts.slice(0,2).forEach(function(a){
-      var b=el('button','now-act');b.type='button';var t=el('span');t.appendChild(el('b',null,a[1]));t.appendChild(el('small',null,a[2]));b.appendChild(t);
+      // 1行に収まるよう短い言い方で。数があるものだけ小さく添える
+      var SH={avoid:'苦手を登録',food:a[1]==='BBQのメニュー'?'BBQのメニュー':'メニューにいいね',pack:a[1].replace('をチェック',''),buy:'買い出しリスト',plan:'今日の予定',budget:'精算する',memo:'写真アルバム'};
+      var sub=/^(あと|まだ|未精算)/.test(a[2])?a[2]:'';
+      var b=el('button','now-act');b.type='button';b.appendChild(el('b',null,SH[a[0]]||a[1]));if(sub)b.appendChild(el('small',null,sub));b.title=a[2];
       b.addEventListener('click',function(){if(a[0]==='members'){memOpen=true;renderSplit();$('mem-input').focus()}go(a[0])});box.appendChild(b);
     });
     $('now-card').hidden=!acts.length;
@@ -2209,7 +2213,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var reg=split.members.indexOf(me)>=0,L=[];
     if(reg)L.push({t:'おかえり、'+me+'！',to:null});
     else{L.push({t:'ようこそ！ 案内係の うしだよ。',to:null});L.push({t:'まずは 自分の名前を えらんでね。',to:'members'})}
-    L.push({t:'「いまやること」を 見てね。',to:'now-card'});
+    L.push({t:'「やること」を 見てね。',to:'now-card'});
     L.push({t:'作りたいものに いいね してね。',to:'dish-list'});
     L.push({t:'持ち物を チェックしてね。',to:'pack'});
     L.push({t:'11月7日、嬬恋で 会おう！',to:null});
