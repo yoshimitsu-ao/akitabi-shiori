@@ -467,6 +467,30 @@ html.locked,html.locked body{overflow:hidden}
 .intro-hl{position:relative;z-index:25;box-shadow:0 0 0 4px #E58A3C,0 0 0 9px rgba(229,138,60,.25)!important;border-radius:16px}
 @media (prefers-reduced-motion:no-preference){.intro-hl{animation:hlpulse 1.4s ease-in-out infinite}@keyframes hlpulse{50%{box-shadow:0 0 0 4px #E58A3C,0 0 0 14px rgba(229,138,60,.12)}}}
 .intro-text,.intro-name{font-family:"M PLUS Rounded 1c","Zen Maru Gothic",var(--f-body)}
+.g-tabs{display:flex;gap:6px;margin-bottom:12px}
+.g-tab{flex:1;font:inherit;font-weight:700;padding:9px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer}
+.g-tab.on{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.g-pane[hidden]{display:none}
+.g-list{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--fg);resize:vertical}
+.g-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.rl-wrap{position:relative;width:min(280px,80vw);margin:14px auto 6px}
+.rl-wheel{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 12px rgba(0,0,0,.18))}
+#rl-g{transform-origin:0 0}
+.rl-pin{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid var(--fg);z-index:2}
+.g-go{display:block;width:100%;max-width:280px;margin:8px auto 0;font:inherit;font-weight:800;font-size:17px;padding:12px;border:0;border-radius:999px;background:var(--maple);color:#fff;cursor:pointer;box-shadow:0 4px 0 color-mix(in srgb,var(--maple) 60%,#000)}
+.g-go:active{transform:translateY(2px);box-shadow:0 2px 0 color-mix(in srgb,var(--maple) 60%,#000)}
+.g-result{text-align:center;font-size:18px;min-height:1.6em;margin:12px 0 0}
+.g-result b{font-family:"M PLUS Rounded 1c",var(--f-body);font-size:26px;color:var(--maple)}
+.am-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.am-cols label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
+.am-board{margin-top:12px}
+.am-board[hidden]{display:none}
+.am-svg{display:block;width:100%;height:auto;margin:6px auto;overflow:visible}
+.am-svg .am-name{font-size:13px;font-weight:800;cursor:pointer}
+.am-svg .am-bot{font-size:11px;font-weight:700}
+.am-btns{display:flex;gap:8px;justify-content:center}
+.am-out{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px;font-size:14px}
+.am-out b{color:var(--accent)}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -849,6 +873,42 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv drop" style="left:12%;width:12px;height:12px;color:var(--maple);--r:0deg;animation-delay:-1s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:40%;width:14px;height:14px;color:var(--larch);--r:-15deg"><use href="#leaf"/></svg><svg class="lv" style="left:44%;width:10px;height:10px;color:var(--larch);--r:40deg"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:77%;width:13px;height:13px;color:var(--berry);--r:0deg;animation-delay:-5s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv" style="left:93%;width:11px;height:11px;color:var(--maple);--r:10deg"><use href="#leaf"/></svg></div>
 
+<section id="games">
+  <div class="sec-h"><h2>ミニゲーム</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Games</span></div>
+  <div class="g-tabs" role="tablist">
+    <button type="button" class="g-tab on" data-g="roulette" role="tab" aria-selected="true">ルーレット</button>
+    <button type="button" class="g-tab" data-g="amida" role="tab" aria-selected="false">あみだくじ</button>
+  </div>
+
+  <div class="g-pane" id="g-roulette">
+    <p class="hint">項目は1行に1つ。最初はメンバーが入っています。</p>
+    <textarea class="g-list" id="rl-items" rows="4" aria-label="ルーレットの項目"></textarea>
+    <div class="g-quick"><button type="button" class="st-fix" data-fill="members">メンバー</button><button type="button" class="st-fix" data-fill="yesno">やる／やらない</button><button type="button" class="st-fix" data-fill="food">次に焼くもの</button></div>
+    <div class="rl-wrap">
+      <span class="rl-pin" aria-hidden="true"></span>
+      <svg class="rl-wheel" id="rl-wheel" viewBox="-110 -110 220 220" role="img" aria-label="ルーレット"><g id="rl-g"></g><circle r="14" fill="var(--paper)" stroke="var(--fg)" stroke-width="3"/></svg>
+    </div>
+    <button type="button" class="g-go" id="rl-go">回す</button>
+    <p class="g-result" id="rl-res" aria-live="polite"></p>
+  </div>
+
+  <div class="g-pane" id="g-amida" hidden>
+    <div class="am-cols">
+      <label>上（引く人）<textarea class="g-list" id="am-top" rows="4"></textarea></label>
+      <label>下（当たり・役割）<textarea class="g-list" id="am-bot" rows="4" placeholder="例：火おこし&#10;買い出し&#10;皿洗い"></textarea></label>
+    </div>
+    <p class="hint">下が足りないぶんは「はずれ」になります。</p>
+    <button type="button" class="g-go" id="am-make">あみだを作る</button>
+    <span class="dish-status" id="am-status" role="status"></span>
+    <div class="am-board" id="am-board" hidden>
+      <p class="hint">名前をタップすると、線をたどります。</p>
+      <svg id="am-svg" class="am-svg" aria-label="あみだくじ"></svg>
+      <div class="am-btns"><button type="button" class="st-fix" id="am-all">全部ひらく</button><button type="button" class="st-fix" id="am-new">作り直す</button></div>
+      <ul class="am-out" id="am-out" aria-live="polite"></ul>
+    </div>
+  </div>
+</section>
+
 <section id="memo">
   <div class="sec-h"><h2>写真アルバム</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Photos</span></div>
   <div class="album" id="album"></div>
@@ -968,7 +1028,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     <use href="#leaf" x="282" y="42" width="9" height="9" style="color:var(--larch)"/>
   </svg>
   <span>あつまれ げんじつとうひ / 2026.11.07 – 08</span>
-  <button type="button" class="st-fix intro-again" id="intro-again">うしの案内をもう一度見る</button>
+  <button type="button" class="st-fix intro-again" id="intro-again" hidden>うしの案内をもう一度見る</button>
 </footer>
 
 </div>
@@ -1020,7 +1080,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
   var state={dishes:[]},split={members:[],expenses:[]};
   var pending=0,loaded=false;
-  var STATUS={ci:'ci-status',av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
+  var STATUS={am:'am-status',ci:'ci-status',av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
   var $=function(id){return document.getElementById(id)};
 
   function call(fn,arg){
@@ -1633,6 +1693,90 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     $('ci-form').hidden=!ciEditing;txt.hidden=ciEditing||!t;$('ci-edit').hidden=ciEditing;$('ci-edit').textContent=t?'直す':'書く';
     txt.textContent=t;
   }
+  // ---- ミニゲーム（ルーレット・あみだくじ）。結果はそのスマホの中だけ
+  var GCOL=['#C4512F','#B9821F','#55703F','#B0465C','#5B86B5','#8A5A2B','#7A6FA8','#2E8B7A'];
+  function lines(id){return $(id).value.split(/\n|、|,/).map(function(x){return x.trim()}).filter(String).slice(0,16)}
+  document.querySelectorAll('.g-tab').forEach(function(b){b.addEventListener('click',function(){
+    document.querySelectorAll('.g-tab').forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)});
+    $('g-roulette').hidden=b.dataset.g!=='roulette';$('g-amida').hidden=b.dataset.g!=='amida';
+  })});
+  // ルーレット
+  var rlRot=0,rlBusy=false;
+  function drawWheel(){
+    var it=lines('rl-items'),g=$('rl-g');g.textContent='';var n=it.length;
+    if(n<2){g.innerHTML='<circle r="100" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/><text text-anchor="middle" y="40" font-size="11" fill="var(--mute)">2つ以上入れてね</text>';return}
+    var NS='http://www.w3.org/2000/svg';
+    it.forEach(function(t,i){
+      var a0=(i/n)*2*Math.PI-Math.PI/2,a1=((i+1)/n)*2*Math.PI-Math.PI/2,r=100;
+      var p=document.createElementNS(NS,'path');
+      p.setAttribute('d','M0 0 L'+(r*Math.cos(a0)).toFixed(2)+' '+(r*Math.sin(a0)).toFixed(2)+' A'+r+' '+r+' 0 '+((a1-a0)>Math.PI?1:0)+' 1 '+(r*Math.cos(a1)).toFixed(2)+' '+(r*Math.sin(a1)).toFixed(2)+'Z');
+      p.setAttribute('fill',GCOL[i%GCOL.length]);p.setAttribute('stroke','#fff');p.setAttribute('stroke-width','1.5');g.appendChild(p);
+      var am=(a0+a1)/2,tx=document.createElementNS(NS,'text');
+      tx.setAttribute('x',(62*Math.cos(am)).toFixed(2));tx.setAttribute('y',(62*Math.sin(am)).toFixed(2));
+      tx.setAttribute('transform','rotate('+(am*180/Math.PI)+' '+(62*Math.cos(am)).toFixed(2)+' '+(62*Math.sin(am)).toFixed(2)+')');
+      tx.setAttribute('text-anchor','middle');tx.setAttribute('dominant-baseline','middle');tx.setAttribute('fill','#fff');tx.setAttribute('font-weight','700');
+      tx.setAttribute('font-size',n>10?9:n>6?11:13);tx.textContent=t.length>7?t.slice(0,7)+'…':t;g.appendChild(tx);
+    });
+  }
+  function fillRl(kind){
+    var v=kind==='yesno'?['やる','やらない']:kind==='food'?['肉','野菜','焼きそば','マシュマロ','ソーセージ','焼きおにぎり']:split.members.slice();
+    $('rl-items').value=v.join('\n');drawWheel();$('rl-res').textContent='';
+  }
+  document.querySelectorAll('[data-fill]').forEach(function(b){b.addEventListener('click',function(){fillRl(b.dataset.fill)})});
+  $('rl-items').addEventListener('input',function(){drawWheel();$('rl-res').textContent=''});
+  $('rl-go').addEventListener('click',function(){
+    var it=lines('rl-items');if(it.length<2){$('rl-res').textContent='項目を2つ以上入れてね';return}
+    if(rlBusy)return;rlBusy=true;$('rl-res').textContent='';
+    var n=it.length,k=Math.floor(Math.random()*n),seg=360/n;
+    // 針は上。k番目の真ん中が上に来るように回す（少しずらして自然に）
+    var target=360-(k*seg+seg/2)+(Math.random()-.5)*seg*.7;
+    rlRot=rlRot-(rlRot%360)+360*6+target;
+    var g=$('rl-g');g.style.transition=matchMedia('(prefers-reduced-motion: reduce)').matches?'none':'transform 4.2s cubic-bezier(.12,.75,.15,1)';g.style.transform='rotate('+rlRot+'deg)';
+    setTimeout(function(){rlBusy=false;$('rl-res').innerHTML='';$('rl-res').appendChild(el('b',null,it[k]));$('rl-res').appendChild(document.createTextNode(' に決定！'))},matchMedia('(prefers-reduced-motion: reduce)').matches?50:4300);
+  });
+  // あみだくじ
+  var AM=null;
+  function makeAmida(){
+    var top=lines('am-top');if(top.length<2){status('上に2人以上入れてね','am');return}
+    var bot=lines('am-bot');while(bot.length<top.length)bot.push('はずれ');bot=bot.slice(0,top.length);
+    // 下はシャッフルして隠す
+    for(var i=bot.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=bot[i];bot[i]=bot[j];bot[j]=t}
+    var n=top.length,R=14,bars=[];
+    for(var r=0;r<R;r++){var row=[];for(var c=0;c<n-1;c++){row.push(!row[c-1]&&Math.random()<.42)}bars.push(row)}
+    AM={top:top,bot:bot,bars:bars,n:n,R:R,open:{}};drawAmida();$('am-board').hidden=false;$('am-out').textContent='';
+  }
+  function amPath(c){
+    var W=AM.W,H=AM.H,x=function(i){return 30+i*W},y=function(r){return 50+(r+1)*H},pts=[[x(c),36]];
+    for(var r=0;r<AM.R;r++){pts.push([x(c),y(r)]);if(AM.bars[r][c]){c++;pts.push([x(c),y(r)])}else if(c>0&&AM.bars[r][c-1]){c--;pts.push([x(c),y(r)])}}
+    pts.push([x(c),50+(AM.R+1)*H+14]);return{pts:pts,end:c};
+  }
+  function drawAmida(){
+    var n=AM.n,W=Math.max(46,Math.min(70,300/(n-1||1))),H=16,w=60+(n-1)*W,h=50+(AM.R+1)*H+50;AM.W=W;AM.H=H;
+    var sv=$('am-svg');sv.setAttribute('viewBox','0 0 '+w+' '+h);sv.style.maxWidth=w+'px';var NS='http://www.w3.org/2000/svg',out='';
+    for(var c=0;c<n;c++){var x=30+c*W;out+='<line x1="'+x+'" y1="36" x2="'+x+'" y2="'+(50+(AM.R+1)*H+14)+'" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/>'}
+    for(var r=0;r<AM.R;r++)for(var c2=0;c2<n-1;c2++)if(AM.bars[r][c2]){var y=50+(r+1)*H;out+='<line x1="'+(30+c2*W)+'" y1="'+y+'" x2="'+(30+(c2+1)*W)+'" y2="'+y+'" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/>'}
+    sv.innerHTML=out;
+    AM.top.forEach(function(t,c){var tx=document.createElementNS(NS,'text');tx.setAttribute('x',30+c*W);tx.setAttribute('y',22);tx.setAttribute('text-anchor','middle');tx.setAttribute('class','am-name');tx.setAttribute('fill',GCOL[c%GCOL.length]);tx.textContent=t.length>5?t.slice(0,5)+'…':t;
+      tx.addEventListener('click',function(){amRun(c)});sv.appendChild(tx)});
+    AM.bot.forEach(function(t,c){var g=document.createElementNS(NS,'g');g.setAttribute('id','am-b'+c);
+      var x=30+c*W,y=50+(AM.R+1)*H+32;
+      g.innerHTML='<rect x="'+(x-W/2+3)+'" y="'+(y-14)+'" width="'+(W-6)+'" height="22" rx="6" fill="var(--fg)"/><text x="'+x+'" y="'+(y+2)+'" text-anchor="middle" class="am-bot" fill="var(--paper)">？</text>';sv.appendChild(g)});
+  }
+  function amRun(c){
+    if(!AM||AM.open[c])return;AM.open[c]=1;var r=amPath(c),col=GCOL[c%GCOL.length];
+    var d='M'+r.pts.map(function(p){return p.join(' ')}).join(' L'),NS='http://www.w3.org/2000/svg',p=document.createElementNS(NS,'path');
+    p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',col);p.setAttribute('stroke-width','4');p.setAttribute('stroke-linejoin','round');p.setAttribute('stroke-linecap','round');
+    $('am-svg').insertBefore(p,$('am-svg').querySelector('text'));
+    var L=p.getTotalLength(),fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    p.style.strokeDasharray=L;p.style.strokeDashoffset=L;p.getBoundingClientRect();
+    p.style.transition=fast?'none':'stroke-dashoffset 1.6s linear';p.style.strokeDashoffset=0;
+    setTimeout(function(){var g=$('am-b'+r.end);if(g){g.querySelector('rect').setAttribute('fill',col);g.querySelector('text').textContent=AM.bot[r.end].length>5?AM.bot[r.end].slice(0,5)+'…':AM.bot[r.end]}
+      var li=el('li');li.appendChild(el('b',null,AM.top[c]));li.appendChild(document.createTextNode(' → '+AM.bot[r.end]));$('am-out').appendChild(li)},fast?20:1650);
+  }
+  $('am-make').addEventListener('click',makeAmida);
+  $('am-new').addEventListener('click',makeAmida);
+  $('am-all').addEventListener('click',function(){if(!AM)return;var i=0;(function next(){if(i>=AM.n)return;amRun(i++);setTimeout(next,350)})()});
+  function initGames(){if(!$('rl-items').value)fillRl('members');if(!$('am-top').value)$('am-top').value=split.members.join('\n')}
   function renderAll(){renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
 
   function addPreset(name){
@@ -1856,9 +2000,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   document.addEventListener('keydown',function(e){if($('intro').hidden)return;if(e.key==='Escape')introClose();else if(e.key==='Enter'||e.key===' '){e.preventDefault();introNext()}});
   $('intro-again').addEventListener('click',introOpen);
   var introSeen=false;try{introSeen=localStorage.getItem(INTRO_KEY)==='1'}catch(e){}
-  renderAll();refresh();tick();loadWeather();setInterval(loadWeather,3600000);
+  renderAll();refresh();tick();
+  var gw=setInterval(function(){if(loaded){clearInterval(gw);initGames()}},300);loadWeather();setInterval(loadWeather,3600000);
   // 初めて開いた人には、データを読み込んでから案内を出す
-  if(!introSeen){var iw=setInterval(function(){if(loaded){clearInterval(iw);introOpen()}},300);setTimeout(function(){clearInterval(iw)},15000)}
+  // 案内はいったんお休み（自動では出さない）
   setInterval(function(){if(document.visibilityState==='visible')refresh()},20000);
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refresh()});
 })();
