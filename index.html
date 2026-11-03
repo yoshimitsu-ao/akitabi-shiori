@@ -491,6 +491,17 @@ html.locked,html.locked body{overflow:hidden}
 .am-btns{display:flex;gap:8px;justify-content:center}
 .am-out{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px;font-size:14px}
 .am-out b{color:var(--accent)}
+.g-label{font-size:12px;color:var(--mute);margin:10px 0 4px}
+.g-mem{display:flex;flex-wrap:wrap;gap:6px}
+.gm{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:13px;padding:3px 10px 3px 3px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--mute);cursor:pointer;opacity:.55}
+.gm .av{width:22px;height:22px;font-size:10px;filter:grayscale(1)}
+.gm.on{opacity:1;color:var(--fg);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--paper))}
+.gm.on .av{filter:none}
+.gt{display:inline-flex;align-items:center;gap:2px}
+.g-save{display:flex;gap:6px;margin-top:8px}
+.g-save input{flex:1;min-width:0;font:inherit;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--fg)}
+.am-top-col{display:grid;gap:6px;align-content:start}
+.am-cols{align-items:start}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -881,9 +892,16 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </div>
 
   <div class="g-pane" id="g-roulette">
-    <p class="hint">項目は1行に1つ。最初はメンバーが入っています。</p>
-    <textarea class="g-list" id="rl-items" rows="4" aria-label="ルーレットの項目"></textarea>
-    <div class="g-quick"><button type="button" class="st-fix" data-fill="members">メンバー</button><button type="button" class="st-fix" data-fill="yesno">やる／やらない</button><button type="button" class="st-fix" data-fill="food">次に焼くもの</button></div>
+    <div class="g-label">お題</div>
+    <div class="g-quick" id="rl-topics"></div>
+    <div class="g-label">メンバー（タップで外す・入れる）</div>
+    <div class="g-mem" id="rl-mem"></div>
+    <div class="g-label">ほかの項目（1行に1つ）</div>
+    <textarea class="g-list" id="rl-items" rows="3" aria-label="ルーレットのほかの項目" placeholder="例：やる&#10;やらない"></textarea>
+    <form class="g-save" id="rl-save" novalidate>
+      <input id="rl-name" type="text" maxlength="12" placeholder="お題の名前（例：運転する人）" aria-label="お題の名前" autocomplete="off">
+      <button type="submit" class="st-fix">お題として保存</button>
+    </form>
     <div class="rl-wrap">
       <span class="rl-pin" aria-hidden="true"></span>
       <svg class="rl-wheel" id="rl-wheel" viewBox="-110 -110 220 220" role="img" aria-label="ルーレット"><g id="rl-g"></g><circle r="14" fill="var(--paper)" stroke="var(--fg)" stroke-width="3"/></svg>
@@ -894,7 +912,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
   <div class="g-pane" id="g-amida" hidden>
     <div class="am-cols">
-      <label>上（引く人）<textarea class="g-list" id="am-top" rows="4"></textarea></label>
+      <div class="am-top-col"><span class="g-label">上（引く人）</span><div class="g-mem" id="am-mem"></div><textarea class="g-list" id="am-top" rows="2" placeholder="ほかに引く人"></textarea></div>
       <label>下（当たり・役割）<textarea class="g-list" id="am-bot" rows="4" placeholder="例：火おこし&#10;買い出し&#10;皿洗い"></textarea></label>
     </div>
     <p class="hint">下が足りないぶんは「はずれ」になります。</p>
@@ -1696,6 +1714,34 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // ---- ミニゲーム（ルーレット・あみだくじ）。結果はそのスマホの中だけ
   var GCOL=['#C4512F','#B9821F','#55703F','#B0465C','#5B86B5','#8A5A2B','#7A6FA8','#2E8B7A'];
   function lines(id){return $(id).value.split(/\n|、|,/).map(function(x){return x.trim()}).filter(String).slice(0,16)}
+  // メンバーのチップ（タップで外す・入れる）。外した人だけ覚えておく
+  var OFF={rl:{},am:{}};
+  function memPick(box,key,onchg){
+    box.textContent='';
+    split.members.forEach(function(m){var b=el('button','gm'+(OFF[key][m]?'':' on'));b.type='button';b.setAttribute('aria-pressed',OFF[key][m]?'false':'true');
+      b.appendChild(av(m));b.appendChild(el('span',null,m));
+      b.addEventListener('click',function(){if(OFF[key][m])delete OFF[key][m];else OFF[key][m]=1;memPick(box,key,onchg);onchg&&onchg()});box.appendChild(b)});
+    if(!split.members.length)box.appendChild(el('span','dish-empty','メンバーがまだいません'));
+  }
+  function picked(key){return split.members.filter(function(m){return!OFF[key][m]})}
+  // お題（「メンバー」「やる／やらない」と、自分で保存したもの）
+  var TKEY='retoli-topics-v1',TOP=[];
+  try{TOP=JSON.parse(localStorage.getItem(TKEY)||'[]')||[]}catch(e){TOP=[]}
+  function saveTopics(){try{localStorage.setItem(TKEY,JSON.stringify(TOP))}catch(e){}}
+  function rlItems(){return picked('rl').concat(lines('rl-items')).slice(0,16)}
+  function renderTopics(){
+    var box=$('rl-topics');box.textContent='';
+    var base=[{n:'メンバー',mem:1,items:[]},{n:'やる／やらない',mem:0,items:['やる','やらない']}];
+    base.concat(TOP).forEach(function(t,i){
+      var w=el('span','gt'),b=el('button','st-fix',t.n);b.type='button';
+      b.addEventListener('click',function(){OFF.rl={};if(!t.mem)split.members.forEach(function(m){OFF.rl[m]=1});$('rl-items').value=(t.items||[]).join('\n');
+        memPick($('rl-mem'),'rl',drawWheel);drawWheel();$('rl-res').textContent=''});
+      w.appendChild(b);
+      if(i>=base.length)w.appendChild(xBtn(t.n+'を消す',function(){TOP=TOP.filter(function(x){return x!==t});saveTopics();renderTopics()},true));
+      box.appendChild(w);
+    });
+  }
+
   document.querySelectorAll('.g-tab').forEach(function(b){b.addEventListener('click',function(){
     document.querySelectorAll('.g-tab').forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)});
     $('g-roulette').hidden=b.dataset.g!=='roulette';$('g-amida').hidden=b.dataset.g!=='amida';
@@ -1703,7 +1749,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // ルーレット
   var rlRot=0,rlBusy=false;
   function drawWheel(){
-    var it=lines('rl-items'),g=$('rl-g');g.textContent='';var n=it.length;
+    var it=rlItems(),g=$('rl-g');g.textContent='';var n=it.length;
     if(n<2){g.innerHTML='<circle r="100" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/><text text-anchor="middle" y="40" font-size="11" fill="var(--mute)">2つ以上入れてね</text>';return}
     var NS='http://www.w3.org/2000/svg';
     it.forEach(function(t,i){
@@ -1718,14 +1764,15 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       tx.setAttribute('font-size',n>10?9:n>6?11:13);tx.textContent=t.length>7?t.slice(0,7)+'…':t;g.appendChild(tx);
     });
   }
-  function fillRl(kind){
-    var v=kind==='yesno'?['やる','やらない']:kind==='food'?['肉','野菜','焼きそば','マシュマロ','ソーセージ','焼きおにぎり']:split.members.slice();
-    $('rl-items').value=v.join('\n');drawWheel();$('rl-res').textContent='';
-  }
-  document.querySelectorAll('[data-fill]').forEach(function(b){b.addEventListener('click',function(){fillRl(b.dataset.fill)})});
   $('rl-items').addEventListener('input',function(){drawWheel();$('rl-res').textContent=''});
+  $('rl-save').addEventListener('submit',function(ev){ev.preventDefault();
+    var n=$('rl-name').value.trim().slice(0,12),it=lines('rl-items'),mem=picked('rl').length>0;
+    if(!n){$('rl-res').textContent='お題の名前を入れてね';return}
+    if(!it.length&&!mem){$('rl-res').textContent='項目を入れてね';return}
+    TOP=TOP.filter(function(x){return x.n!==n});TOP.push({n:n,mem:mem?1:0,items:it});saveTopics();$('rl-name').value='';renderTopics();$('rl-res').textContent='「'+n+'」を保存しました';
+  });
   $('rl-go').addEventListener('click',function(){
-    var it=lines('rl-items');if(it.length<2){$('rl-res').textContent='項目を2つ以上入れてね';return}
+    var it=rlItems();if(it.length<2){$('rl-res').textContent='項目を2つ以上入れてね';return}
     if(rlBusy)return;rlBusy=true;$('rl-res').textContent='';
     var n=it.length,k=Math.floor(Math.random()*n),seg=360/n;
     // 針は上。k番目の真ん中が上に来るように回す（少しずらして自然に）
@@ -1737,7 +1784,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // あみだくじ
   var AM=null;
   function makeAmida(){
-    var top=lines('am-top');if(top.length<2){status('上に2人以上入れてね','am');return}
+    var top=picked('am').concat(lines('am-top')).slice(0,16);if(top.length<2){status('上に2人以上入れてね','am');return}
     var bot=lines('am-bot');while(bot.length<top.length)bot.push('はずれ');bot=bot.slice(0,top.length);
     // 下はシャッフルして隠す
     for(var i=bot.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=bot[i];bot[i]=bot[j];bot[j]=t}
@@ -1776,8 +1823,10 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   $('am-make').addEventListener('click',makeAmida);
   $('am-new').addEventListener('click',makeAmida);
   $('am-all').addEventListener('click',function(){if(!AM)return;var i=0;(function next(){if(i>=AM.n)return;amRun(i++);setTimeout(next,350)})()});
-  function initGames(){if(!$('rl-items').value)fillRl('members');if(!$('am-top').value)$('am-top').value=split.members.join('\n')}
-  function renderAll(){renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
+  var gSig='';
+  function initGames(){renderTopics();gSig='';syncGames()}
+  function syncGames(){var sig=split.members.join('|');if(sig===gSig||!$('rl-mem'))return;gSig=sig;memPick($('rl-mem'),'rl',drawWheel);memPick($('am-mem'),'am');if(!rlBusy)drawWheel()}
+  function renderAll(){if(typeof syncGames==='function'&&gSig!=='')syncGames();renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
 
   function addPreset(name){
     if(state.dishes.some(function(d){return d.name===name}))return;
