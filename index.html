@@ -6,7 +6,7 @@
 <title>1・2年目 秋旅</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: 縦書きタイトルの扉 → 2日間を一本の道（ルート線）でたどる行程 → 宿・ごはん・持ち物・予算 */
 :root{
@@ -32,12 +32,20 @@ h2,h3{text-wrap:balance}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 
 /* 扉 */
-.cover{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,5vw,56px);align-items:end;padding-block:clamp(28px,7vw,72px) 24px}
+.cover{display:block;padding-block:clamp(20px,5vw,56px) 24px}
 .vtitle{writing-mode:vertical-rl;font-family:var(--f-display);font-weight:800;font-size:clamp(46px,11vw,96px);line-height:1.05;letter-spacing:.06em;margin:0}
 .vtitle small{display:block;font-size:.34em;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-left:.5em}
 .cover-r{min-width:0;display:grid;gap:18px}
 /* iPhone：縦書きタイトルを上にそろえて少し大きく。上に大きな空きができないように */
-@media (max-width:480px){.cover{align-items:start;gap:14px;padding-top:16px}.vtitle{font-size:58px}.cover-r{gap:12px}}
+@media (max-width:480px){.cover{padding-top:16px}.cover-r{gap:12px}}
+/* タイトル：丸くてポップな文字で、秋のおでかけ気分に */
+.ptitle{margin:0 0 10px;display:flex;align-items:flex-end;flex-wrap:wrap;gap:4px 14px}
+.pt-main{display:inline-flex;font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-body);font-weight:400;font-size:clamp(64px,19vw,110px);line-height:1;letter-spacing:.02em}
+.pt-main span{display:inline-block;color:var(--maple);text-shadow:0 4px 0 color-mix(in srgb,var(--maple) 25%,transparent);transform:rotate(-7deg) translateY(4px)}
+.pt-main span+span{color:var(--accent);text-shadow:0 4px 0 color-mix(in srgb,var(--accent) 25%,transparent);transform:rotate(6deg) translateY(-6px)}
+@media (prefers-reduced-motion:no-preference){.pt-main span{animation:ptpop .7s cubic-bezier(.3,1.6,.5,1) both}.pt-main span+span{animation-delay:.12s}
+  @keyframes ptpop{from{opacity:0;translate:0 18px;scale:.6}to{opacity:1;translate:0 0;scale:1}}}
+.pt-sub{font-family:"Zen Maru Gothic",var(--f-body);font-weight:900;font-size:15px;color:var(--fg);background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:5px 14px;transform:rotate(-2deg);margin-bottom:14px;white-space:nowrap}
 .mtn{width:100%;height:auto;display:block;max-width:100%}
 .dates{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-top:2px solid var(--fg);padding-top:12px}
 .dates .big{font-family:var(--f-mono);font-size:clamp(26px,5vw,40px);font-weight:500;letter-spacing:-.01em}
@@ -436,7 +444,7 @@ html.locked,html.locked body{overflow:hidden}
 .ci[open] .ci-sum b::before{content:"− "}
 .ci:not([open]){padding-block:10px}
 .intro{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:16px 16px calc(28px + env(safe-area-inset-bottom));
-  background:linear-gradient(rgba(15,20,18,.15),rgba(15,20,18,.55));cursor:pointer;-webkit-tap-highlight-color:transparent}
+  background:linear-gradient(rgba(15,20,18,0) 0%,rgba(15,20,18,.05) 45%,rgba(15,20,18,.5));cursor:pointer;-webkit-tap-highlight-color:transparent}
 .intro[hidden]{display:none}
 .intro-cow{width:120px;height:74px;margin-bottom:-6px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
 .intro-cow svg{width:100%;height:100%;display:block;color:#1B201D}
@@ -451,6 +459,9 @@ html.locked,html.locked body{overflow:hidden}
 @media (prefers-reduced-motion:no-preference){.intro-next{animation:introblink 1s steps(2) infinite}@keyframes introblink{50%{opacity:0}}}
 .intro-skip{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(0,0,0,.35);color:#fff;cursor:pointer}
 .intro-again{display:block;margin-top:10px;font-size:12px}
+.intro-hl{position:relative;z-index:25;box-shadow:0 0 0 4px #E58A3C,0 0 0 9px rgba(229,138,60,.25)!important;border-radius:16px}
+@media (prefers-reduced-motion:no-preference){.intro-hl{animation:hlpulse 1.4s ease-in-out infinite}@keyframes hlpulse{50%{box-shadow:0 0 0 4px #E58A3C,0 0 0 14px rgba(229,138,60,.12)}}}
+.intro-text,.intro-name{font-family:"Zen Maru Gothic",var(--f-body)}
 .net{position:fixed;left:16px;right:16px;bottom:16px;z-index:9;max-width:520px;margin:0 auto;padding:10px 14px;border-radius:14px;background:var(--fg);color:var(--paper);font-size:13px;text-align:center;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}
 .net[hidden]{display:none}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -598,7 +609,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 <div class="wrap">
 
 <header class="cover">
-  <h1 class="vtitle">秋旅<small>一・二年目</small></h1>
+  <h1 class="ptitle"><span class="pt-main" aria-label="秋旅"><span aria-hidden="true">秋</span><span aria-hidden="true">旅</span></span><span class="pt-sub">1・2年目の 秋のおでかけ</span></h1>
   <div class="cover-r">
     <svg class="mtn" viewBox="0 0 600 220" role="img" aria-label="浅間山とカラマツの林">
       <path d="M0 220 L0 176 C60 170 110 150 170 120 C210 98 240 70 262 56 C276 47 288 44 300 44 C318 44 332 52 348 64 C380 88 420 120 470 142 C520 162 560 168 600 170 L600 220 Z" fill="var(--rock)" opacity=".14"/>
@@ -1805,26 +1816,34 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // ---- はじめての人への案内（うしが話す。文字が1文字ずつ出る）
   var INTRO_KEY='retoli-intro-v1';
   function introLines(){
-    var reg=split.members.indexOf(me)>=0;
-    var L=reg?['おかえり、'+me+'！']:['ようこそ！ 案内係の うしだよ。','まずは 自分の名前を えらんでね。'];
-    L.push('「いまやること」を 見てね。');
-    L.push('作りたいものに いいね してね。');
-    L.push('持ち物を チェックしてね。');
-    L.push('11月7日、嬬恋で 会おう！');
+    var reg=split.members.indexOf(me)>=0,L=[];
+    if(reg)L.push({t:'おかえり、'+me+'！',to:null});
+    else{L.push({t:'ようこそ！ 案内係の うしだよ。',to:null});L.push({t:'まずは 自分の名前を えらんでね。',to:'members'})}
+    L.push({t:'「いまやること」を 見てね。',to:'now-card'});
+    L.push({t:'作りたいものに いいね してね。',to:'dish-list'});
+    L.push({t:'持ち物を チェックしてね。',to:'pack'});
+    L.push({t:'11月7日、嬬恋で 会おう！',to:null});
     return L;
+  }
+  // 案内に合わせて、その場所まで画面を動かして光らせる
+  function introGo(to){
+    document.querySelectorAll('.intro-hl').forEach(function(e){e.classList.remove('intro-hl')});
+    var el2=to&&$(to);if(el2&&el2.hidden)el2=null;
+    if(!el2){window.scrollTo({top:0,behavior:'smooth'});return}
+    window.scrollTo({top:Math.max(0,el2.getBoundingClientRect().top+window.scrollY-96),behavior:'smooth'});el2.classList.add('intro-hl');
   }
   var introL=[],introI=0,introTimer=null,introTyping=false;
   var introReduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   function introType(){
-    var t=introL[introI],box=$('intro-text'),k=0;box.textContent='';$('intro-next').hidden=true;introTyping=true;clearInterval(introTimer);
+    var t=introL[introI].t,box=$('intro-text'),k=0;introGo(introL[introI].to);box.textContent='';$('intro-next').hidden=true;introTyping=true;clearInterval(introTimer);
     if(introReduce){box.textContent=t;introTyping=false;$('intro-next').hidden=false;return}
     introTimer=setInterval(function(){k++;box.textContent=t.slice(0,k);if(k>=t.length){clearInterval(introTimer);introTyping=false;$('intro-next').hidden=false}},45);
   }
   function introOpen(){introL=introLines();introI=0;$('intro').hidden=false;document.documentElement.classList.add('locked');introType();$('intro-box').focus()}
-  function introClose(){clearInterval(introTimer);$('intro').hidden=true;document.documentElement.classList.remove('locked');try{localStorage.setItem(INTRO_KEY,'1')}catch(e){}
+  function introClose(){clearInterval(introTimer);document.querySelectorAll('.intro-hl').forEach(function(e){e.classList.remove('intro-hl')});$('intro').hidden=true;document.documentElement.classList.remove('locked');try{localStorage.setItem(INTRO_KEY,'1')}catch(e){}
     if(split.members.indexOf(me)<0){var t=$('members');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}}
   function introNext(){
-    if(introTyping){clearInterval(introTimer);$('intro-text').textContent=introL[introI];introTyping=false;$('intro-next').hidden=false;return}
+    if(introTyping){clearInterval(introTimer);$('intro-text').textContent=introL[introI].t;introTyping=false;$('intro-next').hidden=false;return}
     introI++;if(introI>=introL.length){introClose();return}introType();
   }
   $('intro').addEventListener('click',function(e){if(e.target.id==='intro-skip')return;introNext()});
