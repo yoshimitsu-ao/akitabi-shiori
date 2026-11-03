@@ -514,6 +514,8 @@ html.locked,html.locked body{overflow:hidden}
 .am-out{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px;font-size:14px}
 .am-out b{color:var(--accent)}
 .g-label{font-size:12px;color:var(--mute);margin:10px 0 4px}
+.g-list.am-top{margin-top:8px}
+#g-amida .g-go{margin-top:16px}
 .g-mem{display:flex;flex-wrap:wrap;gap:6px}
 .gm{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:13px;padding:3px 10px 3px 3px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--mute);cursor:pointer;opacity:.55}
 .gm .av{width:22px;height:22px;font-size:10px;filter:grayscale(1)}
@@ -967,11 +969,11 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </div>
 
   <div class="g-pane" id="g-amida" hidden>
-    <div class="am-cols">
-      <div class="am-top-col"><span class="g-label">上（引く人）</span><div class="g-mem" id="am-mem"></div><textarea class="g-list" id="am-top" rows="2" placeholder="ほかに引く人（1行に1人）" hidden></textarea></div>
-      <label>下（当たり・役割）<textarea class="g-list" id="am-bot" rows="4" placeholder="例：火おこし&#10;買い出し&#10;皿洗い"></textarea></label>
-    </div>
-    <p class="hint">下が足りないぶんは「はずれ」になります。</p>
+    <div class="g-label">引く人（タップで外す・入れる）</div>
+    <div class="g-mem" id="am-mem"></div>
+    <textarea class="g-list am-top" id="am-top" rows="2" placeholder="ほかに引く人（1行に1人）" aria-label="ほかに引く人" hidden></textarea>
+    <div class="g-label">当たり・役割（1行に1つ。足りないぶんは「はずれ」）</div>
+    <textarea class="g-list" id="am-bot" rows="4" aria-label="当たり・役割" placeholder="例：火おこし&#10;買い出し&#10;皿洗い"></textarea>
     <button type="button" class="g-go" id="am-make">あみだを作る</button>
     <span class="dish-status" id="am-status" role="status"></span>
     <div class="am-board" id="am-board" hidden>
