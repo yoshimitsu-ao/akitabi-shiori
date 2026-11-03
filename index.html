@@ -115,6 +115,14 @@ dl.kv dd{margin:0;min-width:0}
 .tag.no{text-decoration:line-through;color:var(--mute)}
 .av{display:inline-grid;place-content:center;width:28px;height:28px;border-radius:50%;color:var(--paper);font-family:var(--f-body);font-weight:700;font-size:12px;flex:none;line-height:1}
 .mem{display:inline-flex;align-items:center;gap:8px;font-size:15px;padding:3px 12px 3px 3px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.mem-nm{font:inherit;padding:0;border:0;background:none;color:inherit;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--fg) 35%,transparent);text-underline-offset:3px}
+.mem.ed{display:flex;width:100%;box-sizing:border-box;padding-right:6px}
+.mem-ren{display:flex;gap:6px;align-items:center;flex:1;min-width:0}
+.mem-ren .st-fix{flex:none;padding-inline:10px}
+.mem-ren input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 12px;border:1px solid var(--accent);border-radius:12px;background:var(--paper);color:var(--fg)}
+.mem-hint{font-size:12px;color:var(--mute);margin:6px 0 0}
+.me-chips .gplus{width:34px;height:34px;align-self:center}
+#mem-form[hidden]{display:none}
 .pay-form{margin-top:12px;padding:16px;border-radius:18px;background:var(--paper);border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pay-form input,.pay-form select{font:inherit;padding:9px 12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;min-width:0;width:100%}
 .pay-form input:focus-visible,.pay-form select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
@@ -734,12 +742,12 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 <nav class="toc" aria-label="目次"><button type="button" data-to="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></svg><span>予定</span></button><button type="button" data-to="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5h16c0 4-3.6 6.5-8 6.5s-8-2.5-8-6.5z"/><path d="M8 16.5 6.5 20.5M16 16.5l1.5 4M9.5 7.5c-1-1 1-2 0-3.5M14.5 7.5c-1-1 1-2 0-3.5"/></svg><span>BBQ</span></button><button type="button" data-to="buy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4"/></svg><span>買い出し</span></button><button type="button" data-to="pack"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7.5" width="14" height="13" rx="4"/><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><rect x="8.5" y="13" width="7" height="4.5" rx="1.5"/></svg><span>持ち物</span></button><button type="button" data-to="budget"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9 7.5l3 4 3-4M12 11.5v5.5M9.5 12.5h5M9.5 15h5"/></svg><span>割り勘</span></button></nav>
 
 <section id="members" class="members">
-  <div class="me-line" id="me-line" hidden><span class="me-av" id="me-av"></span><span>あなた：<b id="me-name"></b></span><span class="me-n" id="me-count"></span><button type="button" class="st-fix" id="me-open">切り替え</button></div>
+  <div class="me-line" id="me-line" hidden><span class="me-av" id="me-av"></span><span>ユーザー：<b id="me-name"></b></span><button type="button" class="st-fix" id="me-open">切り替え</button></div>
   <div class="mem-card" id="mem-card">
-    <div class="mem-top"><h2 class="mem-h">メンバー</h2><button type="button" class="st-fix" id="mem-close" hidden>閉じる</button></div>
+    <div class="mem-top"><h2 class="mem-h">ユーザー</h2><button type="button" class="st-fix" id="mem-close" hidden>閉じる</button></div>
     <div class="me-chips" id="me-chips" role="group" aria-label="自分を選ぶ"></div>
-    <p class="me-q" id="me-q2">いなければ、ニックネームを登録</p>
-    <form class="dish-form" id="mem-form">
+    <p class="me-q" id="me-q2" hidden></p>
+    <form class="dish-form" id="mem-form" hidden>
       <input id="mem-input" type="text" placeholder="自分のニックネームを入れる" aria-label="自分のニックネーム" autocomplete="off" maxlength="20">
       <button type="submit">登録</button>
     </form>
@@ -747,6 +755,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     <details class="amen mem-fold">
       <summary>メンバーの編集（<span id="mem-n">0</span>人）</summary>
       <div class="dishes" id="mem-list"></div>
+      <p class="mem-hint">名前をタップすると変えられます</p>
     </details>
   </div>
   <div class="now-card" id="now-card" hidden>
@@ -1139,7 +1148,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   var sched=null,editId=null,schedEdit=false,memo={album:'',notes:[]},pack=null,packWho='',me='';
   try{me=localStorage.getItem('retoli-me')||''}catch(e){}
   packWho=me;
-  var memOpen=false;
+  var memOpen=false,memAdd=false,renaming='';
   function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
   var state={dishes:[]},split={members:[],expenses:[]};
   var pending=0,loaded=false;
@@ -1377,17 +1386,29 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     var mc=$('me-chips');mc.textContent='';
     split.members.forEach(function(m){var b=el('button','mchip'+(m===me?' on':''));b.type='button';b.setAttribute('aria-pressed',m===me?'true':'false');
       b.appendChild(av(m));b.appendChild(el('span',null,m));
-      b.addEventListener('click',function(){setMe(m);memOpen=false;renderAll();status(m+'さんに切り替えました','mem',true)});mc.appendChild(b)});
+      b.addEventListener('click',function(){setMe(m);memOpen=false;memAdd=false;renderAll();status(m+'さんに切り替えました','mem',true)});mc.appendChild(b)});
     var isIn=split.members.indexOf(me)>=0;
-    $('me-q2').textContent=split.members.length?(isIn?'メンバーを追加':'いなければ、ニックネームを登録'):'まずは自分のニックネームを登録';
+    if(split.members.length){var pb=el('button','gplus'+(memAdd?' on':''),'＋');pb.type='button';pb.setAttribute('aria-label','名前を追加');pb.setAttribute('aria-expanded',memAdd?'true':'false');
+      pb.addEventListener('click',function(){memAdd=!memAdd;renderSplit();if(memAdd)setTimeout(function(){$('mem-input').focus()},50)});mc.appendChild(pb)}
+    $('mem-form').hidden=split.members.length>0&&!memAdd;
+    $('me-q2').hidden=split.members.length>0;$('me-q2').textContent='まずは自分のニックネームを登録';
     var ma=$('me-av');ma.textContent='';if(isIn)ma.appendChild(av(me));
     $('me-line').hidden=!(isIn&&!memOpen);$('mem-card').hidden=isIn&&!memOpen;
-    $('mem-close').hidden=!isIn;$('me-name').textContent=me;$('me-count').textContent='メンバー'+split.members.length+'人';
-    $('mem-input').placeholder=isIn?'ほかのメンバーを追加':'自分のニックネームを入れる';
+    $('mem-close').hidden=!isIn;$('me-name').textContent=me;
+    $('mem-input').placeholder=isIn?'追加する名前':'自分のニックネームを入れる';
     $('mem-form').querySelector('button').textContent=isIn?'追加':'登録';
     if(!split.members.length)ml.appendChild(el('span','dish-empty',loaded?'まだ誰もいません':'読み込み中…'));
     split.members.forEach(function(m){
-      var chip=el('span','mem');chip.appendChild(av(m));chip.appendChild(el('span',null,m));
+      var chip=el('span','mem'+(renaming===m?' ed':''));chip.appendChild(av(m));
+      if(renaming===m){
+        var f=el('form','mem-ren'),ri=el('input'),ok=el('button','st-fix','変更');ri.value=m;ri.maxLength=20;ri.setAttribute('aria-label',m+'の新しい名前');ok.type='submit';
+        var cn=el('button','st-fix','やめる');cn.type='button';cn.addEventListener('click',function(){renaming='';renderSplit()});
+        f.appendChild(ri);f.appendChild(ok);f.appendChild(cn);
+        f.addEventListener('submit',function(ev){ev.preventDefault();renameMem(m,ri.value)});
+        chip.appendChild(f);ml.appendChild(chip);setTimeout(function(){if(document.activeElement!==ri){ri.focus();ri.select()}},30);return;
+      }
+      var nb=el('button','mem-nm',m);nb.type='button';nb.setAttribute('aria-label',m+'の名前を変える');
+      nb.addEventListener('click',function(){renaming=m;renderSplit()});chip.appendChild(nb);
       chip.appendChild(xBtn(m+'を外す',function(){
         if(split.expenses.some(function(x){return x.p===m||(x.s||[]).indexOf(m)>=0})){status(m+'さんは支払いに入っているので外せません。先にその支払いを消してください','mem');return}
         split.members=split.members.filter(function(x){return x!==m});op({type:'removeMember',name:m},'mem');
@@ -1968,11 +1989,31 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   }
 
   $('dish-form').addEventListener('submit',function(ev){ev.preventDefault();var inp=$('dish-input');var v=inp.value;inp.value='';addCustom(v)});
+  // 名前を変える（支払い・持ち物・いいねなどもまとめて置き換え）
+  function renameMem(a,b){
+    b=String(b||'').trim().slice(0,20);
+    if(!b||b===a){renaming='';renderSplit();return}
+    if(split.members.indexOf(b)>=0){status(b+'さんはもういます','mem');return}
+    renaming='';renameLocal({bbq:state,split:split,memo:memo,pack:pack},a,b);
+    if(me===a)setMe(b);if(packWho===a)packWho=b;
+    [OFF.rl,OFF.am].forEach(function(o){if(o[a]){delete o[a];o[b]=1}});
+    op({type:'renameMember',from:a,to:b},'mem').then(function(){status(a+' → '+b+' に変えました','mem',true)});
+  }
+  function renameLocal(s,a,b){
+    var r=function(x){return x===a?b:x},mv=function(o){if(o&&Object.prototype.hasOwnProperty.call(o,a)){o[b]=o[a];delete o[a]}};
+    s.split.members=s.split.members.map(r);
+    (s.split.expenses||[]).forEach(function(x){x.p=r(x.p);x.s=(x.s||[]).map(r)});
+    var paid={};Object.keys(s.split.paid||{}).forEach(function(k){var m=k.match(/^(.*)>(.*):(\d+)$/);paid[m?r(m[1])+'>'+r(m[2])+':'+m[3]:k]=s.split.paid[k]});s.split.paid=paid;
+    (s.bbq.dishes||[]).forEach(function(x){x.by=r(x.by);if(Array.isArray(x.likedBy))x.likedBy=x.likedBy.map(r)});
+    (s.bbq.wants||[]).forEach(function(x){if(Array.isArray(x.by))x.by=x.by.map(r)});
+    if(s.memo){(s.memo.notes||[]).forEach(function(x){x.n=r(x.n)});mv(s.memo.avoid)}
+    if(s.pack){mv(s.pack.own);mv(s.pack.done)}
+  }
   $('mem-form').addEventListener('submit',function(ev){
     ev.preventDefault();var inp=$('mem-input'),v=inp.value.trim().slice(0,20);
     if(!v)return;if(split.members.indexOf(v)>=0){status(v+'さんはもういます','mem');return}
     var self=split.members.indexOf(me)<0;
-    inp.value='';split.members.push(v);if(self)setMe(v);
+    inp.value='';split.members.push(v);if(self)setMe(v);memAdd=false;
     op({type:'addMember',name:v},'mem').then(function(){status(self?v+'さん、ようこそ。自分の持ち物は「持ち物」で見られます':v+'さんを追加しました','mem',true)});
   });
   $('receipt').addEventListener('change',function(){

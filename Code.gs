@@ -150,6 +150,24 @@ function stop_(x) {
   return { d: x.d == 2 ? 2 : 1, t: t, n: str_(x.n, 30), s: str_(x.s, 40), k: x.k ? 1 : 0, m: m };
 }
 
+// メンバーの名前を変える。支払い・いいね・持ち物・食べられないものなど、名前が入っているところをまとめて置き換える
+function renameMember_(s, a, b) {
+  var r = function (x) { return x === a ? b : x; };
+  var mv = function (o) { if (o && Object.prototype.hasOwnProperty.call(o, a)) { o[b] = o[a]; delete o[a]; } };
+  s.split.members = s.split.members.map(r);
+  s.split.expenses.forEach(function (x) { x.p = r(x.p); x.s = (x.s || []).map(r); });
+  var paid = {};
+  Object.keys(s.split.paid || {}).forEach(function (k) {
+    var m = k.match(/^(.*)>(.*):(\d+)$/);
+    paid[m ? r(m[1]) + '>' + r(m[2]) + ':' + m[3] : k] = s.split.paid[k];
+  });
+  s.split.paid = paid;
+  s.bbq.dishes.forEach(function (x) { x.by = r(x.by); if (Array.isArray(x.likedBy)) x.likedBy = x.likedBy.map(r); });
+  (s.bbq.wants || []).forEach(function (x) { if (Array.isArray(x.by)) x.by = x.by.map(r); });
+  (s.memo.notes || []).forEach(function (x) { x.n = r(x.n); });
+  mv(s.memo.avoid); mv(s.pack.own); mv(s.pack.done);
+}
+
 var CATS = ['肉・魚', '野菜・果物', '主食・締め', '飲み物', '調味料', 'その他'];
 
 function mutate_(s, o) {
@@ -181,6 +199,12 @@ function mutate_(s, o) {
     case 'addMember': {
       var m = str_(o.name, 20);
       if (m && members.indexOf(m) < 0) members.push(m);
+      return;
+    }
+    case 'renameMember': {
+      var ra = str_(o.from, 20), rb = str_(o.to, 20);
+      if (!ra || !rb || ra === rb || members.indexOf(ra) < 0 || members.indexOf(rb) >= 0) return;
+      renameMember_(s, ra, rb);
       return;
     }
     case 'removeMember': {
