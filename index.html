@@ -1775,12 +1775,26 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     ['さば','鯖'],['いか','烏賊'],['さけ','鮭','サーモン'],['きのこ','しいたけ','椎茸','しめじ','えのき','エリンギ','まいたけ','マッシュルーム'],['ねぎ','葱','長ねぎ','下仁田ねぎ'],
     ['にんにく','ガーリック'],['ぶた','豚','豚肉','豚バラ','豚こま'],['うし','牛','牛肉','牛カルビ'],['とり','鶏','鶏肉','鶏もも','丸鶏','チキン'],['かつお','鰹','カツオ']];
   function kana(t){return String(t||'').replace(/[\u30a1-\u30f6]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0x60)}).toLowerCase()}
-  function terms(w){var k=kana(w),out=[k];SYN.forEach(function(g){if(g.some(function(x){return kana(x)===k}))g.forEach(function(x){out.push(kana(x))})});return out}
+  // まとめた言い方（海鮮・魚・肉など）は、中身の食材にも反応させる（逆向きはしない：えびが苦手でも、いかには反応しない）
+  var FISH=['魚','さかな','鮭','サーモン','さば','鯖','まぐろ','鮪','ツナ','かつお','鰹','鰤','鯛','鱈','鯵','いわし','鰯','さんま','秋刀魚','うなぎ','鰻','ししゃも','しらす','刺身','さしみ','たらこ','明太','いくら','ちくわ','かまぼこ','はんぺん','アンチョビ'];
+  var SHELL=['えび','海老','エビ','シュリンプ','かに','蟹','カニ','いか','烏賊','たこ','蛸','貝','あさり','はまぐり','しじみ','ほたて','帆立','牡蠣','カキフライ','ムール','うに','ウニ'];
+  var CAT={'海鮮':FISH.concat(SHELL,['シーフード','海鮮']),'魚介':FISH.concat(SHELL,['シーフード','魚介']),'シーフード':FISH.concat(SHELL,['シーフード','海鮮']),
+    '魚':FISH,'さかな':FISH,'甲殻':['えび','海老','シュリンプ','かに','蟹','ロブスター'],'貝':['貝','あさり','はまぐり','しじみ','ほたて','帆立','牡蠣','ムール'],
+    '肉':['肉','豚','牛','鶏','チキン','ビーフ','ポーク','ソーセージ','ウインナー','ベーコン','ハム','ひき肉','ラム','ジンギスカン'],
+    '辛いもの':['辛','唐辛子','とうがらし','キムチ','ラー油','チリ','豆板醤','コチュジャン','わさび','からし','ハバネロ','タバスコ'],
+    'ナッツ':['ナッツ','ピーナッツ','落花生','くるみ','胡桃','アーモンド','カシューナッツ','マカダミア','ピスタチオ'],
+    '生もの':['刺身','さしみ','生','たたき','ユッケ','カルパッチョ']};
+  CAT['辛い']=CAT['辛いもの'];CAT['激辛']=CAT['辛いもの'];CAT['魚類']=FISH;CAT['肉類']=CAT['肉'];CAT['甲殻類']=CAT['甲殻'];CAT['貝類']=CAT['貝'];CAT['ナッツ類']=CAT['ナッツ'];CAT['生']=CAT['生もの'];
+  function terms(w){var raw=String(w||'').trim(),base=raw.replace(/(系|類|全般|全部|料理|もの|物|系全般)$/,'')||raw,k=kana(raw),out=[k];
+    [raw,base].forEach(function(x){(CAT[x]||[]).forEach(function(y){out.push(kana(y))})});
+    if(base!==raw)out.push(kana(base));
+    SYN.forEach(function(g){if(g.some(function(x){var kx=kana(x);return kx===k||kx===kana(base)}))g.forEach(function(x){out.push(kana(x))})});return out}
+  var NOT={'そば':['やきそば'],'いか':['すいか'],'生':['生クリーム','生ハム','生姜','生地','生ビール','生チョコ','生麺'],'らむ':['らむね']};
   function avoidHits(text){
     var t=kana(text),hits=[],av=(memo.avoid||{});
     Object.keys(av).forEach(function(m){if(split.members.indexOf(m)<0)return;
       ['a','d'].forEach(function(k){(av[m][k]||[]).forEach(function(w){
-        if(terms(w).some(function(x){return x&&t.indexOf(x)>=0&&!(x==='そば'&&t.indexOf('やきそば')>=0)}))hits.push({m:m,w:w,k:k});
+        if(terms(w).some(function(x){if(!x||t.indexOf(x)<0)return false;var u=t;(NOT[x]||[]).forEach(function(n){u=u.split(kana(n)).join('')});return u.indexOf(x)>=0}))hits.push({m:m,w:w,k:k});
       })});
     });
     return hits;
@@ -1995,6 +2009,14 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(!d){renderAll();return}
     if(!items.length){renderAll();status(name+'の材料は出せませんでした。買い出しリストに直接足してください','dish');return}
     d.items=items;await op({type:'setItems',name:name,items:items},'dish');
+    // サーバーが古い（setItems を知らない）ときは、料理を入れ直して材料を残す
+    var d2=state.dishes.filter(function(x){return x.name===name})[0];
+    if(d2&&!(d2.items||[]).length){
+      var keep={name:name,servings:d2.servings||11,items:items,by:d2.by||me};
+      state.dishes=state.dishes.filter(function(x){return x.name!==name});await op({type:'removeDish',name:name},'dish');
+      state.dishes.push(keep);await op({type:'addDish',dish:keep},'dish');
+      (d2.likedBy||[]).forEach(function(m){op({type:'likeDish',name:name,who:m,d:1},null)});
+    }
     status(name+'の材料（'+items.length+'品）を買い出しリストに入れました','dish',true);
   }
 
