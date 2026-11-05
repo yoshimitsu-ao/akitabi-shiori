@@ -217,6 +217,32 @@ dl.kv dd{margin:0;min-width:0}
 .dish-status.err{color:var(--berry);font-weight:700}
 .pay-form .dish-status{grid-column:1/-1;margin:0}
 .hint{font-size:12px;color:var(--mute);margin:-4px 0 0}
+.sg-lead{font-size:13px;color:var(--mute);margin:-8px 0 12px;line-height:1.7}.sg-lead b{color:var(--fg)}
+.sg-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:6px 0 4px;margin-bottom:10px}.sg-tabs::-webkit-scrollbar{display:none}
+.sg-tab{position:relative;font:inherit;font-size:13px;padding:7px 4px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer;white-space:nowrap}
+.sg-tab .c{font-family:var(--f-mono);font-size:11px;color:var(--mute);margin-left:4px}
+.sg-tab.on{background:var(--accent);border-color:var(--accent);color:var(--paper)}.sg-tab.on .c{color:var(--paper);opacity:.8}
+.sg-tab .now{position:absolute;top:-7px;right:-4px;font-size:9px;font-weight:700;line-height:1;padding:3px 5px;border-radius:999px;background:var(--maple);color:#fff}
+.sg-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.sg-form #sg-t{grid-column:1/-1}
+.sg-form input{min-width:0;font:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px}
+.sg-form button{font:inherit;font-weight:700;padding:9px 18px;border:0;border-radius:999px;background:var(--accent);color:var(--paper);cursor:pointer}
+.sg-list{display:grid;gap:8px;margin-top:10px}
+.sg{border:1px solid var(--line);border-radius:16px;background:var(--paper);padding:10px 12px}
+.sg-top{display:flex;align-items:center;gap:10px}
+.sg-no{flex:none;width:22px;font-family:var(--f-mono);font-size:12px;color:var(--mute);text-align:center}
+.sg-main{flex:1;min-width:0;font:inherit;text-align:left;padding:0;border:0;background:none;color:var(--fg);cursor:pointer}
+.sg-main b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-main small{display:block;font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-who{flex:none;display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:12px;font-weight:700;padding:5px 10px;border:1px dashed var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer;white-space:nowrap}
+.sg-who.open{border-style:solid;border-color:var(--line);color:var(--fg);font-weight:400;cursor:default}
+.sg-who .av{width:20px;height:20px;font-size:10px}
+.sg-who.mine{border-style:solid;border-color:var(--line);color:var(--mute);font-weight:400}
+.sg-links{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 32px}
+.sg-links[hidden]{display:none}
+.sg-links a{font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;color:var(--fg);text-decoration:none;background:var(--bg)}
+.sg-links .dish-x{margin-left:auto}
+.sg-empty{font-size:13px;color:var(--mute);padding:6px 2px}
 .extra-form{margin-top:0}
 .sched-toggle{display:block;margin:18px auto 0;font:inherit;font-size:13px;font-weight:700;padding:8px 18px;border:1px dashed var(--accent);border-radius:999px;background:none;color:var(--accent);cursor:pointer}
 .sched-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -942,6 +968,19 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv drop" style="left:12%;width:12px;height:12px;color:var(--maple);--r:0deg;animation-delay:-1s;animation-duration:9s"><use href="#leaf"/></svg><svg class="lv" style="left:40%;width:14px;height:14px;color:var(--larch);--r:-15deg"><use href="#leaf"/></svg><svg class="lv" style="left:44%;width:10px;height:10px;color:var(--larch);--r:40deg"><use href="#ginkgo"/></svg><svg class="lv drop" style="left:77%;width:13px;height:13px;color:var(--berry);--r:0deg;animation-delay:-5s;animation-duration:11s"><use href="#leaf"/></svg><svg class="lv" style="left:93%;width:11px;height:11px;color:var(--maple);--r:10deg"><use href="#leaf"/></svg></div>
 
+<section id="songs">
+  <div class="sec-h"><h2>プレイリスト</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Playlist</span></div>
+  <p class="sg-lead">車で流す曲を、時間帯ごとに入れてね。誰が入れたかは<b>ヒミツ</b>。流れたら「誰の曲？」で答え合わせ。</p>
+  <div class="sg-tabs" id="sg-tabs" role="tablist" aria-label="時間帯"></div>
+  <form class="sg-form" id="sg-form" novalidate>
+    <input id="sg-t" type="text" maxlength="30" placeholder="曲名" aria-label="曲名" autocomplete="off">
+    <input id="sg-a" type="text" maxlength="24" placeholder="アーティスト" aria-label="アーティスト" autocomplete="off">
+    <button type="submit">追加</button>
+  </form>
+  <span class="dish-status" id="sg-status" role="status"></span>
+  <div class="sg-list" id="sg-list"></div>
+</section>
+
 <section id="games">
   <div class="sec-h"><h2>ミニゲーム</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Games</span></div>
   <div class="g-tabs" role="tablist">
@@ -1165,7 +1204,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function setMe(m){me=m;packWho=m||packWho;try{localStorage.setItem('retoli-me',m)}catch(e){}}
   var state={dishes:[]},split={members:[],expenses:[]};
   var pending=0,loaded=false;
-  var STATUS={am:'am-status',ci:'ci-status',av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
+  var STATUS={sg:'sg-status',am:'am-status',ci:'ci-status',av:'av-status',pack:'pack-status',memo:'memo-status',sched:'sched-status',dish:'dish-status',extra:'extra-status',shop:'shop-status',want:'want-status',mem:'mem-status',pay:'pay-status'};
   var $=function(id){return document.getElementById(id)};
 
   function call(fn,arg){
@@ -1732,6 +1771,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(days>=1){
       if(reg&&!(memo.avoid||{})[me])acts.push(['avoid','食べられないものを登録','アレルギー・苦手。なければ「特になし」']);
       if(days>1)acts.push(['food','作りたいものを選ぶ','食べたいものにいいね']);
+      if(reg&&!songs().some(function(x){return x.by===me}))acts.push(['songs','曲を入れる','プレイリスト']);
       acts.push(['pack',days===1?'持ち物の最終チェック':'持ち物をチェック',packLeft==null?'自分のタブで確認':(packLeft?'あと'+packLeft+'個':'全部そろっています')]);
     }else if(di===0){
       // 予定は押しがちなので、切り替えは少し遅めに（買い出しの15分前から、買い終わるかチェックインの1時間後まで）
@@ -1748,7 +1788,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     }
     acts.slice(0,2).forEach(function(a){
       // 1行に収まるよう短い言い方で。数があるものだけ小さく添える
-      var SH={avoid:'苦手を登録',food:a[1]==='BBQのメニュー'?'BBQのメニュー':'メニューにいいね',pack:a[1].replace('をチェック',''),buy:'買い出しリスト',plan:'今日の予定',budget:'精算する',memo:'写真アルバム'};
+      var SH={songs:'曲を入れる',avoid:'苦手を登録',food:a[1]==='BBQのメニュー'?'BBQのメニュー':'メニューにいいね',pack:a[1].replace('をチェック',''),buy:'買い出しリスト',plan:'今日の予定',budget:'精算する',memo:'写真アルバム'};
       var sub=/^(あと|まだ|未精算)/.test(a[2])?a[2]:'';
       var b=el('button','now-act');b.type='button';b.appendChild(el('b',null,SH[a[0]]||a[1]));if(sub)b.appendChild(el('small',null,sub));b.title=a[2];
       b.addEventListener('click',function(){if(a[0]==='members'){memOpen=true;renderSplit();$('mem-input').focus()}go(a[0])});box.appendChild(b);
@@ -1997,7 +2037,68 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function initGames(){setTopic('mem');gSig='';syncGames()}
   var AMP={label:'ほかに引く人を足す',on:function(){return!$('am-top').hidden},fn:function(){var t=$('am-top');t.hidden=!t.hidden;if(!t.hidden)t.focus()}};
   function syncGames(){var sig=split.members.join('|');if(sig===gSig||!$('rl-mem'))return;gSig=sig;memPick($('rl-mem'),'rl',drawWheel);memPick($('am-mem'),'am',null,AMP);if(!rlBusy)drawWheel()}
-  function renderAll(){if(typeof syncGames==='function'&&gSig!=='')syncGames();renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();if(FOCUS&&!pending)FOCUS=null}
+  // ---- プレイリスト
+  // 曲は memo.notes に入れる（サーバーの貼り替えなしで使えるように）。n=入れた人、t='♪|枠|曲名|アーティスト'
+  var SGB=[['go','行き'],['drive','ドライブ'],['night','焚き火'],['back','帰り道']];
+  var sgTab=null,sgOpen={},SGKEY='retoli-sg-open-v1',sgSeen={};
+  try{sgSeen=JSON.parse(localStorage.getItem(SGKEY)||'{}')||{}}catch(e){sgSeen={}}
+  function songs(){return(memo.notes||[]).map(function(x){var p=String(x.t||'').split('|');if(p[0]!=='♪'||p.length<3)return null;return{id:x.id,by:x.n,b:p[1],t:p[2],a:p[3]||''}}).filter(Boolean)}
+  function sgNow(){
+    var n=now(),di=dayIdx(n),m=n.getHours()*60+n.getMinutes();
+    if(di===0){if(m<stopMin(1,/いちご/,11*60+15))return'go';if(m<stopMin(1,/チェックイン/,15*60+30))return'drive';return'night'}
+    if(di===1)return m<stopMin(2,/帰路/,13*60)?'drive':'back';
+    return null;
+  }
+  function renderSongs(){
+    var tabs=$('sg-tabs'),list=$('sg-list');if(!tabs)return;
+    var all=songs(),cur=sgNow();if(!sgTab)sgTab=cur||'go';
+    tabs.textContent='';
+    SGB.forEach(function(b){
+      var n=all.filter(function(x){return x.b===b[0]}).length;
+      var t=el('button','sg-tab'+(sgTab===b[0]?' on':''));t.type='button';t.setAttribute('role','tab');t.setAttribute('aria-selected',sgTab===b[0]?'true':'false');
+      t.appendChild(document.createTextNode(b[1]));t.appendChild(el('span','c',String(n)));
+      if(cur===b[0])t.appendChild(el('span','now','いま'));
+      t.addEventListener('click',function(){sgTab=b[0];renderSongs()});tabs.appendChild(t);
+    });
+    list.textContent='';
+    var mine=all.filter(function(x){return x.b===sgTab});
+    if(!loaded){list.appendChild(el('div','sg-empty','読み込み中…'));return}
+    if(!mine.length)list.appendChild(el('div','sg-empty','まだ曲がありません。最初の1曲をどうぞ'));
+    mine.forEach(function(x,i){
+      var row=el('div','sg'),top=el('div','sg-top');
+      top.appendChild(el('span','sg-no',String(i+1)));
+      var mb=el('button','sg-main');mb.type='button';mb.setAttribute('aria-expanded',sgOpen[x.id]?'true':'false');mb.setAttribute('aria-label',x.t+'を聴くリンクを開く');
+      mb.appendChild(el('b',null,x.t));if(x.a)mb.appendChild(el('small',null,x.a));
+      mb.addEventListener('click',function(){sgOpen[x.id]=!sgOpen[x.id];renderSongs()});top.appendChild(mb);
+      var known=split.members.indexOf(x.by)>=0;
+      if(x.by===me){var wm=el('span','sg-who mine','自分の曲');top.appendChild(wm)}
+      else if(sgSeen[x.id]){var wo=el('span','sg-who open');if(known)wo.appendChild(av(x.by));wo.appendChild(el('span',null,x.by));top.appendChild(wo)}
+      else{var wb=el('button','sg-who','誰の曲？');wb.type='button';
+        wb.addEventListener('click',function(){sgSeen[x.id]=1;try{localStorage.setItem(SGKEY,JSON.stringify(sgSeen))}catch(e){}renderSongs()});top.appendChild(wb)}
+      row.appendChild(top);
+      var lk=el('div','sg-links');lk.hidden=!sgOpen[x.id];var q=encodeURIComponent((x.t+' '+x.a).trim());
+      [['Spotify','https://open.spotify.com/search/'+q],['Apple Music','https://music.apple.com/jp/search?term='+q],['YouTube','https://www.youtube.com/results?search_query='+q]].forEach(function(l){
+        var a=el('a',null,l[0]);a.href=l[1];a.target='_blank';a.rel='noopener';lk.appendChild(a)});
+      if(x.by===me)lk.appendChild(xBtn(x.t+'を消す',function(){memo.notes=memo.notes.filter(function(y){return y.id!==x.id});op({type:'removeNote',id:x.id},'sg')},true));
+      row.appendChild(lk);list.appendChild(row);
+    });
+  }
+  $('sg-form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var clean=function(v,n){return String(v||'').replace(/[|｜]/g,'／').trim().slice(0,n)};
+    var t=clean($('sg-t').value,30),a=clean($('sg-a').value,24);
+    if(split.members.indexOf(me)<0){status('先にいちばん上でユーザー（自分の名前）を選んでください','sg');return}
+    if(!t){status('曲名を入れてください','sg');$('sg-t').focus();return}
+    var all=songs();
+    if(all.some(function(x){return x.t===t&&x.a===a})){status('その曲はもう入っています','sg');return}
+    if((memo.notes||[]).length>=60){status('曲がいっぱいです（全部で60曲まで）','sg');return}
+    var name=(SGB.filter(function(b){return b[0]===sgTab})[0]||[])[1]||'';
+    var x={n:me,t:'♪|'+sgTab+'|'+t+'|'+a};memo.notes=memo.notes||[];memo.notes.push({id:'tmp'+Date.now(),n:x.n,t:x.t});
+    $('sg-t').value='';$('sg-a').value='';
+    op({type:'addNote',n:x.n,t:x.t},'sg').then(function(){status('「'+t+'」を'+name+'に入れました','sg',true)});
+  });
+
+  function renderAll(){if(typeof syncGames==='function'&&gSig!=='')syncGames();renderCheckin();renderAvoid();renderNow();renderPack();renderMemo();renderSched();renderDishes();renderShop();renderPresets();renderWants();renderSplit();renderSongs();if(FOCUS&&!pending)FOCUS=null}
 
   function addPreset(name){
     if(state.dishes.some(function(d){return d.name===name}))return;
