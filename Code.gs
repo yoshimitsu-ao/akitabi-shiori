@@ -362,6 +362,15 @@ function mutate_(s, o) {
       if (o.v) dd[dn] = 1; else delete dd[dn];
       return;
     }
+    case 'updateExpense': {
+      var ue = o.expense || {};
+      var ua = Math.round(Number(ue.a));
+      var up = str_(ue.p, 20);
+      var uw = (Array.isArray(ue.s) ? ue.s : []).filter(function (x) { return members.indexOf(x) >= 0; });
+      if (!(ua > 0) || members.indexOf(up) < 0 || !uw.length) return;
+      s.split.expenses.forEach(function (x) { if (x.id === o.id) { x.t = str_(ue.t, 30) || '支払い'; x.a = ua; x.p = up; x.s = uw; } });
+      return;
+    }
     case 'removeExpense':
       s.split.expenses = s.split.expenses.filter(function (x) { return x.id !== o.id; });
       return;

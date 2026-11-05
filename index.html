@@ -144,7 +144,13 @@ dl.kv dd{margin:0;min-width:0}
 .pay-row .pt{font-weight:700;min-width:0;grid-column:2}
 .pay-row .pm{font-size:12px;color:var(--mute);grid-column:2;min-width:0}
 .pay-row .pa{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:16px;grid-row:1/3;grid-column:3}
-.pay-row .dish-x{grid-row:1/3;grid-column:4}
+.pay-row{grid-template-columns:auto 1fr auto auto auto}
+.pay-row .dish-x{grid-row:1/3;grid-column:5}
+.pay-row .pay-ed{grid-row:1/3;grid-column:4;font:inherit;font-size:12px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer}
+.pay-row.editing{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.pay-edit-h{grid-column:1/-1;margin:0;font-size:13px;font-weight:700;color:var(--accent)}
+.pay-edit-h[hidden],#pay-cancel[hidden]{display:none}
+.pay-form.editing{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
 .pay-total{display:flex;justify-content:space-between;padding:4px 14px;font-weight:700}
 .pay-total span:last-child{font-family:var(--f-mono)}
 .settle-row{display:flex;align-items:center;gap:7px;padding:12px;border-radius:16px;background:var(--paper);border:1px solid var(--line);flex-wrap:wrap}
@@ -915,6 +921,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <div class="sec-h"><h2>割り勘</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Split</span></div>
   <h3 class="sub-h first">支払い</h3>
   <form class="pay-form split-ed" id="pay-form">
+    <p class="pay-edit-h" id="pay-edit-h" hidden></p>
     <div class="pay-quick" id="pay-quick">
       <button type="button" data-t="ETC">ETC</button><button type="button" data-t="ガソリン">ガソリン</button><button type="button" data-t="食費">食費</button>
     </div>
@@ -923,7 +930,8 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     <input id="pay-amount" type="number" inputmode="numeric" min="1" step="1" placeholder="金額（円）" aria-label="金額">
     <select id="pay-payer" aria-label="払った人"></select>
     <div class="who" id="pay-who"></div>
-    <button type="submit">支払いを追加</button>
+    <button type="submit" id="pay-submit">支払いを追加</button>
+    <button type="button" class="ghost" id="pay-cancel" hidden>編集をやめる</button>
     <span class="dish-status" id="pay-status" role="status"></span>
   </form>
   <div class="pay-list" id="pay-list"></div>
@@ -1443,7 +1451,9 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
       row.appendChild(av(x.p));
       row.appendChild(el('span','pt',x.t));
       row.appendChild(el('span','pa',yen(x.a)));
-      row.appendChild(xBtn(x.t+'を消す',function(){split.expenses=split.expenses.filter(function(y){return y!==x});op({type:'removeExpense',id:x.id},'pay')},true));
+      var eb=el('button','pay-ed','編集');eb.type='button';eb.setAttribute('aria-label',x.t+'を編集');eb.addEventListener('click',function(){editPay(x)});row.appendChild(eb);
+      if(payEdit&&payEdit===x.id)row.classList.add('editing');
+      row.appendChild(xBtn(x.t+'を消す',function(){if(payEdit===x.id)endEditPay();split.expenses=split.expenses.filter(function(y){return y!==x});op({type:'removeExpense',id:x.id},'pay')},true));
       var n=(x.s||[]).length;
       row.appendChild(el('span','pm',x.p+'さんが払った・'+(n===split.members.length?'全員':n+'人')+'で割る'));
       row.dataset.n=x.id||'';pl.appendChild(row);
@@ -2173,7 +2183,24 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     finally{btn.disabled=false}
   });
   $('ci-hide').addEventListener('click',function(){$('ci-val').textContent='';$('ci-show').hidden=true;$('ci-lock').hidden=false});
-  var payKey='';
+  var payKey='',payEdit=null;
+  // 支払いを編集：上のフォームに中身を戻して、「変更を保存」で置き換える
+  function setWho(list){
+    var pw=$('pay-who');pw._all=false;var wa=pw.querySelector('.who-all input');if(wa)wa.checked=false;var wp=pw.querySelector('.who-pick');if(wp)wp.hidden=false;
+    pw.querySelectorAll('.who-pick input').forEach(function(c){c.checked=list?list.indexOf(c.value)>=0:true});
+  }
+  function editPay(x){
+    payEdit=x.id;payKey='';
+    $('pay-title').value=x.t;$('pay-amount').value=x.a;$('pay-payer').value=split.members.indexOf(x.p)>=0?x.p:'';setWho(x.s||[]);
+    $('pay-form').classList.add('editing');$('pay-edit-h').hidden=false;$('pay-edit-h').textContent='「'+x.t+'」を編集中。直したら「変更を保存」';
+    $('pay-submit').textContent='変更を保存';$('pay-cancel').hidden=false;status('','pay');renderSplit();
+    $('pay-form').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function endEditPay(){
+    payEdit=null;$('pay-title').value='';$('pay-amount').value='';setWho(null);
+    $('pay-form').classList.remove('editing');$('pay-edit-h').hidden=true;$('pay-submit').textContent='支払いを追加';$('pay-cancel').hidden=true;renderSplit();
+  }
+  $('pay-cancel').addEventListener('click',function(){endEditPay();status('','pay')});
   ['pay-title','pay-amount','pay-payer'].forEach(function(id){$(id).addEventListener('input',function(){payKey=''})});
   var tocB=document.querySelectorAll('.toc button');
   tocB.forEach(function(b){b.addEventListener('click',function(){var t=$(b.dataset.to);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
@@ -2196,6 +2223,20 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     if(!p){status('払った人を選んでください','pay');return}
     if(!s.length){status('割る人を1人以上選んでください','pay');return}
     // 二重登録・桁まちがいの確認（同じ内容でもう一度押すと追加）
+    if(payEdit){
+      var old=split.expenses.filter(function(y){return y.id===payEdit})[0];
+      if(!old){endEditPay();status('その支払いは消されていました','pay');return}
+      var id=payEdit,nx={t:t,a:a,p:p,s:s};old.t=t;old.a=a;old.p=p;old.s=s;endEditPay();
+      op({type:'updateExpense',id:id,expense:nx},'pay').then(function(){
+        // サーバーが古い（updateExpense を知らない）ときは、消して入れ直す
+        var cur=split.expenses.filter(function(y){return y.id===id})[0];
+        if(cur&&(cur.t!==t||cur.a!==a||cur.p!==p||(cur.s||[]).join()!==s.join())){
+          split.expenses=split.expenses.filter(function(y){return y.id!==id});split.expenses.push(nx);
+          return op({type:'removeExpense',id:id},'pay').then(function(){return op({type:'addExpense',expense:nx},'pay')});
+        }
+      }).then(function(){status('「'+t+'」を直しました','pay',true)});
+      return;
+    }
     var key=[t,a,p,s.join(',')].join('|'),warn='';
     if(split.expenses.some(function(y){return y.a===a&&y.p===p}))warn=p+'さんの'+yen(a)+'の支払いはもう入っています。別の支払いなら、もう一度「支払いを追加」を押してください';
     else if(a>=100000)warn=yen(a)+'で合っていますか？合っていれば、もう一度「支払いを追加」を押してください';
