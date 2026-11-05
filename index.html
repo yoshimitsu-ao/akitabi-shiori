@@ -217,7 +217,8 @@ dl.kv dd{margin:0;min-width:0}
 .dish-status.err{color:var(--berry);font-weight:700}
 .pay-form .dish-status{grid-column:1/-1;margin:0}
 .hint{font-size:12px;color:var(--mute);margin:-4px 0 0}
-.sg-lead{font-size:13px;color:var(--mute);margin:-8px 0 12px;line-height:1.7}.sg-lead b{color:var(--fg)}
+.sg-fold{margin:-6px 0 0;border-top:0;padding-top:0}.sg-fold[open]>summary{margin-bottom:10px}
+.sg-lead{font-size:13px;color:var(--mute);margin:0 0 12px;line-height:1.7}.sg-lead b{color:var(--fg)}
 .sg-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:6px 0 4px;margin-bottom:10px}.sg-tabs::-webkit-scrollbar{display:none}
 .sg-tab{position:relative;font:inherit;font-size:13px;padding:7px 4px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--fg);cursor:pointer;white-space:nowrap}
 .sg-tab .c{font-family:var(--f-mono);font-size:11px;color:var(--mute);margin-left:4px}
@@ -970,6 +971,8 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 
 <section id="songs">
   <div class="sec-h"><h2>プレイリスト</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Playlist</span></div>
+  <details class="amen sg-fold" id="sg-fold">
+  <summary>曲を見る・入れる（<span id="sg-n">0</span>曲）</summary>
   <p class="sg-lead">車で流す曲を、時間帯ごとに入れてね。誰が入れたかは<b>ヒミツ</b>。流れたら「誰の曲？」で答え合わせ。</p>
   <div class="sg-tabs" id="sg-tabs" role="tablist" aria-label="時間帯"></div>
   <form class="sg-form" id="sg-form" novalidate>
@@ -979,6 +982,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </form>
   <span class="dish-status" id="sg-status" role="status"></span>
   <div class="sg-list" id="sg-list"></div>
+  </details>
 </section>
 
 <section id="games">
@@ -1758,7 +1762,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
     capList(list,'pack-'+packWho);
   }
   // ---- いまやること（時期で変わる）
-  function go(id){var t=$(id);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
+  function go(id){if(id==='songs'&&$('sg-fold'))$('sg-fold').open=true;var t=$(id);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}
   function stopMin(day,re,fb){var x=sched&&sched.stops.filter(function(y){return y.d===day&&re.test(y.n)&&tmin(y.t)>=0})[0];return x?tmin(x.t):fb}
   function renderNow(){
     var box=$('now-acts');if(!box)return;box.textContent='';
@@ -2040,7 +2044,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // ---- プレイリスト
   // 曲は memo.notes に入れる（サーバーの貼り替えなしで使えるように）。n=入れた人、t='♪|枠|曲名|アーティスト'
   var SGB=[['go','行き'],['drive','ドライブ'],['night','焚き火'],['back','帰り道']];
-  var sgTab=null,sgOpen={},SGKEY='retoli-sg-open-v1',sgSeen={};
+  var sgAuto=false,sgTab=null,sgOpen={},SGKEY='retoli-sg-open-v1',sgSeen={};
   try{sgSeen=JSON.parse(localStorage.getItem(SGKEY)||'{}')||{}}catch(e){sgSeen={}}
   function songs(){return(memo.notes||[]).map(function(x){var p=String(x.t||'').split('|');if(p[0]!=='♪'||p.length<3)return null;return{id:x.id,by:x.n,b:p[1],t:p[2],a:p[3]||''}}).filter(Boolean)}
   function sgNow(){
@@ -2052,6 +2056,9 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   function renderSongs(){
     var tabs=$('sg-tabs'),list=$('sg-list');if(!tabs)return;
     var all=songs(),cur=sgNow();if(!sgTab)sgTab=cur||'go';
+    $('sg-n').textContent=all.length;
+    // 旅行中（いまの枠があるとき）は最初から開いておく
+    if(cur&&!sgAuto){sgAuto=true;$('sg-fold').open=true}
     tabs.textContent='';
     SGB.forEach(function(b){
       var n=all.filter(function(x){return x.b===b[0]}).length;
