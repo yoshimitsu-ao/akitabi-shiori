@@ -616,6 +616,10 @@ section:nth-of-type(3n) .sec-h .lf{color:var(--berry)}
 /* 牛は端末の「動きを減らす」設定に関係なく、ゆっくり歩かせる */
 .deco .walker{left:auto;-webkit-animation:walk 24s linear infinite;animation:walk 24s linear infinite}
 .deco .walker.rev{-webkit-animation-name:walkback;animation-name:walkback;-webkit-animation-duration:28s;animation-duration:28s;-webkit-animation-delay:-9s;animation-delay:-9s}
+/* 牛のうしろをヤギがついていく（同じ速さで少し遅れて） */
+.deco .walker.goat{width:38px;height:27px;bottom:5px;-webkit-animation-delay:-20.6s;animation-delay:-20.6s}
+.deco .walker.rev.goat{-webkit-animation-delay:-4.6s;animation-delay:-4.6s}
+.deco .walker.goat .flip svg{animation-delay:-.25s;animation-duration:.4s}
 @-webkit-keyframes walk{from{left:-60px}to{left:100%}}
 @keyframes walk{from{left:-60px}to{left:100%}}
 @-webkit-keyframes walkback{from{left:100%}to{left:-60px}}
@@ -711,6 +715,23 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="leaf" viewBox="0 0 24 24"><path d="M12 2l1.6 4.2 3-1.6-.6 3.8 3.6-.6-1.8 3 3.2 1.4-3.6 1.6.8 2.4-3.4-.6L13 19.4V23h-2v-3.6l-2.8-3-3.4.6.8-2.4L2 12.6l3.2-1.4-1.8-3 3.6.6-.6-3.8 3 1.6z" fill="currentColor"/></symbol>
   <symbol id="ginkgo" viewBox="0 0 24 24"><path d="M12 21v-7M12 14C7 14 3 10 3 6c3 1 5 0 7-2 .8 1.5 1.2 3 2 3.5.8-.5 1.2-2 2-3.5 2 2 4 3 7 2 0 4-4 8-9 8z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+      <symbol id="goat" viewBox="-2 -8 62 44">
+        <rect x="9" y="20" width="3" height="15" rx="1.5" fill="var(--fg)"/>
+        <rect x="15" y="20" width="3" height="14" rx="1.5" fill="var(--fg)"/>
+        <rect x="30" y="20" width="3" height="14" rx="1.5" fill="var(--fg)"/>
+        <rect x="36" y="20" width="3" height="15" rx="1.5" fill="var(--fg)"/>
+        <path d="M6 11 l-4 -6" stroke="var(--fg)" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="4" y="8" width="38" height="16" rx="8" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <path d="M38 10 l4 -8" stroke="var(--paper)" stroke-width="7" stroke-linecap="round"/>
+        <path d="M38 10 l4 -8" fill="none" stroke="var(--fg)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0 0"/>
+        <path d="M44 -1 q-3 -6 -9 -5" fill="none" stroke="var(--mute)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M47 -1 q-1 -6 -6 -7" fill="none" stroke="var(--mute)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M41 3 l-6 2" stroke="var(--fg)" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="40" y="-2" width="15" height="12" rx="5" fill="var(--paper)" stroke="var(--fg)" stroke-width="1.6"/>
+        <path d="M51 9 q1 6 -1 9" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="47.5" cy="2.5" r="1.3" fill="var(--fg)"/>
+        <circle cx="53" cy="6" r=".8" fill="var(--fg)"/>
+      </symbol>
   <symbol id="cow" viewBox="-2 -4 68 42">
         <rect x="7" y="22" width="4" height="14" rx="2" fill="var(--fg)"/>
         <rect x="15" y="22" width="4" height="13" rx="2" fill="var(--fg)"/>
@@ -856,7 +877,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </form>
 </section>
 
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><div class="walker goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
 
 <section id="pack">
   <div class="sec-h"><h2>持ち物</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Check list</span></div>
@@ -942,7 +963,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <div class="shop" id="shop"></div>
 </section>
 
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div></div>
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><div class="walker rev goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
 
 <section id="budget">
   <div class="sec-h"><h2>割り勘</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Split</span></div>
@@ -1622,16 +1643,17 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   // 牛をタップすると「モぅ！」と怒る
   (function(){
     var ANG='<svg class="ang" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1v4.5Q6 6 5.5 6H1M10 1v4.5q0 .5.5.5H15M6 15v-4.5Q6 10 5.5 10H1M10 15v-4.5q0-.5.5-.5H15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
-    var SAY=['モぅ！','モぅ！','モ゛ぅ！！','ンモぅ！'],busy=new WeakSet();
+    var SAY=['モぅ！','モぅ！','モ゛ぅ！！','ンモぅ！'],GOAT=['メェ〜','メェ！','メ゛ェ〜！'],busy=new WeakSet();
     document.addEventListener('click',function(ev){
       var t=ev.target.closest&&ev.target.closest('.mtn .cow,.deco .walker,.now-cow,.joy .cw,.intro-cow');if(!t||busy.has(t))return;
       busy.add(t);var sh=t.matches('.mtn .cow')?t.querySelector('.cow-in'):t;
-      sh.classList.add('mad');if(t.classList.contains('walker'))t.classList.add('mad');
+      var pair=t.classList.contains('walker')?Array.prototype.slice.call(t.parentNode.querySelectorAll('.walker')):[];
+      sh.classList.add('mad');pair.forEach(function(w){w.classList.add('mad')});
       var r=t.getBoundingClientRect(),b=document.createElement('span');b.className='moo';b.setAttribute('role','status');
-      b.innerHTML=SAY[Math.floor(Math.random()*SAY.length)]+ANG;
+      b.innerHTML=t.classList.contains('goat')?GOAT[Math.floor(Math.random()*GOAT.length)]:SAY[Math.floor(Math.random()*SAY.length)]+ANG;
       b.style.left=Math.min(innerWidth-50,Math.max(50,r.left+r.width*.6))+'px';b.style.top=Math.max(34,r.top-4)+'px';
       document.body.appendChild(b);try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}
-      setTimeout(function(){sh.classList.remove('mad');t.classList.remove('mad')},700);
+      setTimeout(function(){sh.classList.remove('mad');t.classList.remove('mad');pair.forEach(function(w){w.classList.remove('mad')})},700);
       setTimeout(function(){b.remove();busy.delete(t)},1300);
     });
   })();
