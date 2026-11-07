@@ -616,14 +616,23 @@ section:nth-of-type(3n) .sec-h .lf{color:var(--berry)}
 /* 牛は端末の「動きを減らす」設定に関係なく、ゆっくり歩かせる */
 .deco .walker{left:auto;-webkit-animation:walk 24s linear infinite;animation:walk 24s linear infinite}
 .deco .walker.rev{-webkit-animation-name:walkback;animation-name:walkback;-webkit-animation-duration:28s;animation-duration:28s;-webkit-animation-delay:-9s;animation-delay:-9s}
-/* 牛のうしろをヤギがついていく（同じ速さで少し遅れて） */
-.deco .walker.goat{width:38px;height:27px;bottom:5px;-webkit-animation-delay:-20.6s;animation-delay:-20.6s}
-.deco .walker.rev.goat{-webkit-animation-delay:-4.6s;animation-delay:-4.6s}
-.deco .walker.goat .flip svg{animation-delay:-.25s;animation-duration:.4s}
-@-webkit-keyframes walk{from{left:-60px}to{left:100%}}
-@keyframes walk{from{left:-60px}to{left:100%}}
-@-webkit-keyframes walkback{from{left:100%}to{left:-60px}}
-@keyframes walkback{from{left:100%}to{left:-60px}}
+/* 牛のうしろをヤギがついていく。途中で道の草を食べて、そのあと小走りで追いつく（牛と同じ時間軸で動かす） */
+.deco .walker.goat{width:38px;height:27px;bottom:5px;transform-origin:30% 100%;-webkit-animation:gwalk 24s linear infinite,geat 24s linear infinite;animation:gwalk 24s linear infinite,geat 24s linear infinite}
+.deco .walker.rev.goat{transform-origin:70% 100%;-webkit-animation:gwalkback 28s linear -9s infinite,geatback 28s linear -9s infinite;animation:gwalkback 28s linear -9s infinite,geatback 28s linear -9s infinite}
+@keyframes gwalk{0%{left:calc(0% - 108px)}35%{left:calc(35% - 66px)}47%{left:calc(35% - 66px)}60%{left:calc(60% - 36px)}100%{left:calc(100% + 12px)}}
+@keyframes gwalkback{0%{left:calc(100% + 108px)}35%{left:calc(65% + 48.5px)}47%{left:calc(65% + 48.5px)}60%{left:calc(40% + 6px)}100%{left:calc(0% - 62px)}}
+@keyframes geat{0%,35.5%{transform:none}37%{transform:rotate(9deg)}39%{transform:rotate(6deg)}41%{transform:rotate(10deg)}43%{transform:rotate(6deg)}45%{transform:rotate(10deg)}46.5%{transform:rotate(9deg)}47.2%{transform:none}
+  49%{transform:translateY(-2.5px)}51%{transform:none}53%{transform:translateY(-2.5px)}55%{transform:none}57%{transform:translateY(-2.5px)}59%{transform:none}100%{transform:none}}
+@keyframes geatback{0%,35.5%{transform:none}37%{transform:rotate(-9deg)}39%{transform:rotate(-6deg)}41%{transform:rotate(-10deg)}43%{transform:rotate(-6deg)}45%{transform:rotate(-10deg)}46.5%{transform:rotate(-9deg)}47.2%{transform:none}
+  49%{transform:translateY(-2.5px)}51%{transform:none}53%{transform:translateY(-2.5px)}55%{transform:none}57%{transform:translateY(-2.5px)}59%{transform:none}100%{transform:none}}
+/* 道の草（ヤギが食べると短くなって、ヤギが行ったあとにまた生える） */
+.deco .grass{position:absolute;bottom:6px;left:calc(35% - 39px);width:13px;height:11px;transform-origin:50% 100%;animation:gtuft 24s linear infinite}
+.deco .grass.rev{left:calc(65% + 47px);animation:gtuft 28s linear -9s infinite}
+@keyframes gtuft{0%,36%{transform:none;opacity:1}46%{transform:scaleY(.25);opacity:.8}80%{transform:scaleY(.25);opacity:.8}90%,100%{transform:none;opacity:1}}
+@-webkit-keyframes walk{from{left:-60px}to{left:calc(100% + 60px)}}
+@keyframes walk{from{left:-60px}to{left:calc(100% + 60px)}}
+@-webkit-keyframes walkback{from{left:calc(100% + 60px)}to{left:-110px}}
+@keyframes walkback{from{left:calc(100% + 60px)}to{left:-110px}}
 @media (prefers-reduced-motion:no-preference){
   .deco .lv.drop{animation:drop 10s linear infinite}
   @keyframes drop{0%{transform:translate(-6px,-46px) rotate(0deg);opacity:0}8%{opacity:1}
@@ -877,7 +886,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   </form>
 </section>
 
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><div class="walker goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:14%;width:11px;height:11px;color:var(--larch);--r:20deg"><use href="#ginkgo"/></svg><svg class="lv" style="left:18%;width:10px;height:10px;color:var(--maple);--r:-40deg"><use href="#leaf"/></svg><svg class="lv" style="left:83%;width:13px;height:13px;color:var(--berry);--r:15deg"><use href="#leaf"/></svg><div class="walker"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><svg class="grass" viewBox="-1 -1 15 12"><path d="M1 10 Q2 5 0 1 M4 10 Q4 4 6 0 M7 10 Q8 5 11 2 M10 10 Q11 7 13 6" fill="none" stroke="var(--moss,#6F8F4E)" stroke-width="1.6" stroke-linecap="round"/></svg><div class="walker goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
 
 <section id="pack">
   <div class="sec-h"><h2>持ち物</h2><svg class="lf" aria-hidden="true"><use href="#ginkgo"/></svg><span class="label">Check list</span></div>
@@ -963,7 +972,7 @@ footer{padding-block:40px;font-size:12px;color:var(--mute);border-top:1px solid 
   <div class="shop" id="shop"></div>
 </section>
 
-<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><div class="walker rev goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
+<div class="deco" aria-hidden="true"><span class="ground"></span><svg class="lv" style="left:6%;width:12px;height:12px;color:var(--berry);--r:25deg"><use href="#leaf"/></svg><svg class="lv drop" style="left:52%;width:13px;height:13px;color:var(--larch);--r:0deg;animation-delay:-3s;animation-duration:10s"><use href="#ginkgo"/></svg><svg class="lv" style="left:58%;width:10px;height:10px;color:var(--maple);--r:-30deg"><use href="#leaf"/></svg><div class="walker rev"><div class="flip"><svg viewBox="-2 -4 68 42"><use href="#cow"/></svg></div></div><svg class="grass rev" viewBox="-1 -1 15 12"><path d="M1 10 Q2 5 0 1 M4 10 Q4 4 6 0 M7 10 Q8 5 11 2 M10 10 Q11 7 13 6" fill="none" stroke="var(--moss,#6F8F4E)" stroke-width="1.6" stroke-linecap="round"/></svg><div class="walker rev goat"><div class="flip"><svg viewBox="-2 -8 62 44"><use href="#goat"/></svg></div></div></div>
 
 <section id="budget">
   <div class="sec-h"><h2>割り勘</h2><svg class="lf" aria-hidden="true"><use href="#leaf"/></svg><span class="label">Split</span></div>
